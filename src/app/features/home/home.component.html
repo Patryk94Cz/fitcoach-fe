@@ -1,0 +1,41 @@
+<!-- features/home/home.component.html -->
+<div class="home-container">
+  <!-- Usuwamy lokalny navbar, ponieważ mamy globalny -->
+
+  <!-- Uproszczona sekcja hero -->
+
+  <div class="hero-section">
+    <div class="hero-content">
+      <h1>Witaj w FitCoach</h1>
+      <p>Twój osobisty trener fitness w jednej aplikacji</p>
+      <button mat-raised-button color="primary" (click)="navigateTo('register')">Rozpocznij za darmo</button>
+    </div>
+  </div>
+
+  <!-- Prosta sekcja funkcjonalności -->
+  <div class="features-section">
+    <h2>Nasze funkcje</h2>
+    <div class="features-grid">
+      <mat-card>
+        <mat-icon>fitness_center</mat-icon>
+        <h3>Plany treningowe</h3>
+        <p>Spersonalizowane plany treningowe dopasowane do Twoich potrzeb</p>
+      </mat-card>
+      <mat-card>
+        <mat-icon>restaurant</mat-icon>
+        <h3>Dieta</h3>
+        <p>Wskazówki żywieniowe i plany posiłków</p>
+      </mat-card>
+      <mat-card>
+        <mat-icon>insights</mat-icon>
+        <h3>Analiza postępów</h3>
+        <p>Śledź swoje wyniki i osiągaj cele</p>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Prosta stopka -->
+  <div class="footer">
+    <p>&copy; 2025 FitCoach. Wszelkie prawa zastrzeżone.</p>
+  </div>
+</div>

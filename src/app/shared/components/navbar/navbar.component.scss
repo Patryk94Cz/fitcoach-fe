@@ -1,0 +1,50 @@
+/* src/app/shared/components/navbar/navbar.component.scss */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
+.navbar-spacer {
+  flex: 1 1 auto;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+
+  a {
+    margin: 0 4px;
+  }
+}
+
+.active-link {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 0 8px;
+  }
+
+  .navbar-brand span {
+    display: none; /* Ukryj tekst logo na małych ekranach */
+  }
+}

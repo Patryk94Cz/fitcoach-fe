@@ -1,0 +1,35 @@
+<!-- src/app/shared/components/navbar/navbar.component.html -->
+<mat-toolbar color="primary" class="navbar">
+  <div class="navbar-brand" routerLink="/home">
+    <mat-icon>fitness_center</mat-icon>
+    <span>FitCoach</span>
+  </div>
+
+  <span class="navbar-spacer"></span>
+
+  <!-- Linki nawigacyjne dla wszystkich użytkowników -->
+  <div class="navbar-links">
+    <a mat-button routerLink="/home" routerLinkActive="active-link">Strona główna</a>
+
+    <!-- Linki dla zalogowanych użytkowników -->
+    <ng-container *ngIf="authService.isAuthenticated()">
+      <a mat-button routerLink="/dashboard" routerLinkActive="active-link">Dashboard</a>
+      <a mat-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>account_circle</mat-icon>
+        <span *ngIf="(authService.currentUser$ | async) as user">{{ user.username }}</span>
+      </a>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Wyloguj się</span>
+        </button>
+      </mat-menu>
+    </ng-container>
+
+    <!-- Linki dla niezalogowanych użytkowników -->
+    <ng-container *ngIf="!authService.isAuthenticated()">
+      <a mat-button routerLink="/login" routerLinkActive="active-link">Logowanie</a>
+      <a mat-raised-button color="accent" routerLink="/register" routerLinkActive="active-link">Rejestracja</a>
+    </ng-container>
+  </div>
+</mat-toolbar>
