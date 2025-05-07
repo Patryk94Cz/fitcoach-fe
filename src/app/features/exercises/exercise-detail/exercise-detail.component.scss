@@ -1,0 +1,237 @@
+/* src/app/features/exercises/exercise-detail/exercise-detail.component.scss */
+.exercise-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.navigation-buttons {
+  margin-bottom: 20px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+
+  p {
+    margin-top: 16px;
+    color: #666;
+  }
+}
+
+.exercise-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 28px;
+    font-weight: 500;
+    margin: 0;
+    color: #333;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 12px;
+  }
+}
+
+.exercise-info-section {
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) 2fr;
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.exercise-media {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .exercise-image {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .video-container {
+    text-align: center;
+
+    a {
+      width: 100%;
+    }
+  }
+}
+
+.exercise-details {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+mat-card {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.description {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  color: #333;
+  white-space: pre-line;
+}
+
+mat-divider {
+  margin: 16px 0;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+
+    .info-label {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+    }
+  }
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.tags-section {
+  h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: #666;
+  }
+}
+
+.ratings-card {
+  .mat-card-subtitle {
+    font-size: 14px;
+  }
+}
+
+.rating-form-container {
+  margin-bottom: 24px;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #333;
+  }
+
+  .star-rating {
+    display: flex;
+    margin-bottom: 16px;
+  }
+
+  .comment-field {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .rating-buttons {
+    display: flex;
+    gap: 12px;
+  }
+}
+
+.ratings-divider {
+  margin: 24px 0;
+}
+
+.ratings-list {
+  h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #333;
+  }
+
+  .no-ratings {
+    padding: 16px;
+    text-align: center;
+    color: #666;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+
+  .rating-item {
+    padding: 16px 0;
+
+    .rating-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+
+      .user-info {
+        display: flex;
+        flex-direction: column;
+
+        strong {
+          font-size: 16px;
+          color: #333;
+        }
+
+        .rating-date {
+          font-size: 12px;
+          color: #999;
+        }
+      }
+
+      .stars {
+        display: flex;
+
+        mat-icon {
+          font-size: 18px;
+          height: 18px;
+          width: 18px;
+        }
+      }
+    }
+
+    .rating-comment {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #555;
+      white-space: pre-line;
+      margin-bottom: 16px;
+    }
+
+    &:last-child {
+      mat-divider {
+        display: none;
+      }
+    }
+  }
+}

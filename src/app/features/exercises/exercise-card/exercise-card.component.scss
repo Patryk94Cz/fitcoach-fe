@@ -1,0 +1,124 @@
+/* src/app/features/exercises/exercise-card/exercise-card.component.scss */
+.exercise-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  height: 100%;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.exercise-image-container {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.exercise-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+
+  .exercise-card:hover & {
+    transform: scale(1.05);
+  }
+}
+
+.difficulty-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-content {
+  flex: 1;
+  padding: 16px;
+}
+
+.exercise-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 12px 0;
+  line-height: 1.3;
+  color: #333;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 2.6em;
+}
+
+.muscle-group {
+  margin-bottom: 12px;
+
+  mat-chip {
+    font-size: 12px;
+    height: 24px;
+    min-height: 24px;
+  }
+}
+
+.rating-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .stars {
+    display: flex;
+    align-items: center;
+
+    mat-icon {
+      color: #ffc107;
+      font-size: 18px;
+      height: 18px;
+      width: 18px;
+    }
+  }
+
+  .rating-value {
+    font-weight: 500;
+    margin-left: 4px;
+  }
+
+  .ratings-count {
+    color: #666;
+    font-size: 12px;
+  }
+}
+
+.no-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #999;
+
+  mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+
+  span {
+    font-size: 14px;
+  }
+}
+
+mat-card-actions {
+  padding: 8px 16px 16px;
+  display: flex;
+  justify-content: flex-end;
+}

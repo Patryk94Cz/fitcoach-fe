@@ -1,4 +1,4 @@
-// src/app/app.routes.ts
+// src/app/app.routes.ts - Aktualizacja routingu o ścieżki do ćwiczeń
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
@@ -23,6 +23,27 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () => import('./features/dashboard/dashboard/dashboard.component').then(m => m.DashboardComponent),
+    canActivate: [authGuard]
+  },
+  // Dodane ścieżki dla ćwiczeń - wszystkie z guardami wymagającymi zalogowania
+  {
+    path: 'exercises',
+    loadComponent: () => import('./features/exercises/exercise-list/exercise-list.component').then(m => m.ExerciseListComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'exercises/create',
+    loadComponent: () => import('./features/exercises/exercise-form/exercise-form.component').then(m => m.ExerciseFormComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'exercises/:id',
+    loadComponent: () => import('./features/exercises/exercise-detail/exercise-detail.component').then(m => m.ExerciseDetailComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'exercises/edit/:id',
+    loadComponent: () => import('./features/exercises/exercise-form/exercise-form.component').then(m => m.ExerciseFormComponent),
     canActivate: [authGuard]
   },
   {

@@ -1,0 +1,100 @@
+<!-- src/app/features/exercises/exercise-list/exercise-list.component.html -->
+<div class="exercise-list-container">
+  <div class="page-header">
+    <h1 class="page-title">Ćwiczenia</h1>
+    <button mat-raised-button color="primary" (click)="createNewExercise()">
+      <mat-icon>add</mat-icon>
+      Dodaj ćwiczenie
+    </button>
+  </div>
+
+  <!-- Zakładki kategorii ćwiczeń -->
+  <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="activeTab">
+    <mat-tab label="Wszystkie ćwiczenia"></mat-tab>
+    <mat-tab label="Najwyżej oceniane"></mat-tab>
+    <mat-tab label="Moje ćwiczenia"></mat-tab>
+  </mat-tab-group>
+
+  <!-- Panel wyszukiwania i filtrowania -->
+  <div class="filter-panel">
+    <div class="search-box">
+      <mat-form-field appearance="outline">
+        <mat-label>Wyszukaj ćwiczenie</mat-label>
+        <input matInput [(ngModel)]="searchKeyword" placeholder="Wpisz nazwę ćwiczenia...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="onSearch()">Szukaj</button>
+    </div>
+
+    <div class="filter-section">
+      <h3>Filtruj</h3>
+      <div class="filter-chips">
+        <div class="filter-category">
+          <h4>Grupa mięśniowa:</h4>
+          <div class="chip-container">
+            <mat-chip-set>
+              <mat-chip
+                *ngFor="let group of muscleGroups"
+                [class.selected]="selectedMuscleGroup === group"
+                (click)="filterByMuscleGroup(group)"
+                [matTooltip]="getMuscleGroupName(group)">
+                {{ getMuscleGroupName(group) }}
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+        </div>
+
+        <div class="filter-category">
+          <h4>Poziom trudności:</h4>
+          <div class="chip-container">
+            <mat-chip-set>
+              <mat-chip
+                *ngFor="let level of difficultyLevels"
+                [class.selected]="selectedDifficultyLevel === level"
+                (click)="filterByDifficulty(level)"
+                [matTooltip]="getDifficultyName(level)">
+                {{ getDifficultyName(level) }}
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+        </div>
+      </div>
+
+      <button mat-button color="warn" (click)="clearFilters()" *ngIf="selectedMuscleGroup || selectedDifficultyLevel || searchKeyword">
+        <mat-icon>clear</mat-icon> Wyczyść filtry
+      </button>
+    </div>
+  </div>
+
+  <!-- Ładowanie -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Ładowanie ćwiczeń...</p>
+  </div>
+
+  <!-- Brak wyników -->
+  <div class="no-results" *ngIf="!loading && exercises.length === 0">
+    <mat-icon>search_off</mat-icon>
+    <p>Nie znaleziono ćwiczeń spełniających kryteria.</p>
+    <button mat-button color="primary" (click)="clearFilters()">Wyczyść filtry</button>
+  </div>
+
+  <!-- Siatka ćwiczeń -->
+  <div class="exercises-grid" *ngIf="!loading && exercises.length > 0">
+    <app-exercise-card
+      *ngFor="let exercise of exercises"
+      [exercise]="exercise"
+      (click)="viewExerciseDetails(exercise.id!)">
+    </app-exercise-card>
+  </div>
+
+  <!-- Paginacja -->
+  <mat-paginator
+    *ngIf="totalItems > 0"
+    [length]="totalItems"
+    [pageSize]="pageSize"
+    [pageIndex]="currentPage"
+    [pageSizeOptions]="[12, 24, 36, 48]"
+    (page)="onPageChange($event)">
+  </mat-paginator>
+</div>
