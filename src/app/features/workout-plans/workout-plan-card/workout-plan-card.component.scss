@@ -1,0 +1,162 @@
+/* src/app/features/workout-plans/workout-plan-card/workout-plan-card.component.scss */
+.workout-plan-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  height: 100%;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.plan-image-container {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.plan-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+
+  .workout-plan-card:hover & {
+    transform: scale(1.05);
+  }
+}
+
+.goal-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-content {
+  flex: 1;
+  padding: 16px;
+}
+
+.plan-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 12px 0;
+  line-height: 1.3;
+  color: #333;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 2.6em;
+}
+
+.plan-info {
+  margin-bottom: 12px;
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+
+    mat-icon {
+      font-size: 16px;
+      height: 16px;
+      width: 16px;
+      margin-right: 8px;
+      color: #666;
+    }
+
+    span {
+      font-size: 14px;
+      color: #333;
+    }
+  }
+}
+
+.rating-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+
+  .stats {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .stars {
+      display: flex;
+      align-items: center;
+
+      mat-icon {
+        color: #ffc107;
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
+      }
+    }
+
+    .rating-value {
+      font-weight: 500;
+      margin-left: 4px;
+    }
+
+    .ratings-count {
+      color: #666;
+      font-size: 12px;
+    }
+  }
+
+  .participants {
+    display: flex;
+    align-items: center;
+    color: #666;
+
+    mat-icon {
+      font-size: 16px;
+      height: 16px;
+      width: 16px;
+      margin-right: 4px;
+    }
+
+    span {
+      font-size: 14px;
+    }
+  }
+}
+
+.no-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #999;
+  margin-top: 12px;
+
+  mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+
+  span {
+    font-size: 14px;
+  }
+}
+
+mat-card-actions {
+  padding: 8px 16px 16px;
+  display: flex;
+  justify-content: flex-end;
+}

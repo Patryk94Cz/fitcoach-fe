@@ -1,0 +1,351 @@
+<!-- src/app/features/workout-plans/workout-plan-detail/workout-plan-detail.component.html -->
+<div class="workout-plan-detail-container">
+  <!-- Przyciski nawigacji -->
+  <div class="navigation-buttons">
+    <button mat-button color="primary" routerLink="/workout-plans">
+      <mat-icon>arrow_back</mat-icon>
+      Powrót do listy planów
+    </button>
+  </div>
+
+  <!-- Ładowanie -->
+  <div class="loading-container" *ngIf="loading.plan">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Ładowanie planu treningowego...</p>
+  </div>
+
+  <!-- Główna zawartość -->
+  <div class="workout-plan-content" *ngIf="!loading.plan && workoutPlan">
+    <!-- Nagłówek z nazwą i akcjami -->
+    <div class="workout-plan-header">
+      <h1>{{ workoutPlan.name }}</h1>
+
+      <!-- Przyciski edycji i usuwania (tylko dla autora) -->
+      <div class="action-buttons" *ngIf="isAuthor">
+        <button mat-raised-button color="primary" (click)="editWorkoutPlan()">
+          <mat-icon>edit</mat-icon>
+          Edytuj
+        </button>
+        <button mat-raised-button color="warn" (click)="deleteWorkoutPlan()">
+          <mat-icon>delete</mat-icon>
+          Usuń
+        </button>
+      </div>
+    </div>
+
+    <!-- Sekcja z informacjami o planie treningowym -->
+    <div class="workout-plan-info-section">
+      <div class="workout-plan-media">
+        <img [src]="workoutPlan.imageUrl || 'assets/images/workout-placeholder.jpg'" [alt]="workoutPlan.name" class="workout-plan-image">
+
+        <!-- Progress Card (tylko dla uczestników) -->
+        <mat-card class="progress-card" *ngIf="isJoined && userPlan">
+          <mat-card-header>
+            <mat-card-title>Twój postęp</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="progress-container">
+              <div class="progress-bar" [style.width.%]="userPlan.progressPercentage">
+                <span class="progress-text">{{ userPlan.progressPercentage }}%</span>
+              </div>
+            </div>
+            <div class="progress-info">
+              <div class="progress-item">
+                <span class="info-label">Status:</span>
+                <span class="status-badge" [style.background-color]="getStatusColor(userPlan.status)">
+                  {{ getStatusName(userPlan.status) }}
+                </span>
+              </div>
+              <div class="progress-item">
+                <span class="info-label">Dzień:</span>
+                <span class="info-value">{{ userPlan.currentDay }} / {{ workoutPlan.workoutDays.length }}</span>
+              </div>
+              <div class="progress-item">
+                <span class="info-label">Data rozpoczęcia:</span>
+                <span class="info-value">{{ formatDate(userPlan.startDate) }}</span>
+              </div>
+              <div class="progress-item" *ngIf="userPlan.completionDate">
+                <span class="info-label">Data zakończenia:</span>
+                <span class="info-value">{{ formatDate(userPlan.completionDate) }}</span>
+              </div>
+            </div>
+            <div class="progress-actions">
+              <button
+                mat-raised-button
+                color="primary"
+                [disabled]="loading.update || !canMoveToNextDay() || userPlan.status === 'COMPLETED'"
+                (click)="moveToNextDay()">
+                <mat-icon>arrow_forward</mat-icon>
+                Następny dzień
+              </button>
+              <button
+                mat-raised-button
+                color="accent"
+                *ngIf="canCompleteWorkoutPlan()"
+                [disabled]="loading.update || userPlan.status === 'COMPLETED'"
+                (click)="completeWorkoutPlan()">
+                <mat-icon>check_circle</mat-icon>
+                Zakończ plan
+              </button>
+              <button
+                mat-stroked-button
+                color="warn"
+                [disabled]="loading.update"
+                (click)="abandonWorkoutPlan()">
+                <mat-icon>cancel</mat-icon>
+                Porzuć plan
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Przycisk dołączenia do planu (dla nie-uczestników) -->
+        <button
+          mat-raised-button
+          color="primary"
+          class="join-button"
+          *ngIf="!isJoined && !isAuthor"
+          [disabled]="loading.join"
+          (click)="joinWorkoutPlan()">
+          <mat-icon>fitness_center</mat-icon>
+          <span *ngIf="!loading.join">Dołącz do planu</span>
+          <span *ngIf="loading.join">Dołączanie...</span>
+        </button>
+      </div>
+
+      <div class="workout-plan-details">
+        <!-- Podstawowe informacje -->
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Informacje o planie</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content>
+            <p class="description">{{ workoutPlan.description }}</p>
+
+            <mat-divider></mat-divider>
+
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Cel treningu:</span>
+                <span class="info-value">{{ getGoalName(workoutPlan.goal) }}</span>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Poziom trudności:</span>
+                <span class="info-value">{{ getDifficultyName(workoutPlan.difficultyLevel) }}</span>
+              </div>
+
+              <div class="info-item" *ngIf="workoutPlan.estimatedDurationMinutes">
+                <span class="info-label">Czas trwania:</span>
+                <span class="info-value">{{ workoutPlan.estimatedDurationMinutes }} minut</span>
+              </div>
+
+              <div class="info-item">
+                <span class="info-label">Częstotliwość:</span>
+                <span class="info-value">{{ workoutPlan.suggestedFrequencyPerWeek }} x tydzień</span>
+              </div>
+
+              <div class="info-item" *ngIf="workoutPlan.equipmentNeeded">
+                <span class="info-label">Wymagany sprzęt:</span>
+                <span class="info-value">{{ workoutPlan.equipmentNeeded }}</span>
+              </div>
+
+              <div class="info-item" *ngIf="workoutPlan.caloriesBurned">
+                <span class="info-label">Kalorie (około):</span>
+                <span class="info-value">{{ workoutPlan.caloriesBurned }} kcal</span>
+              </div>
+
+              <div class="info-item" *ngIf="workoutPlan.participantsCount">
+                <span class="info-label">Uczestników:</span>
+                <span class="info-value">{{ workoutPlan.participantsCount }}</span>
+              </div>
+
+              <div class="info-item" *ngIf="workoutPlan.createdAt">
+                <span class="info-label">Data dodania:</span>
+                <span class="info-value">{{ formatDate(workoutPlan.createdAt) }}</span>
+              </div>
+
+              <div class="info-item" *ngIf="workoutPlan.author">
+                <span class="info-label">Autor:</span>
+                <span class="info-value">{{ workoutPlan.author.username }}</span>
+              </div>
+            </div>
+
+            <mat-divider *ngIf="workoutPlan.tags && workoutPlan.tags.length > 0"></mat-divider>
+
+            <div class="tags-section" *ngIf="workoutPlan.tags && workoutPlan.tags.length > 0">
+              <h3>Tagi:</h3>
+              <div class="chip-list">
+                <mat-chip *ngFor="let tag of workoutPlan.tags">
+                  {{ tag }}
+                </mat-chip>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Dni treningowe -->
+        <mat-card class="workout-days-card">
+          <mat-card-header>
+            <mat-card-title>Plan treningowy</mat-card-title>
+            <mat-card-subtitle>
+              {{ workoutPlan.workoutDays.length }} dni treningowych
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <!-- Zakładki z dniami treningowymi -->
+            <mat-tab-group [selectedIndex]="activeDay" (selectedIndexChange)="onDayChange($event)">
+              <mat-tab *ngFor="let day of workoutPlan.workoutDays" [label]="'Dzień ' + day.dayNumber">
+                <div class="workout-day-content">
+                  <h3 class="day-title">{{ day.name }}</h3>
+                  <p class="day-description" *ngIf="day.description">{{ day.description }}</p>
+
+                  <div class="exercises-list">
+                    <div class="exercise-item" *ngFor="let workoutExercise of day.exercises">
+                      <div class="exercise-header">
+                        <div class="exercise-info">
+                          <h4 class="exercise-name">{{ workoutExercise.exercise?.name }}</h4>
+                          <span class="exercise-muscle-group" *ngIf="workoutExercise.exercise?.primaryMuscleGroup">
+                            {{ getMuscleGroupName(workoutExercise.exercise?.primaryMuscleGroup || '') }}
+                          </span>
+                        </div>
+                        <button
+                          mat-icon-button
+                          color="primary"
+                          [routerLink]="['/exercises', workoutExercise.exercise?.id]"
+                          matTooltip="Zobacz szczegóły ćwiczenia">
+                          <mat-icon>visibility</mat-icon>
+                        </button>
+                      </div>
+
+                      <div class="exercise-details">
+                        <div class="detail-item">
+                          <mat-icon>repeat</mat-icon>
+                          <span>{{ workoutExercise.setsCount }} serii x {{ workoutExercise.repsCount }} powtórzeń</span>
+                        </div>
+                        <div class="detail-item" *ngIf="workoutExercise.weight">
+                          <mat-icon>fitness_center</mat-icon>
+                          <span>{{ workoutExercise.weight }}</span>
+                        </div>
+                        <div class="detail-item">
+                          <mat-icon>timer</mat-icon>
+                          <span>{{ workoutExercise.restTimeSeconds }} s odpoczynku</span>
+                        </div>
+                      </div>
+
+                      <div class="exercise-notes" *ngIf="workoutExercise.notes">
+                        <p>{{ workoutExercise.notes }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </mat-tab>
+            </mat-tab-group>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Sekcja ocen -->
+        <mat-card class="ratings-card">
+          <mat-card-header>
+            <mat-card-title>Oceny</mat-card-title>
+            <mat-card-subtitle *ngIf="workoutPlan.averageRating">
+              Średnia ocena: {{ workoutPlan.averageRating | number:'1.1-1' }} / 5
+              ({{ workoutPlan.ratingsCount }} ocen)
+            </mat-card-subtitle>
+            <mat-card-subtitle *ngIf="!workoutPlan.averageRating">
+              Brak ocen
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <!-- Formularz oceny -->
+            <div class="rating-form-container">
+              <h3>{{ hasRated ? 'Twoja ocena:' : 'Oceń ten plan:' }}</h3>
+
+              <form [formGroup]="ratingForm" (ngSubmit)="onRateWorkoutPlan()">
+                <div class="star-rating">
+                  <button
+                    type="button"
+                    *ngFor="let value of ratingValues"
+                    mat-icon-button
+                    [color]="starRating >= value ? 'accent' : ''"
+                    (click)="setRating(value)">
+                    <mat-icon>{{ starRating >= value ? 'star' : 'star_border' }}</mat-icon>
+                  </button>
+                </div>
+
+                <mat-form-field appearance="outline" class="comment-field">
+                  <mat-label>Komentarz</mat-label>
+                  <textarea
+                    matInput
+                    formControlName="comment"
+                    rows="3"
+                    placeholder="Opisz swoje doświadczenie z tym planem..."></textarea>
+                  <mat-hint align="end">{{ ratingForm.get('comment')?.value?.length || 0 }}/500</mat-hint>
+                </mat-form-field>
+
+                <div class="rating-buttons">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    type="submit"
+                    [disabled]="ratingForm.invalid || loading.rating">
+                    {{ hasRated ? 'Aktualizuj ocenę' : 'Dodaj ocenę' }}
+                  </button>
+
+                  <button
+                    mat-button
+                    color="warn"
+                    type="button"
+                    (click)="deleteRating()"
+                    *ngIf="hasRated">
+                    Usuń ocenę
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <mat-divider class="ratings-divider"></mat-divider>
+
+            <!-- Lista ocen innych użytkowników -->
+            <div class="ratings-list">
+              <h3>Oceny użytkowników</h3>
+
+              <div class="loading-container" *ngIf="loading.ratings">
+                <mat-spinner diameter="30"></mat-spinner>
+                <p>Ładowanie ocen...</p>
+              </div>
+
+              <div class="no-ratings" *ngIf="!loading.ratings && ratings.length === 0">
+                <p>Brak ocen dla tego planu treningowego.</p>
+              </div>
+
+              <div class="rating-item" *ngFor="let rating of ratings">
+                <div class="rating-header">
+                  <div class="user-info">
+                    <strong>{{ rating.user?.username }}</strong>
+                    <span class="rating-date" *ngIf="rating.createdAt">
+                      {{ formatDate(rating.createdAt) }}
+                    </span>
+                  </div>
+
+                  <div class="stars">
+                    <mat-icon *ngFor="let star of getStars(rating.rating)" color="accent">
+                      {{ star === 1 ? 'star' : 'star_border' }}
+                    </mat-icon>
+                  </div>
+                </div>
+
+                <p class="rating-comment" *ngIf="rating.comment">{{ rating.comment }}</p>
+
+                <mat-divider></mat-divider>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

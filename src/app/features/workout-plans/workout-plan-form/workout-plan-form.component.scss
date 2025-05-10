@@ -1,0 +1,391 @@
+/* src/app/features/workout-plans/workout-plan-form/workout-plan-form.component.scss */
+.workout-plan-form-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.navigation-buttons {
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+
+  p {
+    margin-top: 16px;
+    color: #666;
+  }
+}
+
+.form-content {
+  margin-bottom: 40px;
+
+  mat-card {
+    margin-bottom: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05) !important;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  mat-card-content {
+    padding: 16px;
+  }
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.half-width {
+  width: 50%;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+}
+
+.visibility-toggle {
+  margin: 16px 0;
+
+  .hint {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+    margin-left: 24px;
+  }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+    color: #333;
+  }
+}
+
+.no-items-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 24px;
+
+  p {
+    color: #666;
+    margin-bottom: 16px;
+  }
+}
+
+.workout-days-container {
+  margin-bottom: 24px;
+
+  .workout-day-form {
+    margin-top: 16px;
+
+    .day-info {
+      margin-bottom: 24px;
+    }
+
+    .exercises-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+
+      h3 {
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0;
+        color: #333;
+      }
+    }
+
+    .exercises-list {
+      margin-bottom: 24px;
+
+      .exercise-item {
+        padding: 16px 0;
+
+        .exercise-header {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 16px;
+
+          .exercise-order {
+            background-color: #3f51b5;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            flex-shrink: 0;
+          }
+
+          .exercise-select {
+            flex: 1;
+          }
+        }
+
+        .exercise-details {
+          margin-left: 44px;
+
+          .exercise-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+
+            mat-form-field {
+              flex: 1;
+              min-width: 120px;
+            }
+
+            .notes-field {
+              flex: 2;
+              min-width: 200px;
+            }
+          }
+        }
+      }
+    }
+
+    .day-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+}
+
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+
+  button {
+    mat-icon {
+      margin: 0 4px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 8px;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+.summary-section {
+  margin-bottom: 24px;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #333;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 8px;
+  }
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+
+  .summary-label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 4px;
+  }
+
+  .summary-value {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+.days-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .day-summary {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 16px;
+
+    h4 {
+      font-size: 16px;
+      font-weight: 500;
+      margin: 0 0 12px 0;
+      color: #333;
+    }
+
+    .day-exercises {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .day-exercise {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background-color: white;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+        .exercise-summary-name {
+          font-weight: 500;
+          color: #333;
+        }
+
+        .exercise-summary-details {
+          font-size: 14px;
+          color: #666;
+        }
+      }
+    }
+  }
+}
+
+.validation-warnings {
+  margin-bottom: 24px;
+
+  .warning {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background-color: #ffecb3;
+    border-radius: 4px;
+    border-left: 4px solid #ffc107;
+
+    mat-icon {
+      color: #ff9800;
+    }
+
+    p {
+      margin: 0;
+      color: #795548;
+    }
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+
+  button {
+    &:last-child {
+      margin-left: auto;
+    }
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 8px;
+
+    button {
+      width: 100%;
+
+      &:last-child {
+        margin-left: 0;
+      }
+    }
+  }
+}
+
+/* Style dla paneli mat-expansion-panel */
+:host ::ng-deep .mat-expansion-panel {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+
+  .mat-expansion-panel-header {
+    height: 64px;
+  }
+
+  .mat-expansion-panel-header-title {
+    color: #3f51b5;
+    font-weight: 500;
+  }
+
+  .mat-expansion-panel-header-description {
+    color: #666;
+  }
+}
+
+/* Style dla steppera */
+:host ::ng-deep .mat-horizontal-stepper-header-container {
+  margin-bottom: 24px;
+}
+
+:host ::ng-deep .mat-horizontal-stepper-header {
+  pointer-events: none !important;
+}
+
+:host ::ng-deep .mat-stepper-horizontal-line {
+  margin: 0 -8px;
+}
+
+:host ::ng-deep .mat-step-label {
+  font-weight: 500;
+}
+
+:host ::ng-deep .mat-step-icon {
+  background-color: #3f51b5;
+}

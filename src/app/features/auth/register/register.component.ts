@@ -98,9 +98,14 @@ export class RegisterComponent {
     this.authService.register(registerData).subscribe({
       next: (response) => {
         this.isLoading = false;
+
+        // Wyświetl komunikat o pomyślnej rejestracji
         this.snackBar.open('Rejestracja zakończona pomyślnie! Możesz się teraz zalogować.', 'OK', {
-          duration: 5000
+          duration: 5000,
+          panelClass: ['success-snackbar']
         });
+
+        // Przekieruj do ekranu logowania
         this.router.navigate(['/login']);
       },
       error: (error) => {
@@ -116,7 +121,8 @@ export class RegisterComponent {
         }
 
         this.snackBar.open(errorMessage, 'OK', {
-          duration: 5000
+          duration: 5000,
+          panelClass: ['error-snackbar']
         });
         console.error('Registration error:', error);
       }

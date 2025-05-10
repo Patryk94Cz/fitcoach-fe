@@ -1,4 +1,4 @@
-// src/app/app.routes.ts - Aktualizacja routingu o ścieżki do ćwiczeń
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
@@ -25,7 +25,7 @@ export const routes: Routes = [
     loadComponent: () => import('./features/dashboard/dashboard/dashboard.component').then(m => m.DashboardComponent),
     canActivate: [authGuard]
   },
-  // Dodane ścieżki dla ćwiczeń - wszystkie z guardami wymagającymi zalogowania
+  // Ścieżki dla ćwiczeń
   {
     path: 'exercises',
     loadComponent: () => import('./features/exercises/exercise-list/exercise-list.component').then(m => m.ExerciseListComponent),
@@ -44,6 +44,32 @@ export const routes: Routes = [
   {
     path: 'exercises/edit/:id',
     loadComponent: () => import('./features/exercises/exercise-form/exercise-form.component').then(m => m.ExerciseFormComponent),
+    canActivate: [authGuard]
+  },
+  // Nowe ścieżki dla planów treningowych
+  {
+    path: 'workout-plans',
+    loadComponent: () => import('./features/workout-plans/workout-plan-list/workout-plan-list.component').then(m => m.WorkoutPlanListComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'workout-plans/create',
+    loadComponent: () => import('./features/workout-plans/workout-plan-form/workout-plan-form.component').then(m => m.WorkoutPlanFormComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'workout-plans/:id',
+    loadComponent: () => import('./features/workout-plans/workout-plan-detail/workout-plan-detail.component').then(m => m.WorkoutPlanDetailComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'workout-plans/edit/:id',
+    loadComponent: () => import('./features/workout-plans/workout-plan-form/workout-plan-form.component').then(m => m.WorkoutPlanFormComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'my-workouts',
+    loadComponent: () => import('./features/workout-plans/my-workout-plans/my-workout-plans.component').then(m => m.MyWorkoutPlansComponent),
     canActivate: [authGuard]
   },
   {

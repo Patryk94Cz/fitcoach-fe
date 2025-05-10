@@ -1,0 +1,422 @@
+/* src/app/features/workout-plans/workout-plan-detail/workout-plan-detail.component.scss */
+.workout-plan-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.navigation-buttons {
+  margin-bottom: 20px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+
+  p {
+    margin-top: 16px;
+    color: #666;
+  }
+}
+
+.workout-plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 {
+    font-size: 28px;
+    font-weight: 500;
+    margin: 0;
+    color: #333;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 12px;
+  }
+}
+
+.workout-plan-info-section {
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) 2fr;
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.workout-plan-media {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .workout-plan-image {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .progress-card {
+    margin-top: 16px;
+
+    .progress-container {
+      background-color: #f5f5f5;
+      height: 12px;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      position: relative;
+
+      .progress-bar {
+        background-color: #4caf50;
+        height: 100%;
+        border-radius: 6px;
+        transition: width 0.3s ease;
+        min-width: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .progress-text {
+        position: absolute;
+        right: 8px;
+        font-size: 10px;
+        font-weight: 500;
+        color: #333;
+      }
+    }
+
+    .progress-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+
+      .progress-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .info-label {
+          font-size: 14px;
+          color: #666;
+        }
+
+        .info-value, .status-badge {
+          font-size: 14px;
+          font-weight: 500;
+          color: #333;
+        }
+
+        .status-badge {
+          padding: 2px 8px;
+          border-radius: 4px;
+          color: white;
+        }
+      }
+    }
+
+    .progress-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      button {
+        mat-icon {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+
+  .join-button {
+    margin-top: 16px;
+    height: 48px;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.workout-plan-details {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+mat-card {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.description {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  color: #333;
+  white-space: pre-line;
+}
+
+mat-divider {
+  margin: 16px 0;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+
+    .info-label {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 16px;
+      font-weight: 500;
+      color: #333;
+    }
+  }
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.tags-section {
+  h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: #666;
+  }
+}
+
+.workout-days-card {
+  .mat-card-subtitle {
+    margin-bottom: 0;
+  }
+
+  .workout-day-content {
+    padding: 16px 0;
+
+    .day-title {
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0 0 8px 0;
+      color: #333;
+    }
+
+    .day-description {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 16px;
+      white-space: pre-line;
+    }
+
+    .exercises-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .exercise-item {
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+      .exercise-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+
+        .exercise-info {
+          .exercise-name {
+            font-size: 16px;
+            font-weight: 500;
+            margin: 0 0 4px 0;
+            color: #333;
+          }
+
+          .exercise-muscle-group {
+            font-size: 12px;
+            color: #666;
+            background-color: #e0e0e0;
+            padding: 2px 6px;
+            border-radius: 4px;
+          }
+        }
+      }
+
+      .exercise-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 12px;
+
+        .detail-item {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          background-color: #e8eaf6;
+          padding: 4px 8px;
+          border-radius: 4px;
+
+          mat-icon {
+            font-size: 16px;
+            height: 16px;
+            width: 16px;
+            color: #3f51b5;
+          }
+
+          span {
+            font-size: 14px;
+            color: #333;
+          }
+        }
+      }
+
+      .exercise-notes {
+        background-color: #fff8e1;
+        padding: 8px 12px;
+        border-radius: 4px;
+        border-left: 3px solid #ffb300;
+
+        p {
+          font-size: 14px;
+          color: #666;
+          margin: 0;
+          white-space: pre-line;
+        }
+      }
+    }
+  }
+}
+
+.ratings-card {
+  .mat-card-subtitle {
+    font-size: 14px;
+  }
+}
+
+.rating-form-container {
+  margin-bottom: 24px;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #333;
+  }
+
+  .star-rating {
+    display: flex;
+    margin-bottom: 16px;
+  }
+
+  .comment-field {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .rating-buttons {
+    display: flex;
+    gap: 12px;
+  }
+}
+
+.ratings-divider {
+  margin: 24px 0;
+}
+
+.ratings-list {
+  h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #333;
+  }
+
+  .no-ratings {
+    padding: 16px;
+    text-align: center;
+    color: #666;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+
+  .rating-item {
+    padding: 16px 0;
+
+    .rating-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+
+      .user-info {
+        display: flex;
+        flex-direction: column;
+
+        strong {
+          font-size: 16px;
+          color: #333;
+        }
+
+        .rating-date {
+          font-size: 12px;
+          color: #999;
+        }
+      }
+
+      .stars {
+        display: flex;
+
+        mat-icon {
+          font-size: 18px;
+          height: 18px;
+          width: 18px;
+        }
+      }
+    }
+
+    .rating-comment {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #555;
+      white-space: pre-line;
+      margin-bottom: 16px;
+    }
+
+    &:last-child {
+      mat-divider {
+        display: none;
+      }
+    }
+  }
+}
+
+/* Dodatkowe style do zakładek */
+:host ::ng-deep .mat-mdc-tab-group {
+  .mat-mdc-tab-body-content {
+    padding: 16px 0;
+  }
+}

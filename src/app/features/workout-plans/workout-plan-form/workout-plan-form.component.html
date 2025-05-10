@@ -1,0 +1,474 @@
+<!-- src/app/features/workout-plans/workout-plan-form/workout-plan-form.component.html -->
+<div class="workout-plan-form-container">
+  <div class="navigation-buttons">
+    <button mat-button color="primary" routerLink="/workout-plans">
+      <mat-icon>arrow_back</mat-icon>
+      Powrót do listy planów
+    </button>
+  </div>
+
+  <h1 class="page-title">{{ isEditMode ? 'Edycja planu treningowego' : 'Tworzenie nowego planu treningowego' }}</h1>
+
+  <!-- Ładowanie -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>{{ isEditMode ? 'Ładowanie planu treningowego...' : 'Zapisywanie planu treningowego...' }}</p>
+  </div>
+
+  <!-- Formularz -->
+  <div class="form-content" *ngIf="!loading">
+    <form [formGroup]="workoutPlanForm" (ngSubmit)="onSubmit()">
+      <mat-stepper linear #stepper>
+        <!-- Krok 1: Podstawowe informacje -->
+        <mat-step [stepControl]="workoutPlanForm">
+          <ng-template matStepLabel>Podstawowe informacje</ng-template>
+
+          <mat-card>
+            <mat-card-content>
+              <!-- Nazwa planu -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nazwa planu treningowego</mat-label>
+                <input matInput formControlName="name" placeholder="Np. Plan na masę, Plan redukcyjny..." required>
+                <mat-error *ngIf="workoutPlanForm.get('name')?.hasError('required')">
+                  Nazwa jest wymagana
+                </mat-error>
+                <mat-error *ngIf="workoutPlanForm.get('name')?.hasError('minlength')">
+                  Nazwa musi mieć co najmniej 3 znaki
+                </mat-error>
+                <mat-error *ngIf="workoutPlanForm.get('name')?.hasError('maxlength')">
+                  Nazwa nie może przekraczać 100 znaków
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Opis planu -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Opis planu treningowego</mat-label>
+                <textarea
+                  matInput
+                  formControlName="description"
+                  placeholder="Opisz szczegółowo cel i założenia planu..."
+                  rows="5"
+                  required></textarea>
+                <mat-error *ngIf="workoutPlanForm.get('description')?.hasError('required')">
+                  Opis jest wymagany
+                </mat-error>
+                <mat-error *ngIf="workoutPlanForm.get('description')?.hasError('minlength')">
+                  Opis musi mieć co najmniej 10 znaków
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Cel i trudność -->
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Cel treningu</mat-label>
+                  <mat-select formControlName="goal" required>
+                    <mat-option *ngFor="let goal of workoutGoals" [value]="goal">
+                      {{ getGoalName(goal) }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="workoutPlanForm.get('goal')?.hasError('required')">
+                    Cel treningu jest wymagany
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Poziom trudności</mat-label>
+                  <mat-select formControlName="difficultyLevel" required>
+                    <mat-option *ngFor="let level of difficultyLevels" [value]="level">
+                      {{ getDifficultyName(level) }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="workoutPlanForm.get('difficultyLevel')?.hasError('required')">
+                    Poziom trudności jest wymagany
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Częstotliwość i czas trwania -->
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Sugerowana częstotliwość treningów (na tydzień)</mat-label>
+                  <input
+                    type="number"
+                    matInput
+                    formControlName="suggestedFrequencyPerWeek"
+                    min="1"
+                    max="7"
+                    required>
+                  <mat-error *ngIf="workoutPlanForm.get('suggestedFrequencyPerWeek')?.hasError('required')">
+                    Częstotliwość treningów jest wymagana
+                  </mat-error>
+                  <mat-error *ngIf="workoutPlanForm.get('suggestedFrequencyPerWeek')?.hasError('min')">
+                    Minimalna wartość to 1
+                  </mat-error>
+                  <mat-error *ngIf="workoutPlanForm.get('suggestedFrequencyPerWeek')?.hasError('max')">
+                    Maksymalna wartość to 7
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Szacowany czas treningu (w minutach)</mat-label>
+                  <input
+                    type="number"
+                    matInput
+                    formControlName="estimatedDurationMinutes"
+                    min="5"
+                    max="240">
+                  <mat-error *ngIf="workoutPlanForm.get('estimatedDurationMinutes')?.hasError('min')">
+                    Minimalny czas to 5 minut
+                  </mat-error>
+                  <mat-error *ngIf="workoutPlanForm.get('estimatedDurationMinutes')?.hasError('max')">
+                    Maksymalny czas to 240 minut
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- URL zdjęcia -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>URL zdjęcia</mat-label>
+                <input
+                  matInput
+                  formControlName="imageUrl"
+                  placeholder="https://przyklad.pl/zdjecie.jpg">
+              </mat-form-field>
+
+              <!-- Dodatkowe informacje -->
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Wymagany sprzęt</mat-label>
+                  <input matInput formControlName="equipmentNeeded" placeholder="Np. hantle, sztanga, ławka...">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Kalorie (kcal)</mat-label>
+                  <input
+                    type="number"
+                    matInput
+                    formControlName="caloriesBurned"
+                    placeholder="Szacowana ilość spalanych kalorii">
+                  <mat-error *ngIf="workoutPlanForm.get('caloriesBurned')?.hasError('min')">
+                    Wartość nie może być ujemna
+                  </mat-error>
+                  <mat-error *ngIf="workoutPlanForm.get('caloriesBurned')?.hasError('max')">
+                    Wartość nie może przekraczać 2000
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Tagi -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Tagi</mat-label>
+                <mat-chip-grid #chipGrid aria-label="Wprowadź tagi">
+                  <mat-chip-row
+                    *ngFor="let tag of tagsArray.controls; let i = index"
+                    [value]="tag.value"
+                    (removed)="removeTag(i)">
+                    {{ tag.value }}
+                    <button matChipRemove>
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip-row>
+                  <input
+                    placeholder="Nowy tag..."
+                    [matChipInputFor]="chipGrid"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    (matChipInputTokenEnd)="addTag($event)">
+                </mat-chip-grid>
+                <mat-hint>Naciśnij Enter, aby dodać tag</mat-hint>
+              </mat-form-field>
+
+              <!-- Dostępność planu -->
+              <div class="visibility-toggle">
+                <mat-checkbox formControlName="isPublic">
+                  Udostępnij plan publicznie
+                </mat-checkbox>
+                <p class="hint">Plan będzie widoczny dla wszystkich użytkowników aplikacji.</p>
+              </div>
+
+              <div class="step-actions">
+                <button mat-button matStepperNext color="primary">
+                  Następny krok: Dni treningowe
+                  <mat-icon>arrow_forward</mat-icon>
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </mat-step>
+
+        <!-- Krok 2: Dni treningowe -->
+        <mat-step>
+          <ng-template matStepLabel>Dni treningowe</ng-template>
+
+          <mat-card>
+            <mat-card-content>
+              <div class="section-header">
+                <h2>Dni treningowe</h2>
+                <button mat-raised-button color="primary" type="button" (click)="addWorkoutDay()">
+                  <mat-icon>add</mat-icon>
+                  Dodaj dzień treningowy
+                </button>
+              </div>
+
+              <div class="no-items-message" *ngIf="workoutDaysArray.length === 0">
+                <p>Nie dodano jeszcze żadnych dni treningowych.</p>
+                <button mat-stroked-button color="primary" type="button" (click)="addWorkoutDay()">
+                  <mat-icon>add</mat-icon>
+                  Dodaj pierwszy dzień
+                </button>
+              </div>
+
+              <div class="workout-days-container" *ngIf="workoutDaysArray.length > 0">
+                <mat-accordion>
+                  <mat-expansion-panel *ngFor="let day of workoutDaysArray.controls; let dayIndex = index" [expanded]="dayIndex === 0">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        Dzień {{ safeGetValue(day, 'dayNumber') }}
+                      </mat-panel-title>
+                      <mat-panel-description>
+                        {{ safeGetValue(day, 'name') }}
+                      </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <div class="workout-day-form" [formGroup]="asFormGroup(day)">
+                      <!-- Dane dnia treningowego -->
+                      <div class="day-info">
+                        <mat-form-field appearance="outline" class="full-width">
+                          <mat-label>Nazwa dnia</mat-label>
+                          <input matInput formControlName="name" required>
+                          <mat-error *ngIf="asFormGroup(day).get('name')?.hasError('required')">
+                            Nazwa dnia jest wymagana
+                          </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="full-width">
+                          <mat-label>Opis dnia treningowego</mat-label>
+                          <textarea matInput formControlName="description" rows="2"></textarea>
+                        </mat-form-field>
+                      </div>
+
+                      <!-- Lista ćwiczeń -->
+                      <div class="exercises-header">
+                        <h3>Ćwiczenia</h3>
+                        <button mat-stroked-button color="primary" type="button" (click)="addExercise(dayIndex)">
+                          <mat-icon>add</mat-icon>
+                          Dodaj ćwiczenie
+                        </button>
+                      </div>
+
+                      <div class="exercises-list" formArrayName="exercises">
+                        <div class="no-items-message" *ngIf="getExercisesArray(dayIndex).length === 0">
+                          <p>Nie dodano jeszcze żadnych ćwiczeń.</p>
+                          <button mat-stroked-button color="primary" type="button" (click)="addExercise(dayIndex)">
+                            <mat-icon>add</mat-icon>
+                            Dodaj pierwsze ćwiczenie
+                          </button>
+                        </div>
+
+                        <div class="exercise-item" *ngFor="let exercise of getExercisesArray(dayIndex).controls; let exerciseIndex = index" [formGroupName]="exerciseIndex">
+                          <div class="exercise-header">
+                            <span class="exercise-order">{{ safeGetValue(exercise, 'order') || exerciseIndex + 1 }}</span>
+
+                            <mat-form-field appearance="outline" class="exercise-select">
+                              <mat-label>Wybierz ćwiczenie</mat-label>
+                              <mat-select formControlName="exerciseId" required>
+                                <mat-option *ngFor="let ex of allExercises" [value]="ex.id">
+                                  {{ ex.name }}
+                                </mat-option>
+                              </mat-select>
+                              <mat-error *ngIf="asFormGroup(exercise).get('exerciseId')?.hasError('required')">
+                                Wybór ćwiczenia jest wymagany
+                              </mat-error>
+                            </mat-form-field>
+
+                            <button mat-icon-button color="warn" type="button" (click)="removeExercise(dayIndex, exerciseIndex)" matTooltip="Usuń ćwiczenie">
+                              <mat-icon>delete</mat-icon>
+                            </button>
+                          </div>
+
+                          <div class="exercise-details">
+                            <div class="exercise-row">
+                              <mat-form-field appearance="outline">
+                                <mat-label>Serie</mat-label>
+                                <input type="number" matInput formControlName="setsCount" min="1" max="20" required>
+                                <mat-error *ngIf="asFormGroup(exercise).get('setsCount')?.hasError('required')">
+                                  Ilość serii jest wymagana
+                                </mat-error>
+                                <mat-error *ngIf="asFormGroup(exercise).get('setsCount')?.hasError('min')">
+                                  Minimalna ilość to 1
+                                </mat-error>
+                                <mat-error *ngIf="asFormGroup(exercise).get('setsCount')?.hasError('max')">
+                                  Maksymalna ilość to 20
+                                </mat-error>
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline">
+                                <mat-label>Powtórzenia</mat-label>
+                                <input type="number" matInput formControlName="repsCount" min="1" max="100" required>
+                                <mat-error *ngIf="asFormGroup(exercise).get('repsCount')?.hasError('required')">
+                                  Ilość powtórzeń jest wymagana
+                                </mat-error>
+                                <mat-error *ngIf="asFormGroup(exercise).get('repsCount')?.hasError('min')">
+                                  Minimalna ilość to 1
+                                </mat-error>
+                                <mat-error *ngIf="asFormGroup(exercise).get('repsCount')?.hasError('max')">
+                                  Maksymalna ilość to 100
+                                </mat-error>
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline">
+                                <mat-label>Odpoczynek (sek)</mat-label>
+                                <input type="number" matInput formControlName="restTimeSeconds" min="0" max="300" required>
+                                <mat-error *ngIf="asFormGroup(exercise).get('restTimeSeconds')?.hasError('required')">
+                                  Czas odpoczynku jest wymagany
+                                </mat-error>
+                                <mat-error *ngIf="asFormGroup(exercise).get('restTimeSeconds')?.hasError('min')">
+                                  Minimalna wartość to 0
+                                </mat-error>
+                                <mat-error *ngIf="asFormGroup(exercise).get('restTimeSeconds')?.hasError('max')">
+                                  Maksymalna wartość to 300
+                                </mat-error>
+                              </mat-form-field>
+                            </div>
+
+                            <div class="exercise-row">
+                              <mat-form-field appearance="outline">
+                                <mat-label>Ciężar</mat-label>
+                                <input matInput formControlName="weight" placeholder="np. 70-80% 1RM, 10kg, Masa ciała">
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline" class="notes-field">
+                                <mat-label>Uwagi</mat-label>
+                                <textarea matInput formControlName="notes" rows="1" placeholder="Dodatkowe informacje o wykonaniu ćwiczenia"></textarea>
+                              </mat-form-field>
+                            </div>
+                          </div>
+
+                          <mat-divider *ngIf="exerciseIndex < getExercisesArray(dayIndex).length - 1"></mat-divider>
+                        </div>
+                      </div>
+
+                      <div class="day-actions">
+                        <button mat-stroked-button color="warn" type="button" (click)="removeWorkoutDay(dayIndex)">
+                          <mat-icon>delete</mat-icon>
+                          Usuń dzień treningowy
+                        </button>
+                      </div>
+                    </div>
+                  </mat-expansion-panel>
+                </mat-accordion>
+              </div>
+
+              <div class="step-actions">
+                <button mat-button matStepperPrevious>
+                  <mat-icon>arrow_back</mat-icon>
+                  Wróć do podstawowych informacji
+                </button>
+                <button mat-button matStepperNext color="primary">
+                  Przejdź do podsumowania
+                  <mat-icon>arrow_forward</mat-icon>
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </mat-step>
+
+        <!-- Krok 3: Podsumowanie -->
+        <mat-step>
+          <ng-template matStepLabel>Podsumowanie</ng-template>
+
+          <mat-card>
+            <mat-card-content>
+              <h2>Podsumowanie planu treningowego</h2>
+
+              <div class="summary-section">
+                <h3>Podstawowe informacje</h3>
+                <div class="summary-grid">
+                  <div class="summary-item">
+                    <span class="summary-label">Nazwa:</span>
+                    <span class="summary-value">{{ workoutPlanForm.get('name')?.value }}</span>
+                  </div>
+                  <div class="summary-item">
+                    <span class="summary-label">Cel:</span>
+                    <span class="summary-value">{{ getGoalName(workoutPlanForm.get('goal')?.value) }}</span>
+                  </div>
+                  <div class="summary-item">
+                    <span class="summary-label">Poziom trudności:</span>
+                    <span class="summary-value">{{ getDifficultyName(workoutPlanForm.get('difficultyLevel')?.value) }}</span>
+                  </div>
+                  <div class="summary-item">
+                    <span class="summary-label">Częstotliwość:</span>
+                    <span class="summary-value">{{ workoutPlanForm.get('suggestedFrequencyPerWeek')?.value }} treningów tygodniowo</span>
+                  </div>
+                  <div class="summary-item" *ngIf="workoutPlanForm.get('estimatedDurationMinutes')?.value">
+                    <span class="summary-label">Czas trwania:</span>
+                    <span class="summary-value">{{ workoutPlanForm.get('estimatedDurationMinutes')?.value }} minut</span>
+                  </div>
+                  <div class="summary-item" *ngIf="workoutPlanForm.get('equipmentNeeded')?.value">
+                    <span class="summary-label">Sprzęt:</span>
+                    <span class="summary-value">{{ workoutPlanForm.get('equipmentNeeded')?.value }}</span>
+                  </div>
+                  <div class="summary-item">
+                    <span class="summary-label">Dostępność:</span>
+                    <span class="summary-value">{{ workoutPlanForm.get('isPublic')?.value ? 'Publiczny' : 'Prywatny' }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="summary-section">
+                <h3>Dni treningowe</h3>
+                <div class="days-summary" *ngIf="workoutDaysArray.length > 0">
+                  <div class="day-summary" *ngFor="let day of workoutDaysArray.controls; let dayIndex = index">
+                    <h4>{{ safeGetValue(day, 'name') }}</h4>
+                    <div class="day-exercises">
+                      <div class="day-exercise" *ngFor="let exercise of getExercisesArray(dayIndex).controls">
+                        <div class="exercise-summary-name">
+                          {{ getExerciseName(safeGetValue(exercise, 'exerciseId')) }}
+                        </div>
+                        <div class="exercise-summary-details">
+                          {{ safeGetValue(exercise, 'setsCount') }} x {{ safeGetValue(exercise, 'repsCount') }}
+                          <span *ngIf="safeGetValue(exercise, 'weight')">, {{ safeGetValue(exercise, 'weight') }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="warning" *ngIf="workoutDaysArray.length === 0">
+                  <mat-icon color="warn">warning</mat-icon>
+                  <p>Brak dni treningowych. Wróć do poprzedniego kroku, aby dodać dni treningowe.</p>
+                </div>
+              </div>
+
+              <div class="validation-warnings">
+                <div class="warning" *ngIf="workoutPlanForm.invalid">
+                  <mat-icon color="warn">error</mat-icon>
+                  <p>Formularz zawiera błędy. Sprawdź wszystkie pola przed zapisaniem.</p>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button mat-button matStepperPrevious>
+                  <mat-icon>arrow_back</mat-icon>
+                  Wróć do dni treningowych
+                </button>
+                <button
+                  mat-raised-button
+                  color="warn"
+                  type="button"
+                  routerLink="/workout-plans">
+                  Anuluj
+                </button>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="workoutPlanForm.invalid || workoutDaysArray.length === 0">
+                  {{ isEditMode ? 'Zapisz zmiany' : 'Utwórz plan treningowy' }}
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </mat-step>
+      </mat-stepper>
+    </form>
+  </div>
+</div>

@@ -15,8 +15,14 @@
     <ng-container *ngIf="authService.isAuthenticated()">
       <a mat-button routerLink="/dashboard" routerLinkActive="active-link">Dashboard</a>
 
-      <!-- Dodany link do ćwiczeń -->
+      <!-- Link do ćwiczeń -->
       <a mat-button routerLink="/exercises" routerLinkActive="active-link">Ćwiczenia</a>
+
+      <!-- Dodany nowy link do planów treningowych -->
+      <a mat-button routerLink="/workout-plans" routerLinkActive="active-link">Plany treningowe</a>
+
+      <!-- Dodany link do Moich treningów -->
+      <a mat-button routerLink="/my-workouts" routerLinkActive="active-link">Moje treningi</a>
 
       <a mat-button [matMenuTriggerFor]="userMenu">
         <mat-icon>account_circle</mat-icon>

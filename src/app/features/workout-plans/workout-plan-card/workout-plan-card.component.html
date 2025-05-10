@@ -1,0 +1,61 @@
+<!-- src/app/features/workout-plans/workout-plan-card/workout-plan-card.component.html -->
+<mat-card class="workout-plan-card" [style.background-color]="getGoalColor(workoutPlan.goal)">
+  <div class="plan-image-container">
+    <img [src]="getImageUrl()" [alt]="workoutPlan.name" class="plan-image">
+    <div class="goal-tag" [style.color]="getGoalTextColor(workoutPlan.goal)">
+      {{ getGoalName(workoutPlan.goal) }}
+    </div>
+  </div>
+
+  <mat-card-content>
+    <h3 class="plan-title">{{ workoutPlan.name }}</h3>
+
+    <div class="plan-info">
+      <div class="info-item">
+        <mat-icon>fitness_center</mat-icon>
+        <span>{{ getDifficultyName(workoutPlan.difficultyLevel) }}</span>
+      </div>
+
+      <div class="info-item">
+        <mat-icon>event</mat-icon>
+        <span>{{ formatFrequencyText(workoutPlan.suggestedFrequencyPerWeek) }}</span>
+      </div>
+
+      <div class="info-item" *ngIf="workoutPlan.totalDays">
+        <mat-icon>calendar_today</mat-icon>
+        <span>{{ workoutPlan.totalDays }} dni</span>
+      </div>
+    </div>
+
+    <div class="rating-container" *ngIf="workoutPlan.averageRating !== undefined">
+      <div class="stats">
+        <div class="stars">
+          <ng-container *ngFor="let star of getStarRating(); let i = index">
+            <mat-icon *ngIf="star === 1">star</mat-icon>
+            <mat-icon *ngIf="star === 0.5">star_half</mat-icon>
+            <mat-icon *ngIf="star === 0">star_border</mat-icon>
+          </ng-container>
+        </div>
+        <span class="rating-value">{{ workoutPlan.averageRating | number:'1.1-1' }}</span>
+        <span class="ratings-count">({{ workoutPlan.ratingsCount || 0 }})</span>
+      </div>
+
+      <div class="participants" *ngIf="workoutPlan.participantsCount">
+        <mat-icon>people</mat-icon>
+        <span>{{ workoutPlan.participantsCount }}</span>
+      </div>
+    </div>
+
+    <div class="no-rating" *ngIf="workoutPlan.averageRating === undefined">
+      <mat-icon>star_border</mat-icon>
+      <span>Brak ocen</span>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-button color="primary" [routerLink]="['/workout-plans', workoutPlan.id]">
+      <mat-icon>visibility</mat-icon>
+      Szczegóły
+    </button>
+  </mat-card-actions>
+</mat-card>
