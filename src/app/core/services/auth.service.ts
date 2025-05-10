@@ -1,5 +1,5 @@
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, finalize, map, of, tap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../../environments/environment';
@@ -99,16 +99,32 @@ export class AuthService {
   register(registerRequest: RegisterRequest): Observable<any> {
     this.isLoadingSubject.next(true);
 
-    return this.http.post(`${environment.apiUrl}/auth/register`, registerRequest)
-      .pipe(
-        catchError(error => {
-          console.error('Registration error:', error);
-          throw error;
-        }),
-        finalize(() => {
-          this.isLoadingSubject.next(false);
-        })
-      );
+    // Add special header to handle text responses as the backend might return plain text
+    const headers = new HttpHeaders({
+      'Accept': 'application/json, text/plain, */*'
+    });
+
+    return this.http.post(`${environment.apiUrl}/auth/register`, registerRequest, {
+      headers,
+      responseType: 'text' // Handle response as text to avoid JSON parsing errors
+    }).pipe(
+      map(response => {
+        // Try to parse as JSON if possible
+        try {
+          return JSON.parse(response);
+        } catch (e) {
+          // If not valid JSON, just return the text response
+          return { message: response };
+        }
+      }),
+      catchError(error => {
+        console.error('Registration error:', error);
+        throw error;
+      }),
+      finalize(() => {
+        this.isLoadingSubject.next(false);
+      })
+    );
   }
 
   /**

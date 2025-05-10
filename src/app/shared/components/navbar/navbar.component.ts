@@ -1,5 +1,5 @@
 // src/app/shared/components/navbar/navbar.component.ts
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -24,10 +24,16 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent {
+  @Output() sidebarToggle = new EventEmitter<void>();
+
   constructor(
     private router: Router,
     public authService: AuthService
   ) {}
+
+  toggleSidebar(): void {
+    this.sidebarToggle.emit();
+  }
 
   navigateTo(path: string): void {
     this.router.navigateByUrl(`/${path}`);

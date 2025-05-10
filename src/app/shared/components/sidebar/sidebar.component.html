@@ -1,0 +1,24 @@
+<!-- src/app/shared/components/sidebar/sidebar.component.html -->
+<div class="sidebar" [class.expanded]="isExpanded">
+  <!-- Toggle button -->
+  <div class="sidebar-header">
+    <button mat-icon-button (click)="toggleMenu()" class="toggle-button">
+      <mat-icon>{{ isExpanded ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+    </button>
+  </div>
+
+  <!-- Navigation list -->
+  <mat-nav-list class="nav-list">
+    <ng-container *ngFor="let item of navItems">
+      <a mat-list-item
+         [routerLink]="item.route"
+         routerLinkActive="active-link"
+         [matTooltip]="!isExpanded ? item.name : ''"
+         [matTooltipPosition]="'right'"
+         class="nav-item">
+        <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+        <span class="nav-text" *ngIf="isExpanded">{{ item.name }}</span>
+      </a>
+    </ng-container>
+  </mat-nav-list>
+</div>

@@ -10,6 +10,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -25,7 +27,8 @@ import { AuthService } from '../../../core/services/auth.service';
     MatInputModule,
     MatIconModule,
     MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatProgressBarModule
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
@@ -35,6 +38,7 @@ export class RegisterComponent {
   isLoading = false;
   hidePassword = true;
   hideConfirmPassword = true;
+  registrationSuccess = false;
 
   constructor(
     private fb: FormBuilder,
@@ -96,8 +100,9 @@ export class RegisterComponent {
     };
 
     this.authService.register(registerData).subscribe({
-      next: (response) => {
+      next: () => {
         this.isLoading = false;
+        this.registrationSuccess = true;
 
         // Wyświetl komunikat o pomyślnej rejestracji
         this.snackBar.open('Rejestracja zakończona pomyślnie! Możesz się teraz zalogować.', 'OK', {
@@ -105,15 +110,36 @@ export class RegisterComponent {
           panelClass: ['success-snackbar']
         });
 
-        // Przekieruj do ekranu logowania
-        this.router.navigate(['/login']);
+        // Przekieruj do ekranu logowania po krótkim opóźnieniu (dajemy czas na przeczytanie komunikatu)
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2000);
       },
-      error: (error) => {
+      error: (error: HttpErrorResponse) => {
         this.isLoading = false;
         let errorMessage = 'Błąd rejestracji. Spróbuj ponownie.';
 
+        // Obsługa specyficznego błędu parsowania JSON
+        if (error.status === 200 && error.error instanceof SyntaxError &&
+          error.error.message.includes('not valid JSON')) {
+          // Sukces ale nieprawidłowa odpowiedź JSON - Backend zwrócił tekst zamiast JSON
+          this.registrationSuccess = true;
+          this.snackBar.open('Rejestracja zakończona pomyślnie! Możesz się teraz zalogować.', 'OK', {
+            duration: 5000,
+            panelClass: ['success-snackbar']
+          });
+
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 2000);
+          return;
+        }
+
+        // Standardowa obsługa błędów
         if (error.error) {
-          if (error.error.message) {
+          if (typeof error.error === 'string') {
+            errorMessage = error.error;
+          } else if (error.error.message) {
             errorMessage = error.error.message;
           } else if (error.error.errors && error.error.errors.length > 0) {
             errorMessage = error.error.errors[0];
