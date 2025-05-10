@@ -163,7 +163,7 @@
                     *ngFor="let tag of tagsArray.controls; let i = index"
                     [value]="tag.value"
                     (removed)="removeTag(i)">
-                    {{ tag.value }}
+                    {{tag.value}}
                     <button matChipRemove>
                       <mat-icon>cancel</mat-icon>
                     </button>
@@ -186,7 +186,7 @@
               </div>
 
               <div class="step-actions">
-                <button mat-button matStepperNext color="primary">
+                <button mat-button type="button" matStepperNext color="primary">
                   Następny krok: Dni treningowe
                   <mat-icon>arrow_forward</mat-icon>
                 </button>
@@ -359,11 +359,11 @@
               </div>
 
               <div class="step-actions">
-                <button mat-button matStepperPrevious>
+                <button mat-button type="button" matStepperPrevious>
                   <mat-icon>arrow_back</mat-icon>
                   Wróć do podstawowych informacji
                 </button>
-                <button mat-button matStepperNext color="primary">
+                <button mat-button type="button" matStepperNext color="primary">
                   Przejdź do podsumowania
                   <mat-icon>arrow_forward</mat-icon>
                 </button>
@@ -443,10 +443,15 @@
                   <mat-icon color="warn">error</mat-icon>
                   <p>Formularz zawiera błędy. Sprawdź wszystkie pola przed zapisaniem.</p>
                 </div>
+
+                <div class="warning" *ngIf="workoutDaysArray.length === 0">
+                  <mat-icon color="warn">error</mat-icon>
+                  <p>Plan treningowy musi zawierać przynajmniej jeden dzień treningowy.</p>
+                </div>
               </div>
 
               <div class="form-actions">
-                <button mat-button matStepperPrevious>
+                <button mat-button type="button" matStepperPrevious>
                   <mat-icon>arrow_back</mat-icon>
                   Wróć do dni treningowych
                 </button>

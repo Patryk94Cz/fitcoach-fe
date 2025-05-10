@@ -16,18 +16,30 @@
     font-weight: 500;
     margin: 0;
   }
+
+  .add-plan-button {
+    padding: 4px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
 }
 
-.filter-panel {
-  background-color: #f5f5f5;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 20px 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+.search-filter-bar {
+  margin-bottom: 24px;
 
   .search-box {
     display: flex;
-    align-items: center;
     gap: 16px;
     margin-bottom: 16px;
 
@@ -36,66 +48,51 @@
     }
   }
 
-  .filter-section {
-    h3 {
-      font-size: 16px;
-      margin-bottom: 12px;
-      color: #333;
+  .filter-panel {
+    background-color: #f9f9f9;
+    margin-bottom: 0;
+
+    ::ng-deep .mat-expansion-panel-header {
+      padding: 0 16px;
+      height: 48px;
     }
 
-    h4 {
-      font-size: 14px;
-      font-weight: 500;
-      margin: 8px 0;
-      color: #555;
+    ::ng-deep .mat-expansion-panel-body {
+      padding: 16px;
     }
-  }
 
-  .filter-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 16px;
+    .mat-panel-title {
+      align-items: center;
 
-    .filter-category {
-      flex: 1;
-      min-width: 250px;
-    }
-  }
-
-  .chip-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-
-    mat-chip {
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &.selected {
-        background-color: #3f51b5;
-        color: white;
+      mat-icon {
+        margin-right: 8px;
       }
     }
   }
 
-  .recommended-filter {
-    border-top: 1px solid #ddd;
-    padding-top: 16px;
-    margin-bottom: 16px;
-
-    .recommended-options {
+  .filter-form {
+    .filter-row {
       display: flex;
+      flex-wrap: wrap;
       gap: 16px;
-      align-items: flex-start;
-      margin-top: 16px;
+      margin-bottom: 16px;
 
       mat-form-field {
         flex: 1;
+        min-width: 200px;
       }
     }
+
+    .filter-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 16px;
+    }
   }
+}
+
+.category-tabs {
+  margin-bottom: 20px;
 }
 
 .workout-plans-grid {
@@ -123,48 +120,54 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 60px 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
   text-align: center;
+  margin: 20px 0;
+  border: 2px dashed #e0e0e0;
 
   mat-icon {
-    font-size: 48px;
-    height: 48px;
-    width: 48px;
-    margin-bottom: 16px;
-    color: #999;
+    font-size: 64px;
+    height: 64px;
+    width: 64px;
+    margin-bottom: 20px;
+    color: #9c27b0; /* Accent color */
   }
 
   p {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 16px;
-  }
-}
-
-/* Dodatkowe style do wyglądu zakładek */
-:host ::ng-deep .mat-mdc-tab-group {
-  .mat-mdc-tab-header {
-    margin-bottom: 20px;
-  }
-
-  .mat-mdc-tab .mdc-tab__text-label {
+    font-size: 18px;
+    color: #444;
     font-weight: 500;
+    margin-bottom: 24px;
+    line-height: 1.5;
+    max-width: 500px;
   }
 
-  .mat-mdc-tab-body-content {
-    overflow: hidden;
+  .no-results-actions {
+    display: flex;
+    gap: 12px;
+
+    button {
+      font-weight: 500;
+
+      &[color="accent"] {
+        padding: 4px 16px;
+        font-size: 16px;
+
+        mat-icon {
+          font-size: 20px;
+          height: 20px;
+          width: 20px;
+          margin: 0 4px 0 0;
+          color: inherit;
+        }
+      }
+    }
   }
 }
 
-/* Style dla paginatora */
-:host ::ng-deep .mat-mdc-paginator {
-  background-color: transparent;
-  margin-top: 20px;
-}
-
-/* Responsywność */
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .page-header {
     flex-direction: column;
@@ -176,7 +179,7 @@
     }
   }
 
-  .filter-panel .search-box {
+  .search-filter-bar .search-box {
     flex-direction: column;
     gap: 8px;
 
@@ -185,7 +188,7 @@
     }
   }
 
-  .filter-panel .recommended-options {
+  .filter-form .filter-actions {
     flex-direction: column;
 
     button {
@@ -201,10 +204,5 @@
 @media (max-width: 600px) {
   .workout-plans-grid {
     grid-template-columns: 1fr;
-  }
-
-  .filter-chips {
-    flex-direction: column;
-    gap: 8px;
   }
 }

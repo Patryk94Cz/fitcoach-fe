@@ -206,8 +206,25 @@ export class WorkoutPlanFormComponent implements OnInit {
 
   // Obsługa formularza
   onSubmit(): void {
+    // Sprawdź ogólną poprawność formularza
     if (this.workoutPlanForm.invalid) {
       this.markFormGroupTouched(this.workoutPlanForm);
+      return;
+    }
+
+    // Sprawdź czy są dni treningowe
+    if (this.workoutDaysArray.length === 0) {
+      this.snackBar.open('Plan treningowy musi zawierać przynajmniej jeden dzień treningowy', 'OK', {
+        duration: 5000,
+        panelClass: ['error-snackbar']
+      });
+
+      // Przejdź do zakładki z dniami treningowymi
+      const stepperComponent = document.querySelector('mat-stepper') as any;
+      if (stepperComponent && stepperComponent.selectedIndex !== 1) {
+        stepperComponent.selectedIndex = 1;
+      }
+
       return;
     }
 
@@ -255,7 +272,28 @@ export class WorkoutPlanFormComponent implements OnInit {
         },
         error: (error) => {
           console.error('Błąd podczas aktualizacji planu treningowego:', error);
-          this.snackBar.open('Nie udało się zaktualizować planu treningowego', 'OK', { duration: 3000 });
+
+          let errorMessage = 'Nie udało się zaktualizować planu treningowego';
+
+          // Obsługa błędów walidacji z serwera
+          if (error.error && error.error.errors) {
+            if (typeof error.error.errors === 'object') {
+              const errorMessages = Object.values(error.error.errors);
+              if (errorMessages.length > 0) {
+                errorMessage = errorMessages[0] as string;
+              }
+            } else if (typeof error.error.errors === 'string') {
+              errorMessage = error.error.errors;
+            }
+          } else if (error.error && error.error.message) {
+            errorMessage = error.error.message;
+          }
+
+          this.snackBar.open(errorMessage, 'OK', {
+            duration: 5000,
+            panelClass: ['error-snackbar']
+          });
+
           this.loading = false;
         }
       });
@@ -269,7 +307,28 @@ export class WorkoutPlanFormComponent implements OnInit {
         },
         error: (error) => {
           console.error('Błąd podczas tworzenia planu treningowego:', error);
-          this.snackBar.open('Nie udało się utworzyć planu treningowego', 'OK', { duration: 3000 });
+
+          let errorMessage = 'Nie udało się utworzyć planu treningowego';
+
+          // Obsługa błędów walidacji z serwera
+          if (error.error && error.error.errors) {
+            if (typeof error.error.errors === 'object') {
+              const errorMessages = Object.values(error.error.errors);
+              if (errorMessages.length > 0) {
+                errorMessage = errorMessages[0] as string;
+              }
+            } else if (typeof error.error.errors === 'string') {
+              errorMessage = error.error.errors;
+            }
+          } else if (error.error && error.error.message) {
+            errorMessage = error.error.message;
+          }
+
+          this.snackBar.open(errorMessage, 'OK', {
+            duration: 5000,
+            panelClass: ['error-snackbar']
+          });
+
           this.loading = false;
         }
       });
@@ -356,9 +415,17 @@ export class WorkoutPlanFormComponent implements OnInit {
       dayNumber: dayNumber,
       name: `Dzień ${dayNumber}`
     });
-    // Dodaj przynajmniej jedno ćwiczenie
+
+    // Dodaj dzień do tablicy dni
     this.workoutDaysArray.push(dayGroup);
-    this.addExercise(this.workoutDaysArray.length - 1); // Dodaj ćwiczenie po dodaniu dnia
+
+    // Dodaj domyślne ćwiczenie po dodaniu dnia
+    this.addExercise(this.workoutDaysArray.length - 1);
+
+    // Pokaż komunikat potwierdzenia
+    this.snackBar.open('Dodano nowy dzień treningowy', 'OK', {
+      duration: 2000
+    });
   }
 
   removeWorkoutDay(index: number): void {
@@ -430,5 +497,10 @@ export class WorkoutPlanFormComponent implements OnInit {
 
   getMuscleGroupName(muscleGroup: string): string {
     return this.exerciseService.getMuscleGroupName(muscleGroup as any);
+  }
+
+  // Pomocnicza metoda sprawdzająca czy mamy dni treningowe
+  get hasWorkoutDays(): boolean {
+    return this.workoutDaysArray.length > 0;
   }
 }

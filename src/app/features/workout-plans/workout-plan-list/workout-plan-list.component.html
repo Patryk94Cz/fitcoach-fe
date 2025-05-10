@@ -1,117 +1,162 @@
-<!-- src/app/features/workout-plans/workout-plan-list/workout-plan-list.component.html -->
 <div class="workout-plan-list-container">
   <div class="page-header">
     <h1 class="page-title">Plany treningowe</h1>
-    <button mat-raised-button color="primary" (click)="createNewWorkoutPlan()">
+    <button mat-raised-button color="primary" class="add-plan-button" (click)="createNewWorkoutPlan()">
       <mat-icon>add</mat-icon>
       Stwórz nowy plan
     </button>
   </div>
 
-  <!-- Zakładki kategorii planów treningowych -->
-  <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="activeTab">
-    <mat-tab label="Wszystkie plany"></mat-tab>
-    <mat-tab label="Najpopularniejsze"></mat-tab>
-    <mat-tab label="Najwyżej oceniane"></mat-tab>
-    <mat-tab label="Moje plany"></mat-tab>
-  </mat-tab-group>
-
-  <!-- Panel wyszukiwania i filtrowania -->
-  <div class="filter-panel">
+  <!-- Search and filter bar -->
+  <div class="search-filter-bar">
     <div class="search-box">
       <mat-form-field appearance="outline">
         <mat-label>Wyszukaj plan treningowy</mat-label>
-        <input matInput [(ngModel)]="searchKeyword" placeholder="Wpisz nazwę planu...">
+        <input
+          matInput
+          [(ngModel)]="searchKeyword"
+          placeholder="Wpisz nazwę planu..."
+          (keyup.enter)="applyFilters()">
         <mat-icon matSuffix>search</mat-icon>
       </mat-form-field>
-      <button mat-raised-button color="primary" (click)="onSearch()">Szukaj</button>
+      <button mat-raised-button color="primary" (click)="applyFilters()">Szukaj</button>
     </div>
 
-    <div class="filter-section">
-      <h3>Filtruj</h3>
-      <div class="filter-chips">
-        <div class="filter-category">
-          <h4>Cel treningu:</h4>
-          <div class="chip-container">
-            <mat-chip-set>
-              <mat-chip
-                *ngFor="let goal of workoutGoals"
-                [class.selected]="selectedGoal === goal"
-                (click)="filterByGoal(goal)"
-                [matTooltip]="getGoalName(goal)">
-                {{ getGoalName(goal) }}
-              </mat-chip>
-            </mat-chip-set>
+    <div class="filter-options">
+      <mat-expansion-panel
+        class="filter-panel"
+        [expanded]="filterPanelOpen"
+        (opened)="filterPanelOpen = true"
+        (closed)="filterPanelOpen = false">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>filter_list</mat-icon>
+            Filtry i sortowanie
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="filter-form">
+          <div class="filter-row">
+            <!-- Goal filter -->
+            <mat-form-field appearance="outline">
+              <mat-label>Cel treningu</mat-label>
+              <mat-select [(ngModel)]="filterOptions.goal">
+                <mat-option value="">Wszystkie</mat-option>
+                <mat-option *ngFor="let goal of workoutGoals" [value]="goal">
+                  {{ getGoalName(goal) }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Difficulty Level filter -->
+            <mat-form-field appearance="outline">
+              <mat-label>Poziom trudności</mat-label>
+              <mat-select [(ngModel)]="filterOptions.difficultyLevel">
+                <mat-option value="">Wszystkie</mat-option>
+                <mat-option *ngFor="let level of difficultyLevels" [value]="level">
+                  {{ getDifficultyName(level) }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Author filter -->
+            <mat-form-field appearance="outline">
+              <mat-label>Autor</mat-label>
+              <mat-select [(ngModel)]="filterOptions.author">
+                <mat-option [value]="null">Wszyscy</mat-option>
+                <mat-option *ngFor="let author of authors" [value]="author.id">
+                  {{ author.username }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Sort option -->
+            <mat-form-field appearance="outline">
+              <mat-label>Sortowanie</mat-label>
+              <mat-select [(ngModel)]="filterOptions.sortBy">
+                <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+                  {{ option.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Frequency filter -->
+          <div class="filter-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Maksymalna liczba treningów tygodniowo</mat-label>
+              <mat-select [(ngModel)]="filterOptions.maxFrequency">
+                <mat-option [value]="null">Bez limitu</mat-option>
+                <mat-option [value]="1">1 trening</mat-option>
+                <mat-option [value]="2">2 treningi</mat-option>
+                <mat-option [value]="3">3 treningi</mat-option>
+                <mat-option [value]="4">4 treningi</mat-option>
+                <mat-option [value]="5">5 treningów</mat-option>
+                <mat-option [value]="6">6 treningów</mat-option>
+                <mat-option [value]="7">7 treningów</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="filter-actions">
+            <button
+              mat-button
+              color="warn"
+              (click)="clearFilters()"
+              [disabled]="!searchKeyword && !filterOptions.goal && !filterOptions.difficultyLevel &&
+                        filterOptions.author === null && filterOptions.sortBy === 'newest' && !filterOptions.maxFrequency">
+              <mat-icon>clear</mat-icon> Wyczyść filtry
+            </button>
+            <button mat-raised-button color="primary" (click)="applyFilters()">
+              <mat-icon>check</mat-icon> Zastosuj filtry
+            </button>
           </div>
         </div>
-
-        <div class="filter-category">
-          <h4>Poziom trudności:</h4>
-          <div class="chip-container">
-            <mat-chip-set>
-              <mat-chip
-                *ngFor="let level of difficultyLevels"
-                [class.selected]="selectedDifficultyLevel === level"
-                (click)="filterByDifficulty(level)"
-                [matTooltip]="getDifficultyName(level)">
-                {{ getDifficultyName(level) }}
-              </mat-chip>
-            </mat-chip-set>
-          </div>
-        </div>
-      </div>
-
-      <!-- Filtr rekomendacji -->
-      <div class="recommended-filter">
-        <button mat-button color="primary" (click)="toggleRecommendedFilter()">
-          <mat-icon>recommend</mat-icon>
-          {{ showRecommendedFilter ? 'Ukryj filtr rekomendacji' : 'Pokaż filtr rekomendacji' }}
-        </button>
-
-        <div class="recommended-options" *ngIf="showRecommendedFilter">
-          <mat-form-field appearance="outline">
-            <mat-label>Maksymalna liczba treningów tygodniowo</mat-label>
-            <mat-select [(ngModel)]="maxFrequencyPerWeek">
-              <mat-option [value]="1">1 trening</mat-option>
-              <mat-option [value]="2">2 treningi</mat-option>
-              <mat-option [value]="3">3 treningi</mat-option>
-              <mat-option [value]="4">4 treningi</mat-option>
-              <mat-option [value]="5">5 treningów</mat-option>
-              <mat-option [value]="6">6 treningów</mat-option>
-              <mat-option [value]="7">7 treningów</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <button
-            mat-raised-button
-            color="accent"
-            (click)="applyRecommendedFilter()"
-            [disabled]="!maxFrequencyPerWeek">
-            Zastosuj
-          </button>
-        </div>
-      </div>
-
-      <button mat-button color="warn" (click)="clearFilters()" *ngIf="selectedGoal || selectedDifficultyLevel || searchKeyword || maxFrequencyPerWeek">
-        <mat-icon>clear</mat-icon> Wyczyść filtry
-      </button>
+      </mat-expansion-panel>
     </div>
   </div>
 
-  <!-- Ładowanie -->
+  <!-- Loading indicator -->
   <div class="loading-container" *ngIf="loading">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Ładowanie planów treningowych...</p>
   </div>
 
-  <!-- Brak wyników -->
+  <!-- No results message -->
   <div class="no-results" *ngIf="!loading && workoutPlans.length === 0">
-    <mat-icon>search_off</mat-icon>
-    <p>Nie znaleziono planów treningowych spełniających kryteria.</p>
-    <button mat-button color="primary" (click)="clearFilters()">Wyczyść filtry</button>
+    <mat-icon>{{ hasActiveFilters() ? 'search_off' : 'fitness_center' }}</mat-icon>
+
+    <!-- Different message based on whether filters are active -->
+    <p *ngIf="hasActiveFilters()">
+      Nie znaleziono planów treningowych spełniających kryteria.
+    </p>
+    <p *ngIf="!hasActiveFilters()">
+      Nie znaleziono żadnych planów treningowych. Dodaj swój pierwszy plan!
+    </p>
+
+    <!-- Action buttons -->
+    <div class="no-results-actions">
+      <button
+        mat-button
+        color="primary"
+        (click)="clearFilters()"
+        *ngIf="hasActiveFilters()">
+        <mat-icon>filter_alt_off</mat-icon>
+        Wyczyść filtry
+      </button>
+
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="createNewWorkoutPlan()"
+        *ngIf="!hasActiveFilters()">
+        <mat-icon>add</mat-icon>
+        Stwórz pierwszy plan
+      </button>
+    </div>
   </div>
 
-  <!-- Siatka planów treningowych -->
+  <!-- Workout plans grid -->
   <div class="workout-plans-grid" *ngIf="!loading && workoutPlans.length > 0">
     <app-workout-plan-card
       *ngFor="let plan of workoutPlans"
@@ -120,7 +165,7 @@
     </app-workout-plan-card>
   </div>
 
-  <!-- Paginacja -->
+  <!-- Pagination -->
   <mat-paginator
     *ngIf="totalItems > 0"
     [length]="totalItems"
