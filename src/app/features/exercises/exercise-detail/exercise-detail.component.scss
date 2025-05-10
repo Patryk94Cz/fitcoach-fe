@@ -25,14 +25,24 @@
 .exercise-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 24px;
 
-  h1 {
-    font-size: 28px;
-    font-weight: 500;
-    margin: 0;
-    color: #333;
+  .title-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    h1 {
+      font-size: 28px;
+      font-weight: 500;
+      margin: 0;
+      color: #333;
+    }
+
+    .favorite-button {
+      transform: scale(1.25);
+    }
   }
 
   .action-buttons {

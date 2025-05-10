@@ -15,13 +15,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ExerciseService } from '../../../core/services/exercise.service';
 import { Exercise, ExerciseRating, RatingRequest } from '../../../models/exercise.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../models/user.model';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-exercise-detail',
@@ -41,7 +41,8 @@ import { Observable } from 'rxjs';
     MatSelectModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTooltipModule
   ],
   templateUrl: './exercise-detail.component.html',
   styleUrls: ['./exercise-detail.component.scss']
@@ -54,6 +55,7 @@ export class ExerciseDetailComponent implements OnInit {
   isAuthor = false;
   userRating: ExerciseRating | null = null;
   hasRated = false;
+  isFavorite = false;
 
   loading = {
     exercise: false,
@@ -91,6 +93,7 @@ export class ExerciseDetailComponent implements OnInit {
     this.loadExercise();
     this.loadRatings();
     this.checkUserRating();
+    this.checkIfFavorite();
   }
 
   // Ładowanie danych ćwiczenia
@@ -165,6 +168,43 @@ export class ExerciseDetailComponent implements OnInit {
         this.loading.rating = false;
       }
     });
+  }
+
+  // Sprawdź czy ćwiczenie jest ulubione
+  checkIfFavorite(): void {
+    // Pobranie ulubionych z localStorage
+    const storedFavorites = localStorage.getItem('favoriteExercises');
+    if (storedFavorites) {
+      const favorites = JSON.parse(storedFavorites) as number[];
+      this.isFavorite = favorites.includes(this.exerciseId);
+    }
+  }
+
+  // Dodawanie/usuwanie do/z ulubionych
+  toggleFavorite(): void {
+    // Pobierz aktualne ulubione
+    const storedFavorites = localStorage.getItem('favoriteExercises');
+    let favorites: number[] = [];
+
+    if (storedFavorites) {
+      favorites = JSON.parse(storedFavorites);
+    }
+
+    if (this.isFavorite) {
+      // Usuń z ulubionych
+      favorites = favorites.filter(id => id !== this.exerciseId);
+      this.exerciseService.removeFromFavorites(this.exerciseId).subscribe();
+      this.snackBar.open('Usunięto z ulubionych', 'OK', { duration: 2000 });
+    } else {
+      // Dodaj do ulubionych
+      favorites.push(this.exerciseId);
+      this.exerciseService.addToFavorites(this.exerciseId).subscribe();
+      this.snackBar.open('Dodano do ulubionych', 'OK', { duration: 2000 });
+    }
+
+    // Zaktualizuj localStorage
+    localStorage.setItem('favoriteExercises', JSON.stringify(favorites));
+    this.isFavorite = !this.isFavorite;
   }
 
   // Obsługa oceniania

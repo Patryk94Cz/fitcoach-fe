@@ -18,8 +18,7 @@ import { ExerciseService } from '../../../core/services/exercise.service';
     MatCardModule,
     MatIconModule,
     MatChipsModule,
-    MatButtonModule,
-    RouterLink
+    MatButtonModule
   ],
   templateUrl: './exercise-card.component.html',
   styleUrls: ['./exercise-card.component.scss']
@@ -66,12 +65,42 @@ export class ExerciseCardComponent {
 
   // Generuj gwiazdki na podstawie oceny
   getStarRating(): number[] {
-    if (!this.exercise.averageRating) return [];
-    const rating = Math.round(this.exercise.averageRating * 2) / 2; // Zaokrąglij do 0.5
-    return Array(5).fill(0).map((_, i) => {
-      if (i + 0.5 === rating) return 0.5;
-      if (i < rating) return 1;
-      return 0;
-    });
+    const stars = [];
+
+    // Always show 5 stars, either filled, half-filled or empty
+    for (let i = 0; i < 5; i++) {
+      if (!this.exercise.averageRating) {
+        // No rating - all empty stars
+        stars.push(0);
+      } else {
+        const rating = this.exercise.averageRating;
+        if (i + 0.5 < rating) {
+          // Full star
+          stars.push(1);
+        } else if (i < rating && i + 1 > rating) {
+          // Half star
+          stars.push(0.5);
+        } else {
+          // Empty star
+          stars.push(0);
+        }
+      }
+    }
+
+    return stars;
+  }
+
+  // Check if exercise is new (created in the last 7 days)
+  isNewExercise(): boolean {
+    if (!this.exercise.createdAt) return false;
+
+    const creationDate = new Date(this.exercise.createdAt);
+    const currentDate = new Date();
+
+    // Calculate difference in days
+    const diffTime = Math.abs(currentDate.getTime() - creationDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return diffDays <= 7; // Consider as new if created within the last 7 days
   }
 }

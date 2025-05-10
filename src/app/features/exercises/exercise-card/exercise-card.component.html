@@ -5,37 +5,43 @@
     <div class="difficulty-tag" [style.color]="getDifficultyTextColor(exercise.difficultyLevel)">
       {{ getDifficultyName(exercise.difficultyLevel) }}
     </div>
+    <!-- New badge for recently added exercises -->
+    <div class="new-badge" *ngIf="isNewExercise()">NOWOŚĆ</div>
   </div>
 
   <mat-card-content>
     <h3 class="exercise-title">{{ exercise.name }}</h3>
 
     <div class="muscle-group">
+      <span class="label">Grupa mięśniowa:</span>
       <mat-chip>{{ getMuscleGroupName(exercise.primaryMuscleGroup) }}</mat-chip>
     </div>
 
-    <div class="rating-container" *ngIf="exercise.averageRating !== undefined">
-      <div class="stars">
-        <ng-container *ngFor="let star of getStarRating(); let i = index">
-          <mat-icon *ngIf="star === 1">star</mat-icon>
-          <mat-icon *ngIf="star === 0.5">star_half</mat-icon>
-          <mat-icon *ngIf="star === 0">star_border</mat-icon>
-        </ng-container>
+    <div class="rating-container">
+      <span class="label">Ocena:</span>
+      <div class="rating-content">
+        <div class="stars">
+          <ng-container *ngFor="let star of getStarRating(); let i = index">
+            <mat-icon *ngIf="star === 1">star</mat-icon>
+            <mat-icon *ngIf="star === 0.5">star_half</mat-icon>
+            <mat-icon *ngIf="star === 0">star_border</mat-icon>
+          </ng-container>
+        </div>
+
+        <div class="rating-info" *ngIf="exercise.averageRating !== undefined">
+          <span class="rating-value">{{ exercise.averageRating | number:'1.1-1' }}</span>
+          <span class="ratings-count">({{ exercise.ratingsCount || 0 }})</span>
+        </div>
+
+        <div class="rating-info" *ngIf="exercise.averageRating === undefined">
+          <span class="no-ratings">Brak ocen</span>
+        </div>
       </div>
-      <span class="rating-value">{{ exercise.averageRating | number:'1.1-1' }}</span>
-      <span class="ratings-count">({{ exercise.ratingsCount || 0 }})</span>
     </div>
 
-    <div class="no-rating" *ngIf="exercise.averageRating === undefined">
-      <mat-icon>star_border</mat-icon>
-      <span>Brak ocen</span>
+    <div class="author-info" *ngIf="exercise.author">
+      <mat-icon>person</mat-icon>
+      <span>{{ exercise.author.username }}</span>
     </div>
   </mat-card-content>
-
-  <mat-card-actions>
-    <button mat-button color="primary" [routerLink]="['/exercises', exercise.id]">
-      <mat-icon>visibility</mat-icon>
-      Szczegóły
-    </button>
-  </mat-card-actions>
 </mat-card>

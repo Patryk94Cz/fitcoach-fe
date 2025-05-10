@@ -18,7 +18,19 @@
   <div class="exercise-content" *ngIf="!loading.exercise && exercise">
     <!-- Nagłówek z nazwą i akcjami -->
     <div class="exercise-header">
-      <h1>{{ exercise.name }}</h1>
+      <div class="title-section">
+        <h1>{{ exercise.name }}</h1>
+
+        <!-- Przycisk ulubionych -->
+        <button
+          mat-icon-button
+          color="accent"
+          class="favorite-button"
+          (click)="toggleFavorite()"
+          matTooltip="{{ isFavorite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych' }}">
+          <mat-icon>{{ isFavorite ? 'star' : 'star_border' }}</mat-icon>
+        </button>
+      </div>
 
       <!-- Przyciski edycji i usuwania (tylko dla autora) -->
       <div class="action-buttons" *ngIf="isAuthor">

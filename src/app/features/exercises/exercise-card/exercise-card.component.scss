@@ -5,7 +5,6 @@
   border-radius: 8px;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
   height: 100%;
 
   &:hover {
@@ -43,6 +42,34 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.new-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  background-color: #f44336; /* Material red */
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transform: rotate(-5deg);
+  animation: pulse 2s infinite;
+  z-index: 10;
+}
+
+@keyframes pulse {
+  0% {
+    transform: rotate(-5deg) scale(1);
+  }
+  50% {
+    transform: rotate(-5deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(-5deg) scale(1);
+  }
+}
+
 mat-card-content {
   flex: 1;
   padding: 16px;
@@ -62,6 +89,14 @@ mat-card-content {
   height: 2.6em;
 }
 
+.label {
+  font-size: 13px;
+  color: #666;
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
 .muscle-group {
   margin-bottom: 12px;
 
@@ -73,9 +108,14 @@ mat-card-content {
 }
 
 .rating-container {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  margin-bottom: 12px;
+
+  .rating-content {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 
   .stars {
     display: flex;
@@ -89,36 +129,39 @@ mat-card-content {
     }
   }
 
-  .rating-value {
-    font-weight: 500;
-    margin-left: 4px;
-  }
+  .rating-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
 
-  .ratings-count {
-    color: #666;
-    font-size: 12px;
+    .rating-value {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .ratings-count {
+      color: #666;
+      font-size: 12px;
+    }
+
+    .no-ratings {
+      color: #999;
+      font-size: 12px;
+      font-style: italic;
+    }
   }
 }
 
-.no-rating {
+.author-info {
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #999;
+  font-size: 12px;
+  color: #666;
 
   mat-icon {
-    font-size: 18px;
-    height: 18px;
-    width: 18px;
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
   }
-
-  span {
-    font-size: 14px;
-  }
-}
-
-mat-card-actions {
-  padding: 8px 16px 16px;
-  display: flex;
-  justify-content: flex-end;
 }

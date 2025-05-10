@@ -1,7 +1,7 @@
 // src/app/core/services/exercise.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   Exercise,
@@ -140,6 +140,57 @@ export class ExerciseService {
   // Pobieranie swojej oceny dla ćwiczenia
   getMyRating(exerciseId: number): Observable<ExerciseRating> {
     return this.http.get<ExerciseRating>(`${this.apiUrl}/${exerciseId}/ratings/me`);
+  }
+
+  // FAVORITES FUNCTIONALITY
+  // Note: Since the backend doesn't have favorites API, we implement this client-side
+
+  // Get favorite exercises - this would typically be a backend API call
+  getFavoriteExercises(exerciseIds: number[]): Observable<Exercise[]> {
+    // In a real implementation, this would call the backend
+    // For now, we'll fetch all and filter client-side
+    return new Observable<Exercise[]>(observer => {
+      if (exerciseIds.length === 0) {
+        observer.next([]);
+        observer.complete();
+        return;
+      }
+
+      // Create a params string with all IDs
+      // In a real API, this might be a POST request with the IDs in the body
+      let params = new HttpParams();
+      exerciseIds.forEach(id => {
+        params = params.append('ids', id.toString());
+      });
+
+      // For now, just get all exercises and filter them
+      this.getExercises(0, 1000).subscribe({
+        next: (response) => {
+          const favorites = response.content.filter(exercise =>
+            exercise.id && exerciseIds.includes(exercise.id)
+          );
+          observer.next(favorites);
+          observer.complete();
+        },
+        error: (err) => {
+          observer.error(err);
+        }
+      });
+    });
+  }
+
+  // Add to favorites - this would be an API call in a real implementation
+  addToFavorites(exerciseId: number): Observable<boolean> {
+    // This would be an API call in a real implementation
+    console.log(`Adding exercise ${exerciseId} to favorites (client-side only)`);
+    return of(true);
+  }
+
+  // Remove from favorites - this would be an API call in a real implementation
+  removeFromFavorites(exerciseId: number): Observable<boolean> {
+    // This would be an API call in a real implementation
+    console.log(`Removing exercise ${exerciseId} from favorites (client-side only)`);
+    return of(true);
   }
 
   // Pomocnicze metody do pracy z modelami
