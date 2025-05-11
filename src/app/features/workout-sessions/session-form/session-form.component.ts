@@ -1,26 +1,23 @@
 // src/app/features/workout-sessions/session-form/session-form.component.ts
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators, AbstractControl} from '@angular/forms';
-import {Router, RouterLink, ActivatedRoute} from '@angular/router';
-import {MatCardModule} from '@angular/material/card';
-import {MatButtonModule} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {MatSelectModule} from '@angular/material/select';
-import {MatSliderModule} from '@angular/material/slider';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
-import {MatStepperModule} from '@angular/material/stepper';
-import {MatDividerModule} from '@angular/material/divider';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatDividerModule } from '@angular/material/divider';
 
-import { WorkoutDay, WorkoutExercise } from '../../../models/workout-plan.model';
-import {WorkoutSessionService} from '../../../core/services/workout-session.service';
-import {WorkoutPlanService} from '../../../core/services/workout-plan.service';
-import {ExerciseService} from '../../../core/services/exercise.service';
-import {UserWorkoutPlan} from '../../../models/workout-plan.model';
-import {WorkoutSessionRequest, ExercisePerformanceRequest} from '../../../models/workout-session.model';
+import { WorkoutSessionService } from '../../../core/services/workout-session.service';
+import { WorkoutPlanService } from '../../../core/services/workout-plan.service';
+import { UserWorkoutPlan, WorkoutDay, WorkoutExercise } from '../../../models/workout-plan.model';
+import { WorkoutSessionRequest, ExercisePerformanceRequest } from '../../../models/workout-session.model';
 
 @Component({
   selector: 'app-session-form',
@@ -35,7 +32,6 @@ import {WorkoutSessionRequest, ExercisePerformanceRequest} from '../../../models
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatSliderModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatStepperModule,
@@ -46,32 +42,31 @@ import {WorkoutSessionRequest, ExercisePerformanceRequest} from '../../../models
 })
 export class SessionFormComponent implements OnInit {
   sessionForm: FormGroup;
+  userWorkoutPlans: UserWorkoutPlan[] = [];
+  selectedPlan: UserWorkoutPlan | null = null;
+  currentDayExercises: WorkoutExercise[] = [];
+
   loading = {
     plans: false,
     plan: false,
     submit: false
   };
-  userWorkoutPlans: UserWorkoutPlan[] = [];
-  selectedPlan: UserWorkoutPlan | null = null;
-  planExercises: any[] = [];
 
   constructor(
     private fb: FormBuilder,
     private workoutSessionService: WorkoutSessionService,
     private workoutPlanService: WorkoutPlanService,
-    private exerciseService: ExerciseService,
     private snackBar: MatSnackBar,
-    private router: Router,
-    private route: ActivatedRoute
+    private router: Router
   ) {
     this.sessionForm = this.createForm();
   }
 
   ngOnInit(): void {
-    this.loadUserPlans();
+    this.loadUserWorkoutPlans();
   }
 
-  // Create the form structure
+  // Tworzenie formularza
   createForm(): FormGroup {
     return this.fb.group({
       userWorkoutPlanId: [null, Validators.required],
@@ -81,157 +76,147 @@ export class SessionFormComponent implements OnInit {
     });
   }
 
-  // Load user's workout plans
-  loadUserPlans(): void {
-    this.loading.plans = true;
-
-    this.workoutPlanService.getUserWorkoutPlans()
-      .subscribe({
-        next: (response) => {
-          // Filter only active plans
-          this.userWorkoutPlans = response.content.filter(
-            plan => plan.status === 'IN_PROGRESS' || plan.status === 'NOT_STARTED'
-          );
-          this.loading.plans = false;
-
-          // If there are no plans, show message and redirect
-          if (this.userWorkoutPlans.length === 0) {
-            this.snackBar.open(
-              'Nie masz aktywnych planów treningowych. Dołącz do planu, aby rejestrować sesje.',
-              'OK',
-              {duration: 5000}
-            );
-            this.router.navigate(['/workout-plans']);
-          }
-        },
-        error: (error) => {
-          console.error('Error loading workout plans:', error);
-          this.snackBar.open('Nie udało się załadować planów treningowych', 'OK', {duration: 3000});
-          this.loading.plans = false;
-        }
-      });
+  // Getter dla tablicy ćwiczeń
+  get exercisePerformancesArray(): FormArray {
+    return this.sessionForm.get('exercisePerformances') as FormArray;
   }
 
+  // Ładowanie planów treningowych użytkownika
+  loadUserWorkoutPlans(): void {
+    this.loading.plans = true;
+
+    this.workoutPlanService.getUserWorkoutPlans().subscribe({
+      next: (response) => {
+        // Filtruj tylko aktywne plany (w trakcie lub nie rozpoczęte)
+        this.userWorkoutPlans = response.content.filter(
+          plan => plan.status === 'IN_PROGRESS' || plan.status === 'NOT_STARTED'
+        );
+        this.loading.plans = false;
+
+        // Jeśli nie ma planów, pokaż komunikat i przekieruj
+        if (this.userWorkoutPlans.length === 0) {
+          this.snackBar.open('Nie masz aktywnych planów treningowych. Dołącz do planu aby rejestrować treningi.', 'OK', {
+            duration: 5000
+          });
+          this.router.navigate(['/workout-plans']);
+        }
+      },
+      error: (error) => {
+        console.error('Błąd podczas ładowania planów treningowych:', error);
+        this.snackBar.open('Nie udało się załadować planów treningowych', 'OK', { duration: 3000 });
+        this.loading.plans = false;
+      }
+    });
+  }
+
+  // Obsługa wyboru planu
   onPlanSelected(planId: number): void {
     this.loading.plan = true;
-
-    // Znajdź wybrany plan z listy
     this.selectedPlan = this.userWorkoutPlans.find(p => p.id === planId) || null;
 
     if (this.selectedPlan) {
-      // Ustaw domyślny numer dnia (obecny dzień)
+      // Ustaw domyślny dzień (aktualny dzień planu)
       this.sessionForm.get('completedDayNumber')?.setValue(this.selectedPlan.currentDay);
 
-      // Pobierz szczegóły planu użytkownika
-      this.workoutPlanService.getUserWorkoutPlan(planId)
-        .subscribe({
-          next: (userPlanDetails) => {
-            // Pobierz pełne szczegóły planu treningowego
-            this.workoutPlanService.getWorkoutPlan(userPlanDetails.workoutPlan.id)
-              .subscribe({
-                next: (workoutPlan) => {
-                  // Znajdź aktualny dzień
-                  const currentDayNumber = this.sessionForm.get('completedDayNumber')?.value;
-                  const currentDay = workoutPlan.workoutDays.find(
-                    (day: WorkoutDay) => day.dayNumber === currentDayNumber
-                  );
+      // Pobierz szczegóły planu
+      this.workoutPlanService.getWorkoutPlanById(this.selectedPlan.workoutPlan.id).subscribe({
+        next: (plan) => {
+          const currentDayNumber = this.sessionForm.get('completedDayNumber')?.value;
+          const currentDay = plan.workoutDays.find(day => day.dayNumber === currentDayNumber);
 
-                  if (currentDay && currentDay.exercises) {
-                    // Wyczyść poprzednie ćwiczenia
-                    this.exercisePerformancesArray.clear();
+          if (currentDay && currentDay.exercises) {
+            // Wyczyść poprzednie ćwiczenia
+            this.exercisePerformancesArray.clear();
 
-                    // Zapisz ćwiczenia do późniejszego użycia
-                    this.planExercises = currentDay.exercises;
+            // Zapisz ćwiczenia aktualnego dnia
+            this.currentDayExercises = currentDay.exercises;
 
-                    // Dodaj grupy formularzy dla każdego ćwiczenia
-                    currentDay.exercises.forEach((exercise: WorkoutExercise, index: number) => {
-                      this.addExercisePerformance(
-                        exercise.exercise?.id || 0,
-                        exercise.setsCount || 0,
-                        exercise.repsCount || 0,
-                        exercise.weight || '',
-                        index + 1
-                      );
-                    });
-                  }
-
-                  this.loading.plan = false;
-                },
-                error: (error) => {
-                  console.error('Błąd podczas ładowania szczegółów planu treningowego:', error);
-                  this.snackBar.open('Nie udało się załadować szczegółów planu', 'OK', { duration: 3000 });
-                  this.loading.plan = false;
-                }
-              });
-          },
-          error: (error) => {
-            console.error('Błąd podczas ładowania szczegółów planu użytkownika:', error);
-            this.snackBar.open('Nie udało się załadować szczegółów planu użytkownika', 'OK', { duration: 3000 });
-            this.loading.plan = false;
+            // Dodaj formularze dla każdego ćwiczenia
+            currentDay.exercises.forEach((exercise, index) => {
+              this.addExercisePerformance(
+                exercise.exercise?.id || 0,
+                exercise.setsCount || 0,
+                exercise.repsCount || 0,
+                exercise.weight || '',
+                index + 1
+              );
+            });
           }
-        });
+
+          this.loading.plan = false;
+        },
+        error: (error) => {
+          console.error('Błąd podczas ładowania szczegółów planu:', error);
+          this.snackBar.open('Nie udało się załadować szczegółów planu', 'OK', { duration: 3000 });
+          this.loading.plan = false;
+        }
+      });
     }
   }
 
-  // When day is changed, update exercises
+  // Obsługa zmiany dnia
   onDayChanged(dayNumber: number): void {
     if (!this.selectedPlan) return;
 
     this.loading.plan = true;
 
-    // Pobierz szczegóły planu użytkownika
-    this.workoutPlanService.getUserWorkoutPlan(this.selectedPlan.id)
-      .subscribe({
-        next: (userPlanDetails) => {
-          // Pobierz pełne szczegóły planu treningowego
-          this.workoutPlanService.getWorkoutPlan(userPlanDetails.workoutPlan.id)
-            .subscribe({
-              next: (workoutPlan) => {
-                // Znajdź wybrany dzień
-                const selectedDay = workoutPlan.workoutDays.find(
-                  (day: WorkoutDay) => day.dayNumber === dayNumber
-                );
+    this.workoutPlanService.getWorkoutPlanById(this.selectedPlan.workoutPlan.id).subscribe({
+      next: (plan) => {
+        const selectedDay = plan.workoutDays.find(day => day.dayNumber === dayNumber);
 
-                if (selectedDay && selectedDay.exercises) {
-                  // Wyczyść poprzednie ćwiczenia
-                  this.exercisePerformancesArray.clear();
+        if (selectedDay && selectedDay.exercises) {
+          // Wyczyść poprzednie ćwiczenia
+          this.exercisePerformancesArray.clear();
 
-                  // Zapisz ćwiczenia do późniejszego użycia
-                  this.planExercises = selectedDay.exercises;
+          // Zapisz ćwiczenia wybranego dnia
+          this.currentDayExercises = selectedDay.exercises;
 
-                  // Dodaj grupy formularzy dla każdego ćwiczenia
-                  selectedDay.exercises.forEach((exercise: WorkoutExercise, index: number) => {
-                    this.addExercisePerformance(
-                      exercise.exercise?.id || 0,
-                      exercise.setsCount || 0,
-                      exercise.repsCount || 0,
-                      exercise.weight || '',
-                      index + 1
-                    );
-                  });
-                }
-
-                this.loading.plan = false;
-              },
-              error: (error) => {
-                console.error('Błąd podczas ładowania szczegółów planu:', error);
-                this.snackBar.open('Nie udało się załadować szczegółów planu', 'OK', { duration: 3000 });
-                this.loading.plan = false;
-              }
-            });
-        },
-        error: (error) => {
-          console.error('Błąd podczas ładowania szczegółów planu użytkownika:', error);
-          this.snackBar.open('Nie udało się załadować szczegółów planu użytkownika', 'OK', { duration: 3000 });
-          this.loading.plan = false;
+          // Dodaj formularze dla każdego ćwiczenia
+          selectedDay.exercises.forEach((exercise, index) => {
+            this.addExercisePerformance(
+              exercise.exercise?.id || 0,
+              exercise.setsCount || 0,
+              exercise.repsCount || 0,
+              exercise.weight || '',
+              index + 1
+            );
+          });
         }
-      });
+
+        this.loading.plan = false;
+      },
+      error: (error) => {
+        console.error('Błąd podczas ładowania szczegółów planu:', error);
+        this.snackBar.open('Nie udało się załadować szczegółów planu', 'OK', { duration: 3000 });
+        this.loading.plan = false;
+      }
+    });
   }
 
-  // Form submission
+  // Dodanie formularza dla ćwiczenia
+  addExercisePerformance(
+    exerciseId: number,
+    defaultSets: number = 0,
+    defaultReps: number = 0,
+    defaultWeight: string = '',
+    orderNumber: number = 1
+  ): void {
+    const exerciseGroup = this.fb.group({
+      exerciseId: [exerciseId, Validators.required],
+      setsCompleted: [defaultSets, [Validators.required, Validators.min(1)]],
+      repsCompleted: [defaultReps, [Validators.required, Validators.min(1)]],
+      weightUsed: [defaultWeight, Validators.required],
+      notes: [''],
+      orderNumber: [orderNumber]
+    });
+
+    this.exercisePerformancesArray.push(exerciseGroup);
+  }
+
+  // Wysłanie formularza
   onSubmit(): void {
     if (this.sessionForm.invalid) {
-      // Mark all fields as touched to display validation errors
+      // Oznacz wszystkie kontrolki jako dotknięte, aby pokazać błędy
       this.markFormGroupTouched(this.sessionForm);
       return;
     }
@@ -246,73 +231,20 @@ export class SessionFormComponent implements OnInit {
       exercisePerformances: formValue.exercisePerformances
     };
 
-    this.workoutSessionService.createSession(sessionRequest)
-      .subscribe({
-        next: (session) => {
-          this.snackBar.open('Sesja treningowa została zarejestrowana pomyślnie!', 'OK', {
-            duration: 3000
-          });
-
-          // Redirect to session details or history page
-          this.router.navigate(['/my-workouts']);
-        },
-        error: (error) => {
-          console.error('Error creating session:', error);
-          this.snackBar.open(
-            'Nie udało się zarejestrować sesji treningowej. Spróbuj ponownie.',
-            'OK',
-            {duration: 5000}
-          );
-          this.loading.submit = false;
-        }
-      });
-  }
-
-  // Helper to add exercise performance to form array
-  addExercisePerformance(
-    exerciseId: number,
-    defaultSets: number = 0,
-    defaultReps: number = 0,
-    defaultWeight: string = '',
-    orderNumber: number = 1
-  ): void {
-    const exercise = this.fb.group({
-      exerciseId: [exerciseId, Validators.required],
-      setsCompleted: [defaultSets, [Validators.required, Validators.min(1)]],
-      repsCompleted: [defaultReps, [Validators.required, Validators.min(1)]],
-      weightUsed: [defaultWeight, Validators.required],
-      notes: [''],
-      orderNumber: [orderNumber]
+    this.workoutSessionService.createSession(sessionRequest).subscribe({
+      next: (session) => {
+        this.snackBar.open('Sesja treningowa została zarejestrowana!', 'OK', { duration: 3000 });
+        this.router.navigate(['/my-workouts']);
+      },
+      error: (error) => {
+        console.error('Błąd podczas rejestrowania sesji:', error);
+        this.snackBar.open('Nie udało się zarejestrować sesji treningowej', 'OK', { duration: 3000 });
+        this.loading.submit = false;
+      }
     });
-
-    this.exercisePerformancesArray.push(exercise);
   }
 
-  // Helper to get exercise name by ID
-  getExerciseName(exerciseId: number): string {
-    const exercise = this.planExercises.find(e => e.exercise?.id === exerciseId);
-    return exercise?.exercise?.name || 'Ćwiczenie';
-  }
-
-  // Helper to get available day numbers from the selected plan
-  get availableDays(): number[] {
-    if (!this.selectedPlan || !this.selectedPlan.workoutPlan.totalDays) {
-      return [];
-    }
-
-    const days = [];
-    for (let i = 1; i <= this.selectedPlan.workoutPlan.totalDays; i++) {
-      days.push(i);
-    }
-    return days;
-  }
-
-  // Helper to access exercise performances form array
-  get exercisePerformancesArray(): FormArray {
-    return this.sessionForm.get('exercisePerformances') as FormArray;
-  }
-
-  // Utility to mark all form controls as touched
+  // Pomocnicza metoda do oznaczania wszystkich kontrolek jako dotknięte
   markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
@@ -329,5 +261,20 @@ export class SessionFormComponent implements OnInit {
         });
       }
     });
+  }
+
+  // Pobranie nazwy ćwiczenia na podstawie ID
+  getExerciseName(exerciseId: number): string {
+    const exercise = this.currentDayExercises.find(e => e.exercise?.id === exerciseId);
+    return exercise?.exercise?.name || 'Ćwiczenie';
+  }
+
+  // Pobranie dostępnych dni treningowych
+  get availableDays(): number[] {
+    if (!this.selectedPlan || !this.selectedPlan.workoutPlan.totalDays) {
+      return [];
+    }
+
+    return Array.from({ length: this.selectedPlan.workoutPlan.totalDays }, (_, i) => i + 1);
   }
 }

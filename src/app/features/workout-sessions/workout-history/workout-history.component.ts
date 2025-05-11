@@ -7,47 +7,46 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
-import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+
 import { WorkoutSessionService } from '../../../core/services/workout-session.service';
 import { WorkoutPlanService } from '../../../core/services/workout-plan.service';
-import { ExerciseService } from '../../../core/services/exercise.service';
 import { WorkoutSessionListItem } from '../../../models/workout-session.model';
 import { UserWorkoutPlan } from '../../../models/workout-plan.model';
-import {MatProgressBar} from '@angular/material/progress-bar';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-workout-history',
   standalone: true,
   imports: [
     CommonModule,
+    RouterLink,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatTabsModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatDividerModule,
     MatBadgeModule,
     MatSnackBarModule,
     MatPaginatorModule,
-    MatExpansionModule,
     MatDialogModule,
     MatTooltipModule,
-    MatChipsModule,
-    MatProgressBar
+    MatChipsModule
   ],
   templateUrl: './workout-history.component.html',
   styleUrls: ['./workout-history.component.scss']
 })
 export class WorkoutHistoryComponent implements OnInit {
-  // Training sessions
+  // Sesje treningowe
   sessions: WorkoutSessionListItem[] = [];
   loading = {
     sessions: false,
@@ -57,17 +56,16 @@ export class WorkoutHistoryComponent implements OnInit {
   currentPage = 0;
   pageSize = 10;
 
-  // My workout plans
+  // Plany treningowe użytkownika
   activeWorkoutPlans: UserWorkoutPlan[] = [];
   selectedPlanId: number | null = null;
 
-  // Tab selection
-  activeTab = 0; // 0 = All sessions, 1 = By plan
+  // Aktywna zakładka
+  activeTab = 0; // 0 = Wszystkie sesje, 1 = Wg planu
 
   constructor(
     private workoutSessionService: WorkoutSessionService,
     private workoutPlanService: WorkoutPlanService,
-    private exerciseService: ExerciseService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private router: Router
@@ -78,7 +76,7 @@ export class WorkoutHistoryComponent implements OnInit {
     this.loadActiveWorkoutPlans();
   }
 
-  // Load recent workout sessions across all plans
+  // Ładowanie ostatnich sesji treningowych
   loadRecentSessions(): void {
     this.loading.sessions = true;
     this.workoutSessionService.getRecentSessions(this.currentPage, this.pageSize)
@@ -89,14 +87,14 @@ export class WorkoutHistoryComponent implements OnInit {
           this.loading.sessions = false;
         },
         error: (error) => {
-          console.error('Error loading workout sessions:', error);
+          console.error('Błąd podczas ładowania sesji treningowych:', error);
           this.snackBar.open('Nie udało się załadować historii treningów', 'OK', { duration: 3000 });
           this.loading.sessions = false;
         }
       });
   }
 
-  // Load sessions for a specific plan
+  // Ładowanie sesji dla konkretnego planu
   loadSessionsByPlan(planId: number): void {
     this.loading.sessions = true;
     this.selectedPlanId = planId;
@@ -109,48 +107,51 @@ export class WorkoutHistoryComponent implements OnInit {
           this.loading.sessions = false;
         },
         error: (error) => {
-          console.error('Error loading plan sessions:', error);
-          this.snackBar.open('Nie udało się załadować sesji treningowych dla wybranego planu', 'OK', { duration: 3000 });
+          console.error('Błąd podczas ładowania sesji dla planu:', error);
+          this.snackBar.open('Nie udało się załadować sesji dla wybranego planu', 'OK', { duration: 3000 });
           this.loading.sessions = false;
         }
       });
   }
 
-  // Load active workout plans
+  // Ładowanie aktywnych planów treningowych
   loadActiveWorkoutPlans(): void {
     this.loading.plans = true;
 
-    this.workoutPlanService.getUserWorkoutPlans(0, 100)
+    this.workoutPlanService.getUserWorkoutPlans()
       .subscribe({
         next: (response) => {
-          this.activeWorkoutPlans = response.content;
+          // Filtrujemy tylko aktywne plany (w trakcie lub ukończone)
+          this.activeWorkoutPlans = response.content.filter(
+            plan => plan.status === 'IN_PROGRESS' || plan.status === 'NOT_STARTED' || plan.status === 'COMPLETED'
+          );
           this.loading.plans = false;
         },
         error: (error) => {
-          console.error('Error loading workout plans:', error);
+          console.error('Błąd podczas ładowania planów treningowych:', error);
           this.snackBar.open('Nie udało się załadować planów treningowych', 'OK', { duration: 3000 });
           this.loading.plans = false;
         }
       });
   }
 
-  // Handle tab changes
+  // Obsługa zmiany zakładki
   onTabChange(index: number): void {
     this.activeTab = index;
     this.currentPage = 0;
 
     if (index === 0) {
-      // "All sessions" tab
+      // Zakładka "Wszystkie sesje"
       this.selectedPlanId = null;
       this.loadRecentSessions();
     } else if (index === 1 && this.activeWorkoutPlans.length > 0) {
-      // "By plan" tab - load first plan if available
+      // Zakładka "Według planu" - ładuj pierwszy plan jeśli dostępny
       this.selectedPlanId = this.activeWorkoutPlans[0].id;
       this.loadSessionsByPlan(this.activeWorkoutPlans[0].id);
     }
   }
 
-  // Handle paginator events
+  // Obsługa zmiany strony w paginacji
   onPageChange(event: PageEvent): void {
     this.currentPage = event.pageIndex;
     this.pageSize = event.pageSize;
@@ -162,25 +163,25 @@ export class WorkoutHistoryComponent implements OnInit {
     }
   }
 
-  // Handler for selecting a specific plan from dropdown
+  // Wybór planu z listy
   onPlanChange(planId: number): void {
     this.currentPage = 0;
     this.loadSessionsByPlan(planId);
   }
 
-  // Navigate to session details
+  // Przejście do szczegółów sesji
   viewSessionDetails(sessionId: number): void {
     this.router.navigate(['/workout-sessions', sessionId]);
   }
 
-  // Navigate to record new session
+  // Przejście do rejestracji nowej sesji
   recordNewSession(): void {
     this.router.navigate(['/workout-sessions/new']);
   }
 
-  // Delete session confirmation and action
+  // Usunięcie sesji treningowej
   deleteSession(session: WorkoutSessionListItem, event: Event): void {
-    event.stopPropagation(); // Prevent navigation to details
+    event.stopPropagation(); // Zapobiega nawigacji do szczegółów sesji
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -197,7 +198,7 @@ export class WorkoutHistoryComponent implements OnInit {
           next: () => {
             this.snackBar.open('Sesja treningowa została usunięta', 'OK', { duration: 3000 });
 
-            // Refresh the list
+            // Odśwież listę sesji
             if (this.selectedPlanId) {
               this.loadSessionsByPlan(this.selectedPlanId);
             } else {
@@ -205,15 +206,15 @@ export class WorkoutHistoryComponent implements OnInit {
             }
           },
           error: (error) => {
-            console.error('Error deleting session:', error);
-            this.snackBar.open('Nie udało się usunąć sesji treningowej', 'OK', { duration: 3000 });
+            console.error('Błąd podczas usuwania sesji:', error);
+            this.snackBar.open('Nie udało się usunąć sesji', 'OK', { duration: 3000 });
           }
         });
       }
     });
   }
 
-  // Format date for display
+  // Formatowanie daty
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('pl-PL', {
@@ -225,7 +226,7 @@ export class WorkoutHistoryComponent implements OnInit {
     });
   }
 
-  // Get status color for visual indication
+  // Pobieranie koloru statusu planu
   getPlanStatusColor(status: string): string {
     const statusColors: Record<string, string> = {
       'NOT_STARTED': '#9e9e9e',
@@ -236,7 +237,7 @@ export class WorkoutHistoryComponent implements OnInit {
     return statusColors[status] || '#000000';
   }
 
-  // Get plan status name for display
+  // Pobieranie nazwy statusu planu
   getPlanStatusName(status: string): string {
     const statusNames: Record<string, string> = {
       'NOT_STARTED': 'Nie rozpoczęty',

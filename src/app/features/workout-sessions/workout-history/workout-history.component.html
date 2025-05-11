@@ -11,7 +11,7 @@
     </button>
   </div>
 
-  <!-- No active plans message -->
+  <!-- Komunikat o braku aktywnych planów -->
   <div class="no-plans-message" *ngIf="!loading.plans && activeWorkoutPlans.length === 0">
     <mat-card>
       <mat-card-content>
@@ -28,13 +28,13 @@
   </div>
 
   <div class="history-content" *ngIf="activeWorkoutPlans.length > 0">
-    <!-- Tab navigation -->
+    <!-- Zakładki -->
     <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="activeTab">
       <mat-tab label="Wszystkie sesje"></mat-tab>
       <mat-tab label="Według planu"></mat-tab>
     </mat-tab-group>
 
-    <!-- Plan selection for "By Plan" tab -->
+    <!-- Selektor planu dla zakładki "Według planu" -->
     <div class="plan-selector" *ngIf="activeTab === 1">
       <mat-card>
         <mat-card-content>
@@ -79,7 +79,7 @@
       </mat-card>
     </div>
 
-    <!-- Sessions list -->
+    <!-- Lista sesji treningowych -->
     <div class="sessions-container">
       <div class="loading-container" *ngIf="loading.sessions">
         <mat-spinner diameter="50"></mat-spinner>
@@ -140,7 +140,7 @@
         </mat-card>
       </div>
 
-      <!-- Pagination -->
+      <!-- Paginacja -->
       <mat-paginator
         *ngIf="totalItems > 0"
         [length]="totalItems"
