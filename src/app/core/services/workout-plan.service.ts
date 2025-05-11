@@ -22,6 +22,10 @@ export class WorkoutPlanService {
 
   constructor(private http: HttpClient) { }
 
+  getWorkoutPlan(workoutPlanId: number): Observable<WorkoutPlan> {
+    return this.http.get<WorkoutPlan>(`${this.apiUrl}/workout-plans/${workoutPlanId}`);
+  }
+
   // Pobieranie planów treningowych
   getWorkoutPlans(page = 0, size = 10, sortBy = 'name', sortDir: 'asc' | 'desc' = 'asc'): Observable<PageResponse<WorkoutPlan>> {
     let params = new HttpParams()

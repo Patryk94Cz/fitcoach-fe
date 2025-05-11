@@ -33,6 +33,7 @@ export class SidebarComponent {
   @Output() toggleSidebar = new EventEmitter<boolean>();
 
   // Navigation menu items
+  // Navigation menu items
   navItems = [
     {
       name: 'Dashboard',
@@ -50,9 +51,14 @@ export class SidebarComponent {
       icon: 'event_note'
     },
     {
-      name: 'Moje treningi',
+      name: 'Historia treningów',
       route: '/my-workouts',
-      icon: 'assignment'
+      icon: 'history'
+    },
+    {
+      name: 'Historia ćwiczeń',
+      route: '/exercise-history',
+      icon: 'trending_up'
     }
   ];
 

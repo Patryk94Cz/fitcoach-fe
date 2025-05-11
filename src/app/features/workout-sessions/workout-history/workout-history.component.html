@@ -1,0 +1,154 @@
+<!-- src/app/features/workout-sessions/workout-history/workout-history.component.html -->
+<div class="workout-history-container">
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Historia treningów</h1>
+      <p class="subtitle">Przegląd wszystkich Twoich sesji treningowych</p>
+    </div>
+    <button mat-raised-button color="primary" class="record-button" (click)="recordNewSession()" *ngIf="activeWorkoutPlans.length > 0">
+      <mat-icon>add</mat-icon>
+      Zarejestruj nowy trening
+    </button>
+  </div>
+
+  <!-- No active plans message -->
+  <div class="no-plans-message" *ngIf="!loading.plans && activeWorkoutPlans.length === 0">
+    <mat-card>
+      <mat-card-content>
+        <div class="message-content">
+          <mat-icon>info</mat-icon>
+          <p>Nie masz jeszcze aktywnych planów treningowych. Dołącz do istniejącego planu, aby zacząć rejestrować treningi.</p>
+          <button mat-raised-button color="primary" routerLink="/workout-plans">
+            <mat-icon>fitness_center</mat-icon>
+            Przeglądaj plany treningowe
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="history-content" *ngIf="activeWorkoutPlans.length > 0">
+    <!-- Tab navigation -->
+    <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="activeTab">
+      <mat-tab label="Wszystkie sesje"></mat-tab>
+      <mat-tab label="Według planu"></mat-tab>
+    </mat-tab-group>
+
+    <!-- Plan selection for "By Plan" tab -->
+    <div class="plan-selector" *ngIf="activeTab === 1">
+      <mat-card>
+        <mat-card-content>
+          <div class="plan-selector-header">
+            <h2>Wybierz plan treningowy</h2>
+          </div>
+
+          <div class="loading-container" *ngIf="loading.plans">
+            <mat-spinner diameter="30"></mat-spinner>
+            <p>Ładowanie planów treningowych...</p>
+          </div>
+
+          <div class="plan-cards" *ngIf="!loading.plans">
+            <mat-card
+              class="plan-card"
+              *ngFor="let plan of activeWorkoutPlans"
+              [class.selected]="selectedPlanId === plan.id"
+              (click)="onPlanChange(plan.id)">
+              <div class="plan-info">
+                <div class="plan-name">{{ plan.workoutPlan.name }}</div>
+                <div class="plan-badge">
+                  <span
+                    class="status-badge"
+                    [style.background-color]="getPlanStatusColor(plan.status)">
+                    {{ getPlanStatusName(plan.status) }}
+                  </span>
+                </div>
+              </div>
+              <div class="plan-progress">
+                <div class="progress-info">
+                  <span>Postęp: {{ plan.progressPercentage }}%</span>
+                  <span>Dzień {{ plan.currentDay }} / {{ plan.workoutPlan.totalDays }}</span>
+                </div>
+                <mat-progress-bar
+                  mode="determinate"
+                  [value]="plan.progressPercentage">
+                </mat-progress-bar>
+              </div>
+            </mat-card>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Sessions list -->
+    <div class="sessions-container">
+      <div class="loading-container" *ngIf="loading.sessions">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Ładowanie historii treningów...</p>
+      </div>
+
+      <div class="no-sessions" *ngIf="!loading.sessions && sessions.length === 0">
+        <mat-card>
+          <mat-card-content>
+            <div class="message-content">
+              <mat-icon>fitness_center</mat-icon>
+              <h3>Brak sesji treningowych</h3>
+              <p *ngIf="activeTab === 0">Nie masz jeszcze zarejestrowanych sesji treningowych.</p>
+              <p *ngIf="activeTab === 1">Nie masz jeszcze zarejestrowanych sesji dla tego planu treningowego.</p>
+              <button mat-raised-button color="primary" (click)="recordNewSession()">
+                <mat-icon>add</mat-icon>
+                Zarejestruj pierwszy trening
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <div class="sessions-list" *ngIf="!loading.sessions && sessions.length > 0">
+        <mat-card class="session-card" *ngFor="let session of sessions" (click)="viewSessionDetails(session.id)">
+          <div class="session-header">
+            <div class="session-date">
+              <mat-icon>event</mat-icon>
+              <span>{{ formatDate(session.sessionDate) }}</span>
+            </div>
+            <div class="session-actions">
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="deleteSession(session, $event)"
+                matTooltip="Usuń sesję">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <div class="session-content">
+            <div class="session-info">
+              <div class="plan-name">{{ session.planName }}</div>
+              <div class="session-day">Dzień {{ session.completedDayNumber }}</div>
+            </div>
+            <div class="session-exercises">
+              <mat-chip-listbox>
+                <mat-chip-option disableRipple>
+                  <mat-icon>fitness_center</mat-icon>
+                  {{ session.exercisesCount }} ćwiczenia
+                </mat-chip-option>
+              </mat-chip-listbox>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+
+      <!-- Pagination -->
+      <mat-paginator
+        *ngIf="totalItems > 0"
+        [length]="totalItems"
+        [pageSize]="pageSize"
+        [pageIndex]="currentPage"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        (page)="onPageChange($event)">
+      </mat-paginator>
+    </div>
+  </div>
+</div>

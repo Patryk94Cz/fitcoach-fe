@@ -1,0 +1,118 @@
+<!-- src/app/features/workout-sessions/session-detail/session-detail.component.html -->
+<div class="session-detail-container">
+  <div class="navigation-buttons">
+    <button mat-button color="primary" routerLink="/my-workouts">
+      <mat-icon>arrow_back</mat-icon>
+      Powrót do historii treningów
+    </button>
+  </div>
+
+  <!-- Loading spinner -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Ładowanie szczegółów sesji treningowej...</p>
+  </div>
+
+  <!-- Session content -->
+  <div class="session-content" *ngIf="!loading && session">
+    <div class="session-header">
+      <div class="title-container">
+        <h1 class="page-title">Sesja treningowa</h1>
+        <h2 class="plan-name">{{ session.userWorkoutPlan.workoutPlan.name }}</h2>
+        <div class="session-date">
+          <mat-icon>event</mat-icon>
+          <span>{{ formatDate(session.sessionDate) }}</span>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button mat-raised-button color="warn" (click)="deleteSession()">
+          <mat-icon>delete</mat-icon>
+          Usuń sesję
+        </button>
+      </div>
+    </div>
+
+    <!-- Session details -->
+    <mat-card class="session-details-card">
+      <mat-card-header>
+        <mat-card-title>Informacje o sesji</mat-card-title>
+        <mat-card-subtitle>
+          Dzień {{ session.completedDayNumber }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="session-notes" *ngIf="session.notes">
+          <h3>Notatki z treningu</h3>
+          <p>{{ session.notes }}</p>
+        </div>
+
+        <h3>Wykonane ćwiczenia</h3>
+        <div class="exercises-list">
+          <div class="exercise-item" *ngFor="let performance of session.exercisePerformances; let i = index">
+            <div class="exercise-header">
+              <div class="exercise-title">
+                <span class="exercise-number">{{ i + 1 }}</span>
+                <div class="exercise-name-container">
+                  <div class="exercise-name">{{ performance.exercise.name }}</div>
+                  <div class="exercise-muscle-group">
+                    {{ getMuscleGroupName(performance.exercise.primaryMuscleGroup) }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="exercise-difficulty">
+                <span class="difficulty-badge"
+                      [class]="'difficulty-' + performance.exercise.difficultyLevel.toLowerCase()">
+                  {{ getDifficultyName(performance.exercise.difficultyLevel) }}
+                </span>
+              </div>
+            </div>
+
+            <div class="exercise-details">
+              <div class="performance-stats">
+                <div class="stat-item">
+                  <div class="stat-label">Serie</div>
+                  <div class="stat-value">{{ performance.setsCompleted }}</div>
+                </div>
+
+                <div class="stat-divider"></div>
+
+                <div class="stat-item">
+                  <div class="stat-label">Powtórzenia</div>
+                  <div class="stat-value">{{ performance.repsCompleted }}</div>
+                </div>
+
+                <div class="stat-divider"></div>
+
+                <div class="stat-item">
+                  <div class="stat-label">Obciążenie</div>
+                  <div class="stat-value">{{ performance.weightUsed }}</div>
+                </div>
+              </div>
+
+              <div class="performance-notes" *ngIf="performance.notes">
+                <h4>Notatki</h4>
+                <p>{{ performance.notes }}</p>
+              </div>
+            </div>
+
+            <mat-divider *ngIf="i < session.exercisePerformances.length - 1"></mat-divider>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Workout plan link -->
+    <div class="plan-link-container">
+      <button
+        mat-stroked-button
+        color="primary"
+        [routerLink]="['/workout-plans', session.userWorkoutPlan.workoutPlan.id]">
+        <mat-icon>visibility</mat-icon>
+        Zobacz szczegóły planu treningowego
+      </button>
+    </div>
+  </div>
+</div>
