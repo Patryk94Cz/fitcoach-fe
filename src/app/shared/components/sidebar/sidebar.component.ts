@@ -54,11 +54,6 @@ export class SidebarComponent {
       name: 'Historia treningów',
       route: '/my-workouts',
       icon: 'history'
-    },
-    {
-      name: 'Historia ćwiczeń',
-      route: '/exercise-history',
-      icon: 'trending_up'
     }
   ];
 
