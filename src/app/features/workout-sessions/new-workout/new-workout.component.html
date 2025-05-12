@@ -1,0 +1,210 @@
+<!-- src/app/features/workout-sessions/new-workout/new-workout.component.html -->
+<div class="new-workout-container">
+  <div class="navigation-buttons">
+    <button mat-button color="primary" routerLink="/my-workouts">
+      <mat-icon>arrow_back</mat-icon>
+      Przejdź do historii treningów
+    </button>
+  </div>
+
+  <h1 class="page-title">Rejestracja treningu</h1>
+  <p class="subtitle">Zapisz swoje wyniki i śledź swoje postępy</p>
+
+  <!-- Ładowanie -->
+  <div class="loading-container" *ngIf="loading.plans">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Ładowanie dostępnych planów treningowych...</p>
+  </div>
+
+  <!-- Główny formularz -->
+  <div class="form-content" *ngIf="!loading.plans">
+    <form [formGroup]="sessionForm" (ngSubmit)="onSubmit()">
+      <mat-stepper #stepper>
+        <!-- Krok 1: Wybór planu i dnia -->
+        <mat-step>
+          <ng-template matStepLabel>Wybierz plan i dzień treningowy</ng-template>
+
+          <mat-card>
+            <mat-card-content>
+              <!-- Informacja o wyborze planu -->
+              <div class="step-intro">
+                <h2>Wybierz plan treningowy i dzień</h2>
+                <p>Aby zarejestrować swój trening, wybierz plan treningowy, do którego zapisałeś się wcześniej oraz dzień treningowy, który wykonałeś.</p>
+              </div>
+
+              <!-- Wybór planu treningowego -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Wybierz plan treningowy</mat-label>
+                <mat-select
+                  formControlName="userWorkoutPlanId"
+                  required
+                  (selectionChange)="onPlanSelected($event.value)">
+                  <mat-option *ngFor="let plan of userWorkoutPlans" [value]="plan.id">
+                    {{ plan.workoutPlan.name }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="sessionForm.get('userWorkoutPlanId')?.hasError('required')">
+                  Wybór planu treningowego jest wymagany
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Wybór dnia treningowego - dostępne po wyborze planu -->
+              <mat-form-field appearance="outline" class="full-width" *ngIf="selectedPlan">
+                <mat-label>Wybierz dzień treningowy</mat-label>
+                <mat-select
+                  formControlName="completedDayNumber"
+                  required
+                  (selectionChange)="onDayChanged($event.value)">
+                  <mat-option *ngFor="let day of availableDays" [value]="day">
+                    Dzień {{ day }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="sessionForm.get('completedDayNumber')?.hasError('required')">
+                  Wybór dnia treningowego jest wymagany
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Ładowanie ćwiczeń -->
+              <div class="loading-container small" *ngIf="loading.plan">
+                <mat-spinner diameter="30"></mat-spinner>
+                <p>Ładowanie ćwiczeń dla wybranego dnia...</p>
+              </div>
+
+              <!-- Nawigacja do następnego kroku -->
+              <div class="step-actions">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  matStepperNext
+                  [disabled]="!sessionForm.get('userWorkoutPlanId')?.valid ||
+                             !sessionForm.get('completedDayNumber')?.valid ||
+                             loading.plan">
+                  Dalej: Zarejestruj wyniki ćwiczeń
+                  <mat-icon>arrow_forward</mat-icon>
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </mat-step>
+
+        <!-- Krok 2: Rejestracja wykonanych ćwiczeń -->
+        <mat-step>
+          <ng-template matStepLabel>Zarejestruj swoje wyniki</ng-template>
+
+          <mat-card>
+            <mat-card-content>
+              <div class="step-intro">
+                <h2>Zapisz wyniki dla każdego ćwiczenia</h2>
+                <p>Wprowadź liczbę wykonanych serii, powtórzeń i obciążenie dla każdego ćwiczenia z twojego treningu.</p>
+              </div>
+
+              <!-- Lista ćwiczeń dla wybranego dnia -->
+              <div formArrayName="exercisePerformances">
+                <div class="exercises-list">
+                  <div
+                    class="exercise-item"
+                    *ngFor="let exercise of exercisePerformancesArray.controls; let i = index"
+                    [formGroupName]="i">
+
+                    <div class="exercise-header">
+                      <div class="exercise-name">{{ getExerciseName(exercise.value.exerciseId) }}</div>
+                    </div>
+
+                    <div class="exercise-form">
+                      <div class="form-row">
+                        <!-- Serie -->
+                        <mat-form-field appearance="outline">
+                          <mat-label>Serie</mat-label>
+                          <input
+                            type="number"
+                            matInput
+                            formControlName="setsCompleted"
+                            min="1"
+                            required>
+                          <mat-error *ngIf="exercise.get('setsCompleted')?.hasError('required')">
+                            Liczba serii jest wymagana
+                          </mat-error>
+                          <mat-error *ngIf="exercise.get('setsCompleted')?.hasError('min')">
+                            Minimalna liczba serii to 1
+                          </mat-error>
+                        </mat-form-field>
+
+                        <!-- Powtórzenia -->
+                        <mat-form-field appearance="outline">
+                          <mat-label>Powtórzenia</mat-label>
+                          <input
+                            type="number"
+                            matInput
+                            formControlName="repsCompleted"
+                            min="1"
+                            required>
+                          <mat-error *ngIf="exercise.get('repsCompleted')?.hasError('required')">
+                            Liczba powtórzeń jest wymagana
+                          </mat-error>
+                          <mat-error *ngIf="exercise.get('repsCompleted')?.hasError('min')">
+                            Minimalna liczba powtórzeń to 1
+                          </mat-error>
+                        </mat-form-field>
+
+                        <!-- Obciążenie -->
+                        <mat-form-field appearance="outline">
+                          <mat-label>Obciążenie</mat-label>
+                          <input
+                            matInput
+                            formControlName="weightUsed"
+                            placeholder="np. 50kg, masa ciała"
+                            required>
+                          <mat-error *ngIf="exercise.get('weightUsed')?.hasError('required')">
+                            Obciążenie jest wymagane (możesz wpisać 'masa ciała')
+                          </mat-error>
+                        </mat-form-field>
+                      </div>
+
+                      <!-- Notatki -->
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Dodatkowe uwagi</mat-label>
+                        <textarea
+                          matInput
+                          formControlName="notes"
+                          rows="2"
+                          placeholder="Opcjonalne uwagi dotyczące wykonania ćwiczenia..."></textarea>
+                      </mat-form-field>
+                    </div>
+
+                    <mat-divider *ngIf="i < exercisePerformancesArray.controls.length - 1"></mat-divider>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Notatki dla całej sesji -->
+              <mat-form-field appearance="outline" class="full-width mt-3">
+                <mat-label>Uwagi do całego treningu</mat-label>
+                <textarea
+                  matInput
+                  formControlName="notes"
+                  rows="3"
+                  placeholder="Opcjonalne uwagi dotyczące całego treningu..."></textarea>
+              </mat-form-field>
+
+              <!-- Przyciski nawigacji -->
+              <div class="step-actions">
+                <button mat-button matStepperPrevious>
+                  <mat-icon>arrow_back</mat-icon>
+                  Wróć do wyboru planu
+                </button>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="sessionForm.invalid || loading.submit">
+                  <mat-spinner *ngIf="loading.submit" diameter="20"></mat-spinner>
+                  <span *ngIf="!loading.submit">Zapisz sesję treningową</span>
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </mat-step>
+      </mat-stepper>
+    </form>
+  </div>
+</div>

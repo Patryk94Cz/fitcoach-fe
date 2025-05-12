@@ -5,10 +5,6 @@
       <h1 class="page-title">Historia treningów</h1>
       <p class="subtitle">Przegląd wszystkich Twoich sesji treningowych</p>
     </div>
-    <button mat-raised-button color="primary" class="record-button" (click)="recordNewSession()" *ngIf="activeWorkoutPlans.length > 0">
-      <mat-icon>add</mat-icon>
-      Zarejestruj nowy trening
-    </button>
   </div>
 
   <!-- Komunikat o braku aktywnych planów -->
@@ -94,9 +90,9 @@
               <h3>Brak sesji treningowych</h3>
               <p *ngIf="activeTab === 0">Nie masz jeszcze zarejestrowanych sesji treningowych.</p>
               <p *ngIf="activeTab === 1">Nie masz jeszcze zarejestrowanych sesji dla tego planu treningowego.</p>
-              <button mat-raised-button color="primary" (click)="recordNewSession()">
+              <button mat-raised-button color="primary" routerLink="/new-workout">
                 <mat-icon>add</mat-icon>
-                Zarejestruj pierwszy trening
+                Przejdź do rejestracji treningu
               </button>
             </div>
           </mat-card-content>

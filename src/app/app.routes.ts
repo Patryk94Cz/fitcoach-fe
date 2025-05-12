@@ -1,4 +1,4 @@
-// src/app/app.routes.ts
+// src/app/app.routes.ts (updated)
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
@@ -67,26 +67,22 @@ export const routes: Routes = [
     loadComponent: () => import('./features/workout-plans/workout-plan-form/workout-plan-form.component').then(m => m.WorkoutPlanFormComponent),
     canActivate: [authGuard]
   },
-  // Ścieżki dla historii treningów (zastępują "my-workouts")
+  // Nowa ścieżka dla rejestracji treningu
+  {
+    path: 'new-workout',
+    loadComponent: () => import('./features/workout-sessions/new-workout/new-workout.component').then(m => m.NewWorkoutComponent),
+    canActivate: [authGuard]
+  },
+  // Ścieżki dla historii treningów
   {
     path: 'my-workouts',
     loadComponent: () => import('./features/workout-sessions/workout-history/workout-history.component').then(m => m.WorkoutHistoryComponent),
     canActivate: [authGuard]
   },
-  // Nowe ścieżki dla sesji treningowych
-  {
-    path: 'workout-sessions/new',
-    loadComponent: () => import('./features/workout-sessions/session-form/session-form.component').then(m => m.SessionFormComponent),
-    canActivate: [authGuard]
-  },
+  // Ścieżki dla sesji treningowych
   {
     path: 'workout-sessions/:id',
     loadComponent: () => import('./features/workout-sessions/session-detail/session-detail.component').then(m => m.SessionDetailComponent),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'exercise-history',
-    loadComponent: () => import('./features/workout-sessions/exercise-history/exercise-history.component').then(m => m.ExerciseHistoryComponent),
     canActivate: [authGuard]
   },
   {

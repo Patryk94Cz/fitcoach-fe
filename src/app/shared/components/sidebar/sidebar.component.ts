@@ -1,4 +1,4 @@
-// src/app/shared/components/sidebar/sidebar.component.ts
+// src/app/shared/components/sidebar/sidebar.component.ts (updated)
 import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -33,7 +33,6 @@ export class SidebarComponent {
   @Output() toggleSidebar = new EventEmitter<boolean>();
 
   // Navigation menu items
-  // Navigation menu items
   navItems = [
     {
       name: 'Dashboard',
@@ -49,6 +48,11 @@ export class SidebarComponent {
       name: 'Plany treningowe',
       route: '/workout-plans',
       icon: 'event_note'
+    },
+    {
+      name: 'Nowy trening',
+      route: '/new-workout',
+      icon: 'add_circle'
     },
     {
       name: 'Historia treningów',
