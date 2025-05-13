@@ -104,7 +104,7 @@
           mat-raised-button
           color="primary"
           class="join-button"
-          *ngIf="!isJoined && !isAuthor"
+          *ngIf="!isJoined"
           [disabled]="loading.join"
           (click)="joinWorkoutPlan()">
           <mat-icon>fitness_center</mat-icon>
