@@ -1,7 +1,7 @@
 // src/app/core/services/workout-plan.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {catchError, map, Observable, of, throwError} from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { PageResponse, DifficultyLevel} from '../../models/exercise.model';
 import {
@@ -202,7 +202,32 @@ export class WorkoutPlanService {
 
   // Porzucanie planu treningowego
   abandonWorkoutPlan(userPlanId: number): Observable<any> {
-    return this.http.delete<any>(`${this.userPlansUrl}/${userPlanId}`);
+    // Dodajemy specjalne opcje, które pozwolą na obsługę odpowiedzi tekstowej
+    const options = {
+      responseType: 'text' as 'json',  // Traktuj odpowiedź jako tekst, nie JSON
+      headers: new HttpHeaders({
+        'Accept': 'text/plain, */*' // Akceptuj odpowiedzi tekstowe
+      })
+    };
+
+    return this.http.delete<any>(`${this.userPlansUrl}/${userPlanId}`, options)
+      .pipe(
+        map(response => {
+          // Jeśli odpowiedź jest ciągiem tekstowym, zwracamy prosty obiekt
+          if (typeof response === 'string') {
+            return { message: response };
+          }
+          return response;
+        }),
+        catchError(error => {
+          // Jeśli błąd wynika z parsowania JSON, a status to 200 OK
+          if (error.status === 200 && error.error instanceof SyntaxError) {
+            // Zwróć sukces z wiadomością tekstową
+            return of({ message: 'Plan treningowy został porzucony' });
+          }
+          return throwError(() => error);
+        })
+      );
   }
 
   // Pobieranie szczegółów planu treningowego użytkownika

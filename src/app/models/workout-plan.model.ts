@@ -90,6 +90,8 @@ export interface UserWorkoutPlan {
   status: WorkoutPlanStatus;
   completionDate?: string;
   progressPercentage: number;
+  lastWorkoutDate?: string;     // Data ostatniego treningu
+  totalWorkouts?: number;       // Liczba treningów
 }
 
 export enum WorkoutPlanStatus {

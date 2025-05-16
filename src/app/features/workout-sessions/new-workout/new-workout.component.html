@@ -29,7 +29,8 @@
               <!-- Informacja o wyborze planu -->
               <div class="step-intro">
                 <h2>Wybierz plan treningowy i dzień</h2>
-                <p>Aby zarejestrować swój trening, wybierz plan treningowy, do którego zapisałeś się wcześniej oraz dzień treningowy, który wykonałeś.</p>
+                <p>Aby zarejestrować swój trening, wybierz plan treningowy, do którego zapisałeś się wcześniej oraz
+                  dzień treningowy, który wykonałeś.</p>
               </div>
 
               <!-- Wybór planu treningowego -->
@@ -41,6 +42,10 @@
                   (selectionChange)="onPlanSelected($event.value)">
                   <mat-option *ngFor="let plan of userWorkoutPlans" [value]="plan.id">
                     {{ plan.workoutPlan.name }}
+                    <span class="status-badge" *ngIf="plan.status === 'COMPLETED'"
+                          [style.color]="'#4caf50'">
+        (zakończony)
+      </span>
                   </mat-option>
                 </mat-select>
                 <mat-error *ngIf="sessionForm.get('userWorkoutPlanId')?.hasError('required')">
@@ -95,7 +100,8 @@
             <mat-card-content>
               <div class="step-intro">
                 <h2>Zapisz wyniki dla każdego ćwiczenia</h2>
-                <p>Wprowadź liczbę wykonanych serii, powtórzeń i obciążenie dla każdego ćwiczenia z twojego treningu.</p>
+                <p>Wprowadź liczbę wykonanych serii, powtórzeń i obciążenie dla każdego ćwiczenia z twojego
+                  treningu.</p>
               </div>
 
               <!-- Lista ćwiczeń dla wybranego dnia -->

@@ -41,60 +41,89 @@
         <!-- Progress Card (tylko dla uczestników) -->
         <mat-card class="progress-card" *ngIf="isJoined && userPlan">
           <mat-card-header>
-            <mat-card-title>Twój postęp</mat-card-title>
+            <mat-card-title>Informacje o planie</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <div class="progress-container">
-              <div class="progress-bar" [style.width.%]="userPlan.progressPercentage">
-                <span class="progress-text">{{ userPlan.progressPercentage }}%</span>
-              </div>
-            </div>
-            <div class="progress-info">
-              <div class="progress-item">
+            <div class="plan-info">
+              <div class="plan-info-item">
                 <span class="info-label">Status:</span>
                 <span class="status-badge" [style.background-color]="getStatusColor(userPlan.status)">
-                  {{ getStatusName(userPlan.status) }}
-                </span>
+          {{ getStatusName(userPlan.status) }}
+        </span>
               </div>
-              <div class="progress-item">
-                <span class="info-label">Dzień:</span>
-                <span class="info-value">{{ userPlan.currentDay }} / {{ workoutPlan.workoutDays.length }}</span>
+              <div class="plan-info-item">
+                <span class="info-label">Ilość dni treningowych:</span>
+                <span class="info-value">{{ workoutPlan.workoutDays.length }}</span>
               </div>
-              <div class="progress-item">
+              <div class="plan-info-item">
                 <span class="info-label">Data rozpoczęcia:</span>
                 <span class="info-value">{{ formatDate(userPlan.startDate) }}</span>
               </div>
-              <div class="progress-item" *ngIf="userPlan.completionDate">
+              <div class="plan-info-item" *ngIf="userPlan.completionDate">
                 <span class="info-label">Data zakończenia:</span>
                 <span class="info-value">{{ formatDate(userPlan.completionDate) }}</span>
               </div>
+
+              <!-- Dodajemy informację o ostatnim treningu -->
+              <div class="plan-info-item" *ngIf="userPlan.lastWorkoutDate">
+                <span class="info-label">Ostatni trening:</span>
+                <span class="info-value">{{ formatDate(userPlan.lastWorkoutDate) }}</span>
+              </div>
+
+              <!-- Liczba treningów -->
+              <div class="plan-info-item" *ngIf="userPlan.totalWorkouts">
+                <span class="info-label">Liczba treningów:</span>
+                <span class="info-value">{{ userPlan.totalWorkouts }}</span>
+              </div>
             </div>
-            <div class="progress-actions">
+
+            <!-- Usuwamy pasek postępu -->
+
+            <div class="plan-actions">
+              <!-- Przycisk do rejestracji treningu (dostępny zawsze) -->
               <button
                 mat-raised-button
                 color="primary"
-                [disabled]="loading.update || !canMoveToNextDay() || userPlan.status === 'COMPLETED'"
-                (click)="moveToNextDay()">
-                <mat-icon>arrow_forward</mat-icon>
-                Następny dzień
+                routerLink="/new-workout">
+                <mat-icon>fitness_center</mat-icon>
+                Zarejestruj trening
               </button>
+
+              <!-- Jeśli plan jest zakończony, dodajemy przycisk do jego reaktywacji -->
               <button
                 mat-raised-button
                 color="accent"
-                *ngIf="canCompleteWorkoutPlan()"
-                [disabled]="loading.update || userPlan.status === 'COMPLETED'"
-                (click)="completeWorkoutPlan()">
-                <mat-icon>check_circle</mat-icon>
-                Zakończ plan
+                *ngIf="userPlan.status === 'COMPLETED'"
+                (click)="reactivateWorkoutPlan()">
+                <mat-icon>replay</mat-icon>
+                Reaktywuj plan
               </button>
-              <button
-                mat-stroked-button
-                color="warn"
-                [disabled]="loading.update"
-                (click)="abandonWorkoutPlan()">
-                <mat-icon>cancel</mat-icon>
-                Porzuć plan
-              </button>
+
+              <!-- Przyciski dla planów w trakcie -->
+              <ng-container *ngIf="userPlan.status !== 'COMPLETED'">
+                <div class="progress-actions">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    [disabled]="loading.update || !canMoveToNextDay()"
+                    (click)="moveToNextDay()">
+                    <mat-icon>arrow_forward</mat-icon>
+                    Następny dzień
+                  </button>
+
+                  <!-- Przycisk zakończenia planu -->
+                  <button
+                    mat-raised-button
+                    color="accent"
+                    *ngIf="canCompleteWorkoutPlan()"
+                    [disabled]="loading.update"
+                    (click)="completeWorkoutPlan()">
+                    <mat-icon>check_circle</mat-icon>
+                    Zakończ plan
+                  </button>
+                </div>
+              </ng-container>
+
             </div>
           </mat-card-content>
         </mat-card>

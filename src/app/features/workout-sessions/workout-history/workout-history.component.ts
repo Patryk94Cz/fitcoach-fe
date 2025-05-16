@@ -121,10 +121,8 @@ export class WorkoutHistoryComponent implements OnInit {
     this.workoutPlanService.getUserWorkoutPlans()
       .subscribe({
         next: (response) => {
-          // Filtrujemy tylko aktywne plany (w trakcie lub ukończone)
-          this.activeWorkoutPlans = response.content.filter(
-            plan => plan.status === 'IN_PROGRESS' || plan.status === 'NOT_STARTED' || plan.status === 'COMPLETED'
-          );
+          // Pokazuj wszystkie plany w historii, włącznie z porzuconymi
+          this.activeWorkoutPlans = response.content;
           this.loading.plans = false;
         },
         error: (error) => {

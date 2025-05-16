@@ -83,21 +83,18 @@ export class NewWorkoutComponent implements OnInit {
     return this.sessionForm.get('exercisePerformances') as FormArray;
   }
 
-  // Ładowanie planów treningowych użytkownika
   loadUserWorkoutPlans(): void {
     this.loading.plans = true;
 
     this.workoutPlanService.getUserWorkoutPlans().subscribe({
       next: (response) => {
-        // Filtruj tylko aktywne plany (w trakcie lub nie rozpoczęte)
-        this.userWorkoutPlans = response.content.filter(
-          plan => plan.status === 'IN_PROGRESS' || plan.status === 'NOT_STARTED'
-        );
+        // Uwzględniamy wszystkie plany - bez filtrowania po statusie
+        this.userWorkoutPlans = response.content;
         this.loading.plans = false;
 
         // Jeśli nie ma planów, pokaż komunikat i przekieruj
         if (this.userWorkoutPlans.length === 0) {
-          this.snackBar.open('Nie masz aktywnych planów treningowych. Dołącz do planu aby rejestrować treningi.', 'OK', {
+          this.snackBar.open('Nie masz żadnych planów treningowych. Dołącz do planu aby rejestrować treningi.', 'OK', {
             duration: 5000
           });
           this.router.navigate(['/workout-plans']);

@@ -142,30 +142,41 @@ export class MyWorkoutPlansComponent implements OnInit {
 
   // Zakończenie planu treningowego
   completeWorkoutPlan(userPlan: UserWorkoutPlan): void {
-    if (!userPlan || userPlan.status === WorkoutPlanStatus.COMPLETED) return;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Zakończenie planu treningowego',
+        message: 'Czy na pewno chcesz zakończyć ten plan treningowy? Twój postęp zostanie zapisany, ale plan będzie oznaczony jako ukończony.',
+        confirmButtonText: 'Zakończ',
+        cancelButtonText: 'Anuluj'
+      }
+    });
 
-    const progress: WorkoutPlanProgress = {
-      currentDay: userPlan.currentDay,
-      status: WorkoutPlanStatus.COMPLETED,
-      progressPercentage: 100
-    };
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const progress: WorkoutPlanProgress = {
+          currentDay: userPlan.currentDay,
+          status: WorkoutPlanStatus.COMPLETED,
+          progressPercentage: 100
+        };
 
-    this.updating[userPlan.id] = true;
+        this.updating[userPlan.id] = true;
 
-    this.workoutPlanService.updateWorkoutPlanProgress(userPlan.id, progress).subscribe({
-      next: (updatedPlan) => {
-        // Aktualizuj plan w tablicy
-        const index = this.userWorkoutPlans.findIndex(p => p.id === userPlan.id);
-        if (index !== -1) {
-          this.userWorkoutPlans[index] = updatedPlan;
-        }
-        this.snackBar.open('Gratulacje! Plan treningowy został zakończony.', 'OK', { duration: 3000 });
-        this.updating[userPlan.id] = false;
-      },
-      error: (error) => {
-        console.error('Błąd podczas aktualizacji postępu:', error);
-        this.snackBar.open('Nie udało się zaktualizować postępu', 'OK', { duration: 3000 });
-        this.updating[userPlan.id] = false;
+        this.workoutPlanService.updateWorkoutPlanProgress(userPlan.id, progress).subscribe({
+          next: (updatedPlan) => {
+            // Aktualizuj plan w tablicy
+            const index = this.userWorkoutPlans.findIndex(p => p.id === userPlan.id);
+            if (index !== -1) {
+              this.userWorkoutPlans[index] = updatedPlan;
+            }
+            this.snackBar.open('Plan treningowy został zakończony!', 'OK', { duration: 3000 });
+            this.updating[userPlan.id] = false;
+          },
+          error: (error) => {
+            console.error('Błąd podczas aktualizacji statusu planu:', error);
+            this.snackBar.open('Nie udało się zakończyć planu treningowego', 'OK', { duration: 3000 });
+            this.updating[userPlan.id] = false;
+          }
+        });
       }
     });
   }
@@ -217,11 +228,10 @@ export class MyWorkoutPlansComponent implements OnInit {
   }
 
   // Sprawdza czy pokazać przycisk zakończenia planu
-  canCompleteWorkoutPlan(userPlan: UserWorkoutPlan): boolean {
-    if (!userPlan) return false;
-    const totalDays = userPlan.workoutPlan.totalDays || 0;
-    return userPlan.status === WorkoutPlanStatus.IN_PROGRESS &&
-      userPlan.currentDay >= (totalDays / 2);
+  canCompleteWorkoutPlan(userPlan?: UserWorkoutPlan): boolean {
+    const plan = userPlan;
+    if (!plan || !plan.workoutPlan) return false;
+    return plan.status === 'IN_PROGRESS' || plan.status === 'NOT_STARTED';
   }
 
   // Pomocnicze metody
