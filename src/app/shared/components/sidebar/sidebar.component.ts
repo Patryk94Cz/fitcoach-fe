@@ -40,6 +40,11 @@ export class SidebarComponent {
       icon: 'dashboard'
     },
     {
+      name: 'Wykres',
+      route: '/exercise-stats',
+      icon: 'trending_up'
+    },
+    {
       name: 'Nowy trening',
       route: '/new-workout',
       icon: 'add_circle'
@@ -64,6 +69,7 @@ export class SidebarComponent {
       route: '/exercise-history-table',
       icon: 'trending_up'
     },
+
   ];
 
   constructor(

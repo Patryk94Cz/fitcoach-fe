@@ -1,0 +1,120 @@
+<!-- src/app/features/statistics/exercise-stats/exercise-stats.component.html -->
+<div class="exercise-stats-container">
+  <h1 class="page-title">Śledź Postęp</h1>
+  <p class="subtitle">Analizuj swoje postępy i monitoruj obciążenia w czasie</p>
+
+  <!-- Filters section -->
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <form [formGroup]="filterForm" class="filters-form">
+        <div class="filter-row">
+          <mat-form-field appearance="outline" class="exercise-select">
+            <mat-label>Wybierz ćwiczenie</mat-label>
+            <mat-select formControlName="exerciseId">
+              <mat-option *ngFor="let exercise of uniqueExercises" [value]="exercise.id">
+                {{ exercise.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="date-range-toggle">
+            <mat-button-toggle-group formControlName="dateRange">
+              <mat-button-toggle value="week">Tydzień</mat-button-toggle>
+              <mat-button-toggle value="month">Miesiąc</mat-button-toggle>
+              <mat-button-toggle value="year">Rok</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading indicator -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Ładowanie danych...</p>
+  </div>
+
+  <!-- No data message -->
+  <div class="no-data-container" *ngIf="!loading && uniqueExercises.length === 0">
+    <mat-card>
+      <mat-card-content class="no-data-content">
+        <mat-icon>trending_up</mat-icon>
+        <p>{{ noDataMessage }}</p>
+        <button mat-raised-button color="primary" routerLink="/new-workout">
+          <mat-icon>add</mat-icon>
+          Zarejestruj trening
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Chart container -->
+  <div class="chart-section" *ngIf="!loading && uniqueExercises.length > 0">
+    <mat-card>
+      <mat-card-content>
+        <div class="chart-header">
+          <h2 *ngIf="selectedExercise">Wykres postępu: {{ selectedExercise }}</h2>
+          <div class="chart-info">
+            <span class="info-badge">
+              <mat-icon>info</mat-icon>
+              Wartości reprezentują obciążenie w kilogramach
+            </span>
+          </div>
+        </div>
+
+        <div class="chart-container" #chartContainer></div>
+
+        <div class="chart-legend" *ngIf="chartData && chartData.length > 0">
+          <div class="legend-item">
+            <div class="legend-color" style="background-color: #3f51b5;"></div>
+            <span>Obciążenie (kg)</span>
+          </div>
+        </div>
+
+        <div class="no-chart-data" *ngIf="chartData && chartData.length === 0 && selectedExercise">
+          <mat-icon>show_chart</mat-icon>
+          <p>Brak danych dla wybranego ćwiczenia w tym zakresie dat.</p>
+          <p>Wybierz inne ćwiczenie lub zmień zakres czasowy.</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Stats summary -->
+  <div class="stats-summary" *ngIf="!loading && chartData && chartData.length > 0">
+    <mat-card>
+      <mat-card-content>
+        <h3>Podsumowanie statystyk</h3>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Najniższe obciążenie</div>
+            <div class="stat-value">
+              {{ getMinWeight() }} kg
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Najwyższe obciążenie</div>
+            <div class="stat-value">
+              {{ getMaxWeight() }} kg
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Średnie obciążenie</div>
+            <div class="stat-value">
+              {{ getAverageWeight() | number:'1.1-1' }} kg
+            </div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-label">Liczba treningów</div>
+            <div class="stat-value">{{ chartData.length }}</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -59,16 +59,6 @@
                   </span>
                 </div>
               </div>
-              <div class="plan-progress">
-                <div class="progress-info">
-                  <span>Postęp: {{ plan.progressPercentage }}%</span>
-                  <span>Dzień {{ plan.currentDay }} / {{ plan.workoutPlan.totalDays }}</span>
-                </div>
-                <mat-progress-bar
-                  mode="determinate"
-                  [value]="plan.progressPercentage">
-                </mat-progress-bar>
-              </div>
             </mat-card>
           </div>
         </mat-card-content>

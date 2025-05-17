@@ -91,6 +91,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'exercise-stats',
+    loadComponent: () => import('./features/statistics/exercise-stats/exercise-stats.component').then(m => m.ExerciseStatsComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: '**',
     redirectTo: '/dashboard'
   },
