@@ -227,11 +227,10 @@ export class MyWorkoutPlansComponent implements OnInit {
       userPlan.currentDay < (userPlan.workoutPlan.totalDays || 0);
   }
 
-  // Sprawdza czy pokazać przycisk zakończenia planu
-  canCompleteWorkoutPlan(userPlan?: UserWorkoutPlan): boolean {
-    const plan = userPlan;
-    if (!plan || !plan.workoutPlan) return false;
-    return plan.status === 'IN_PROGRESS' || plan.status === 'NOT_STARTED';
+  canCompleteWorkoutPlan(userPlan: UserWorkoutPlan): boolean {
+    if (!userPlan) return false;
+
+    return userPlan.status !== 'COMPLETED';
   }
 
   // Pomocnicze metody

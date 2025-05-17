@@ -112,15 +112,7 @@
         </button>
 
         <ng-container *ngIf="userPlan.status !== 'COMPLETED'">
-          <button
-            mat-raised-button
-            color="primary"
-            *ngIf="canMoveToNextDay(userPlan)"
-            [disabled]="updating[userPlan.id]"
-            (click)="moveToNextDay(userPlan)">
-            <mat-icon>arrow_forward</mat-icon>
-            Następny dzień
-          </button>
+          <!-- Usuwamy przycisk "Następny dzień" -->
 
           <button
             mat-raised-button

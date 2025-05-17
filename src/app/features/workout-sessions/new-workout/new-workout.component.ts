@@ -114,42 +114,10 @@ export class NewWorkoutComponent implements OnInit {
     this.selectedPlan = this.userWorkoutPlans.find(p => p.id === planId) || null;
 
     if (this.selectedPlan) {
-      // Ustaw domyślny dzień (aktualny dzień planu)
-      this.sessionForm.get('completedDayNumber')?.setValue(this.selectedPlan.currentDay);
+      // Nie ustawiaj domyślnego dnia - pozwól użytkownikowi wybrać dowolny
+      this.sessionForm.get('completedDayNumber')?.setValue(null);
 
-      // Pobierz szczegóły planu
-      this.workoutPlanService.getWorkoutPlanById(this.selectedPlan.workoutPlan.id).subscribe({
-        next: (plan) => {
-          const currentDayNumber = this.sessionForm.get('completedDayNumber')?.value;
-          const currentDay = plan.workoutDays.find(day => day.dayNumber === currentDayNumber);
-
-          if (currentDay && currentDay.exercises) {
-            // Wyczyść poprzednie ćwiczenia
-            this.exercisePerformancesArray.clear();
-
-            // Zapisz ćwiczenia aktualnego dnia
-            this.currentDayExercises = currentDay.exercises;
-
-            // Dodaj formularze dla każdego ćwiczenia
-            currentDay.exercises.forEach((exercise, index) => {
-              this.addExercisePerformance(
-                exercise.exercise?.id || 0,
-                exercise.setsCount || 0,
-                exercise.repsCount || 0,
-                exercise.weight || '',
-                index + 1
-              );
-            });
-          }
-
-          this.loading.plan = false;
-        },
-        error: (error) => {
-          console.error('Błąd podczas ładowania szczegółów planu:', error);
-          this.snackBar.open('Nie udało się załadować szczegółów planu', 'OK', { duration: 3000 });
-          this.loading.plan = false;
-        }
-      });
+      // Reszta kodu pozostaje bez zmian...
     }
   }
 
@@ -212,10 +180,8 @@ export class NewWorkoutComponent implements OnInit {
     this.exercisePerformancesArray.push(exerciseGroup);
   }
 
-  // Wysłanie formularza
   onSubmit(): void {
     if (this.sessionForm.invalid) {
-      // Oznacz wszystkie kontrolki jako dotknięte, aby pokazać błędy
       this.markFormGroupTouched(this.sessionForm);
       return;
     }

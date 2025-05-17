@@ -407,6 +407,7 @@ export class WorkoutPlanDetailComponent implements OnInit {
 
     if (nextDay > totalDays) return;
 
+    // Oblicz procent postępu ale NIGDY nie ustawiaj statusu na COMPLETED automatycznie
     const progressPercentage = Math.round((nextDay / totalDays) * 100);
 
     const progress: WorkoutPlanProgress = {
@@ -514,26 +515,11 @@ export class WorkoutPlanDetailComponent implements OnInit {
     return statusColors[status] || '#000000';
   }
 
-  canMoveToNextDay(): boolean {
-    if (!this.userPlan || !this.workoutPlan) return false;
-
-    // Wyraźnie sprawdźmy status jako string
-    const status = this.userPlan.status;
-    const isCompleted = status === 'COMPLETED'; // użyj stringa zamiast enuma
-
-    return !isCompleted &&
-      this.userPlan.currentDay < this.workoutPlan.workoutDays.length;
-  }
-
   canCompleteWorkoutPlan(): boolean {
-    if (!this.userPlan || !this.workoutPlan) return false;
+    if (!this.userPlan) return false;
 
-    // Wyraźnie sprawdźmy status jako string
+    // Plan można zakończyć w dowolnym momencie, o ile nie jest już zakończony
     const status = this.userPlan.status;
-    const isCompleted = status === 'COMPLETED'; // użyj stringa zamiast enuma
-    const isInProgress = status === 'IN_PROGRESS';
-    const isNotStarted = status === 'NOT_STARTED';
-
-    return !isCompleted && (isInProgress || isNotStarted);
+    return status !== 'COMPLETED';
   }
 }

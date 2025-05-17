@@ -101,27 +101,15 @@
 
               <!-- Przyciski dla planów w trakcie -->
               <ng-container *ngIf="userPlan.status !== 'COMPLETED'">
-                <div class="progress-actions">
-                  <button
-                    mat-raised-button
-                    color="primary"
-                    [disabled]="loading.update || !canMoveToNextDay()"
-                    (click)="moveToNextDay()">
-                    <mat-icon>arrow_forward</mat-icon>
-                    Następny dzień
-                  </button>
-
-                  <!-- Przycisk zakończenia planu -->
-                  <button
-                    mat-raised-button
-                    color="accent"
-                    *ngIf="canCompleteWorkoutPlan()"
-                    [disabled]="loading.update"
-                    (click)="completeWorkoutPlan()">
-                    <mat-icon>check_circle</mat-icon>
-                    Zakończ plan
-                  </button>
-                </div>
+                <button
+                  mat-raised-button
+                  color="accent"
+                  *ngIf="canCompleteWorkoutPlan()"
+                  [disabled]="loading.update"
+                  (click)="completeWorkoutPlan()">
+                  <mat-icon>check_circle</mat-icon>
+                  Zakończ plan
+                </button>
               </ng-container>
 
             </div>
