@@ -54,18 +54,26 @@ export class AuthService {
         this.isLoadingSubject.next(true);
         this.isAuthenticatedSubject.next(true);
 
-        // Get user data with proper error handling
-        this.getCurrentUser().pipe(
-          catchError(error => {
-            console.error('Error loading user profile:', error);
-            localStorage.removeItem(this.tokenKey);
-            this.isAuthenticatedSubject.next(false);
-            return of(null);
-          }),
-          finalize(() => {
-            this.isLoadingSubject.next(false);
-          })
-        ).subscribe();
+        // Add a special header to prevent the interceptor from being triggered
+        const headers = new HttpHeaders().set('Skip-Token-Injection', 'true');
+
+        // Get user data with proper error handling - use the headers
+        this.http.get<User>(`${environment.apiUrl}/users/me`, { headers })
+          .pipe(
+            catchError(error => {
+              console.error('Error loading user profile:', error);
+              localStorage.removeItem(this.tokenKey);
+              this.isAuthenticatedSubject.next(false);
+              return of(null);
+            }),
+            finalize(() => {
+              this.isLoadingSubject.next(false);
+            })
+          ).subscribe(user => {
+          if (user) {
+            this.currentUserSubject.next(user);
+          }
+        });
       }
     }
   }
@@ -132,7 +140,10 @@ export class AuthService {
    * @returns Observable with user data
    */
   getCurrentUser(): Observable<User> {
-    return this.http.get<User>(`${environment.apiUrl}/users/me`)
+    // Add the special header to skip the interceptor
+    const headers = new HttpHeaders().set('Skip-Token-Injection', 'true');
+
+    return this.http.get<User>(`${environment.apiUrl}/users/me`, { headers })
       .pipe(
         tap(user => {
           this.currentUserSubject.next(user);
@@ -232,11 +243,13 @@ export class AuthService {
    * @returns Observable<boolean> indicating if backend is reachable
    */
   checkBackendHealth(): Observable<boolean> {
-    return this.http.get<any>(`${environment.apiUrl}/public/health`, {
-      headers: { 'Skip-Token-Injection': 'true' }
-    }).pipe(
-      map(() => true),
-      catchError(() => of(false))
-    );
+    // Use the special header here as well
+    const headers = new HttpHeaders().set('Skip-Token-Injection', 'true');
+
+    return this.http.get<any>(`${environment.apiUrl}/public/health`, { headers })
+      .pipe(
+        map(() => true),
+        catchError(() => of(false))
+      );
   }
 }

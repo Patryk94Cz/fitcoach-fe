@@ -33,20 +33,17 @@
                   dzień treningowy, który wykonałeś.</p>
               </div>
 
-              <!-- Wybór planu treningowego -->
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Wybierz plan treningowy</mat-label>
                 <mat-select
                   formControlName="userWorkoutPlanId"
                   required
                   (selectionChange)="onPlanSelected($event.value)">
-                  <mat-option *ngFor="let plan of userWorkoutPlans" [value]="plan.id">
-                    {{ plan.workoutPlan.name }}
-                    <span class="status-badge" *ngIf="plan.status === 'COMPLETED'"
-                          [style.color]="'#4caf50'">
-        (zakończony)
-      </span>
-                  </mat-option>
+                  <ng-container *ngFor="let plan of userWorkoutPlans">
+                    <mat-option *ngIf="plan.status !== 'COMPLETED'" [value]="plan.id">
+                      {{ plan.workoutPlan.name }}
+                    </mat-option>
+                  </ng-container>
                 </mat-select>
                 <mat-error *ngIf="sessionForm.get('userWorkoutPlanId')?.hasError('required')">
                   Wybór planu treningowego jest wymagany

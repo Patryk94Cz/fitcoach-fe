@@ -11,7 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import {MatPaginatorIntl, MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
@@ -27,6 +27,7 @@ import {
 import { PageResponse, DifficultyLevel } from '../../../models/exercise.model';
 import { WorkoutPlanCardComponent } from '../workout-plan-card/workout-plan-card.component';
 import { AuthService } from '../../../core/services/auth.service';
+import {PolishPaginatorIntl} from '../../exercises/exercise-history-table/exercise-history-table.component';
 
 // Filter and sort options
 export interface FilterOptions {
@@ -69,7 +70,10 @@ export enum SortOption {
     WorkoutPlanCardComponent
   ],
   templateUrl: './workout-plan-list.component.html',
-  styleUrls: ['./workout-plan-list.component.scss']
+  styleUrls: ['./workout-plan-list.component.scss'],
+  providers: [
+    { provide: MatPaginatorIntl, useClass: PolishPaginatorIntl }
+  ]
 })
 export class WorkoutPlanListComponent implements OnInit {
   // Dane planów treningowych

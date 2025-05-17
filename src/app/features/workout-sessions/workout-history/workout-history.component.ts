@@ -11,7 +11,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import {MatPaginatorIntl, MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
@@ -21,6 +21,7 @@ import { WorkoutPlanService } from '../../../core/services/workout-plan.service'
 import { WorkoutSessionListItem } from '../../../models/workout-session.model';
 import { UserWorkoutPlan } from '../../../models/workout-plan.model';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import {PolishPaginatorIntl} from '../../exercises/exercise-history-table/exercise-history-table.component';
 
 @Component({
   selector: 'app-workout-history',
@@ -43,7 +44,10 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
     MatChipsModule
   ],
   templateUrl: './workout-history.component.html',
-  styleUrls: ['./workout-history.component.scss']
+  styleUrls: ['./workout-history.component.scss'],
+  providers: [
+    { provide: MatPaginatorIntl, useClass: PolishPaginatorIntl }
+  ]
 })
 export class WorkoutHistoryComponent implements OnInit {
   // Sesje treningowe

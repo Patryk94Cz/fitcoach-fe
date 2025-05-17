@@ -88,11 +88,11 @@ export class NewWorkoutComponent implements OnInit {
 
     this.workoutPlanService.getUserWorkoutPlans().subscribe({
       next: (response) => {
-        // Uwzględniamy wszystkie plany - bez filtrowania po statusie
+        // Get all plans but visually distinguish completed plans in the template
         this.userWorkoutPlans = response.content;
         this.loading.plans = false;
 
-        // Jeśli nie ma planów, pokaż komunikat i przekieruj
+        // If no plans, show message and redirect
         if (this.userWorkoutPlans.length === 0) {
           this.snackBar.open('Nie masz żadnych planów treningowych. Dołącz do planu aby rejestrować treningi.', 'OK', {
             duration: 5000
@@ -106,6 +106,10 @@ export class NewWorkoutComponent implements OnInit {
         this.loading.plans = false;
       }
     });
+  }
+
+  hasCompletedPlans(): boolean {
+    return this.userWorkoutPlans?.some(plan => plan.status === 'COMPLETED') || false;
   }
 
   // Obsługa wyboru planu

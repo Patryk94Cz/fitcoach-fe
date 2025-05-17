@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import {MatPaginatorIntl, MatPaginatorModule, PageEvent} from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -29,6 +29,7 @@ import {
 } from '../../../models/exercise.model';
 import { ExerciseCardComponent } from '../exercise-card/exercise-card.component';
 import { User } from '../../../models/user.model';
+import {PolishPaginatorIntl} from '../exercise-history-table/exercise-history-table.component';
 
 // Filter and sort options
 export interface FilterOptions {
@@ -71,7 +72,10 @@ export enum SortOption {
     ExerciseCardComponent
   ],
   templateUrl: './exercise-list.component.html',
-  styleUrls: ['./exercise-list.component.scss']
+  styleUrls: ['./exercise-list.component.scss'],
+  providers: [
+    { provide: MatPaginatorIntl, useClass: PolishPaginatorIntl }
+  ]
 })
 export class ExerciseListComponent implements OnInit {
   // Exercises data

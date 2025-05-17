@@ -40,6 +40,11 @@ export class SidebarComponent {
       icon: 'dashboard'
     },
     {
+      name: 'Nowy trening',
+      route: '/new-workout',
+      icon: 'add_circle'
+    },
+    {
       name: 'Ćwiczenia',
       route: '/exercises',
       icon: 'fitness_center'
@@ -50,15 +55,15 @@ export class SidebarComponent {
       icon: 'event_note'
     },
     {
-      name: 'Nowy trening',
-      route: '/new-workout',
-      icon: 'add_circle'
-    },
-    {
       name: 'Historia treningów',
       route: '/my-workouts',
       icon: 'history'
-    }
+    },
+    {
+      name: 'Historia ćwiczeń',
+      route: '/exercise-history-table',
+      icon: 'trending_up'
+    },
   ];
 
   constructor(

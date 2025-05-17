@@ -1,1 +1,73 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <h1 class="page-title">Dashboard</h1>
+
+  <!-- Sekcja statystyk -->
+  <div class="stats-row">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>fitness_center</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{totalWorkouts}}</div>
+            <div class="stat-label">Wszystkie treningi</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>calendar_today</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{weeklyWorkouts}}</div>
+            <div class="stat-label">Treningi w tym tygodniu</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-content">
+          <div class="stat-icon">
+            <mat-icon>event_available</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value">{{activePlans}}</div>
+            <div class="stat-label">Aktywne plany</div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="dashboard-section">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Treningi w tym tygodniu</mat-card-title>
+        <mat-card-subtitle>{{getCurrentWeekRange()}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div id="weekly-tracker" class="weekly-tracker"></div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Widok rocznej aktywności -->
+  <div class="dashboard-section">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Twoja aktywność treningowa</mat-card-title>
+        <mat-card-subtitle>Ostatnie 365 dni</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div id="activity-heatmap" class="activity-heatmap"></div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

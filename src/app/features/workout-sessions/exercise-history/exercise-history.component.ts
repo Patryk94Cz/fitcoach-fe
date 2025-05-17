@@ -44,6 +44,7 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
   templateUrl: './workout-history.component.html',
   styleUrls: ['./workout-history.component.scss']
 })
+
 export class WorkoutHistoryComponent implements OnInit {
   // Sesje treningowe
   sessions: WorkoutSessionListItem[] = [];

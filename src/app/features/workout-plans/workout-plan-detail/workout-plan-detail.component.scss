@@ -458,3 +458,24 @@ mat-divider {
   gap: 10px;
   margin-top: 20px;
 }
+
+.completed-info {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 16px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  color: #666;
+
+  mat-icon {
+    margin-right: 8px;
+    color: #f44336; /* Red warning color */
+  }
+}
+
+.plan-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

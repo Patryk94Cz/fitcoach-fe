@@ -86,7 +86,12 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'exercise-history-table',
+    loadComponent: () => import('./features/exercises/exercise-history-table/exercise-history-table.component').then(m => m.ExerciseHistoryTableComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: '**',
     redirectTo: '/dashboard'
-  }
+  },
 ];

@@ -80,11 +80,12 @@
             <!-- Usuwamy pasek postępu -->
 
             <div class="plan-actions">
-              <!-- Przycisk do rejestracji treningu (dostępny zawsze) -->
+              <!-- Przycisk do rejestracji treningu (dostępny tylko dla planów które nie są zakończone) -->
               <button
                 mat-raised-button
                 color="primary"
-                routerLink="/new-workout">
+                routerLink="/new-workout"
+                *ngIf="userPlan.status !== 'COMPLETED'">
                 <mat-icon>fitness_center</mat-icon>
                 Zarejestruj trening
               </button>
@@ -111,7 +112,6 @@
                   Zakończ plan
                 </button>
               </ng-container>
-
             </div>
           </mat-card-content>
         </mat-card>
