@@ -1,36 +1,118 @@
 <!-- features/home/home.component.html -->
 <div class="home-container">
-  <!-- Usuwamy lokalny navbar, ponieważ mamy globalny -->
-
-  <!-- Uproszczona sekcja hero -->
-
   <div class="hero-section">
     <div class="hero-content">
       <h1>Witaj w FitCoach</h1>
-      <p>Twój osobisty trener fitness w jednej aplikacji</p>
+      <p>Twój osobisty trener fitness w kieszeni</p>
+      <p class="hero-description">Śledź postępy, monitoruj treningi i osiągaj swoje cele fitness dzięki naszej kompleksowej aplikacji</p>
       <button mat-raised-button color="primary" (click)="navigateTo('register')">Rozpocznij za darmo</button>
     </div>
   </div>
 
-  <!-- Prosta sekcja funkcjonalności -->
+  <!-- Sekcja o aplikacji -->
+  <div class="about-section">
+    <div class="container">
+      <h2>Dlaczego FitCoach?</h2>
+      <p class="subtitle">Zaprojektowany, aby wspierać Cię na każdym etapie Twojej drogi fitness</p>
+
+      <div class="about-content">
+        <div class="about-text">
+          <p>FitCoach to zaawansowana aplikacja do monitorowania treningów i śledzenia postępów, stworzona z myślą o wszystkich entuzjastach fitnessu - od początkujących po zaawansowanych.</p>
+          <p>Niezależnie od tego, czy Twoim celem jest budowa masy mięśniowej, utrata wagi, zwiększenie siły czy poprawa ogólnej kondycji, FitCoach dostarcza narzędzia potrzebne do śledzenia swoich osiągnięć i konsekwentnego zbliżania się do wyznaczonych celów.</p>
+        </div>
+        <div class="about-image">
+          <img [src]="'./assets/images/gym.jpg'" alt="Śledzenie postępów w treningu">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sekcja funkcjonalności -->
   <div class="features-section">
-    <h2>Nasze funkcje</h2>
-    <div class="features-grid">
-      <mat-card>
-        <mat-icon>fitness_center</mat-icon>
-        <h3>Plany treningowe</h3>
-        <p>Spersonalizowane plany treningowe dopasowane do Twoich potrzeb</p>
-      </mat-card>
-      <mat-card>
-        <mat-icon>restaurant</mat-icon>
-        <h3>Dieta</h3>
-        <p>Wskazówki żywieniowe i plany posiłków</p>
-      </mat-card>
-      <mat-card>
-        <mat-icon>insights</mat-icon>
-        <h3>Analiza postępów</h3>
-        <p>Śledź swoje wyniki i osiągaj cele</p>
-      </mat-card>
+    <div class="container">
+      <h2>Kluczowe funkcje</h2>
+      <p class="subtitle">Wszystko, czego potrzebujesz, aby osiągnąć swoje cele fitness</p>
+
+      <div class="features-grid">
+        <mat-card>
+          <mat-icon>fitness_center</mat-icon>
+          <h3>Biblioteka ćwiczeń</h3>
+          <p>Dostęp do obszernej bazy ćwiczeń z instrukcjami i wskazówkami dla każdej grupy mięśniowej</p>
+        </mat-card>
+
+        <mat-card>
+          <mat-icon>event_note</mat-icon>
+          <h3>Plany treningowe</h3>
+          <p>Gotowe plany treningowe dopasowane do Twoich celów i poziomu zaawansowania</p>
+        </mat-card>
+
+        <mat-card>
+          <mat-icon>add_circle</mat-icon>
+          <h3>Rejestracja treningów</h3>
+          <p>Szybkie i łatwe rejestrowanie treningów, z możliwością zapisania obciążeń, serii i powtórzeń</p>
+        </mat-card>
+
+        <mat-card>
+          <mat-icon>trending_up</mat-icon>
+          <h3>Analiza postępów</h3>
+          <p>Zaawansowane wykresy i statystyki pokazujące Twój progres i pomagające w osiąganiu lepszych rezultatów</p>
+        </mat-card>
+
+        <mat-card>
+          <mat-icon>history</mat-icon>
+          <h3>Historia treningów</h3>
+          <p>Pełna historia Twoich treningów umożliwiająca analizę i planowanie przyszłych sesji</p>
+        </mat-card>
+
+        <mat-card>
+          <mat-icon>dashboard</mat-icon>
+          <h3>Spersonalizowany dashboard</h3>
+          <p>Przejrzysty widok Twoich najważniejszych statystyk i aktualnych planów treningowych</p>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sekcja jak to działa -->
+  <div class="how-it-works-section">
+    <div class="container">
+      <h2>Jak to działa?</h2>
+      <p class="subtitle">Prosty proces, który pomoże Ci osiągnąć Twoje cele fitness</p>
+
+      <div class="steps-container">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Wybierz plan treningowy</h3>
+          <p>Dołącz do jednego z gotowych planów treningowych lub twórz własne, dopasowane do Twoich potrzeb</p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Rejestruj swoje treningi</h3>
+          <p>Zapisuj wszystkie szczegóły Twoich treningów - obciążenia, serie, powtórzenia i notatki</p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Śledź postępy</h3>
+          <p>Monitoruj swoje osiągnięcia i obserwuj postępy dzięki przejrzystym wykresom i statystykom</p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">4</div>
+          <h3>Osiągaj cele</h3>
+          <p>Konsekwentnie zbliżaj się do swoich celów fitness dzięki regularnej analizie postępów</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sekcja CTA -->
+  <div class="cta-section">
+    <div class="container">
+      <h2>Gotowy, aby rozpocząć swoją przygodę fitness?</h2>
+      <p>Dołącz do tysięcy użytkowników, którzy już osiągają swoje cele z FitCoach</p>
+      <button mat-raised-button color="primary" (click)="navigateTo('register')">Utwórz konto za darmo</button>
     </div>
   </div>
 

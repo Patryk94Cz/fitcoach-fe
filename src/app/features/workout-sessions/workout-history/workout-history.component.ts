@@ -45,9 +45,6 @@ import {PolishPaginatorIntl} from '../../exercises/exercise-history-table/exerci
   ],
   templateUrl: './workout-history.component.html',
   styleUrls: ['./workout-history.component.scss'],
-  providers: [
-    { provide: MatPaginatorIntl, useClass: PolishPaginatorIntl }
-  ]
 })
 export class WorkoutHistoryComponent implements OnInit {
   // Sesje treningowe

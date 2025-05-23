@@ -23,6 +23,18 @@
     margin-bottom: 15px;
   }
 
+  .forgot-password-link {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -10px;
+    margin-bottom: 15px;
+
+    a {
+      font-size: 14px;
+      text-decoration: none;
+    }
+  }
+
   .button-container {
     display: flex;
     justify-content: center;

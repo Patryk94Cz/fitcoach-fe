@@ -203,7 +203,7 @@ export class NewWorkoutComponent implements OnInit {
     this.workoutSessionService.createSession(sessionRequest).subscribe({
       next: (session) => {
         this.snackBar.open('Sesja treningowa została zarejestrowana!', 'OK', { duration: 3000 });
-        this.router.navigate(['/my-workouts']);
+        // this.router.navigate(['/my-workouts']);
       },
       error: (error) => {
         console.error('Błąd podczas rejestrowania sesji:', error);

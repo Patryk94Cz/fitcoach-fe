@@ -252,4 +252,19 @@ export class AuthService {
         catchError(() => of(false))
       );
   }
+
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/forgot-password`, { email });
+  }
+
+  validateResetToken(token: string): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/validate-reset-token?token=${token}`);
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/reset-password`, {
+      token,
+      newPassword
+    });
+  }
 }

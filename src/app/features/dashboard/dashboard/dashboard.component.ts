@@ -13,7 +13,6 @@ import * as d3 from 'd3';
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     MatCardModule,
     MatButtonModule,
     MatIconModule

@@ -1,6 +1,7 @@
-// src/app/app.routes.ts (updated)
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { ForgotPasswordComponent } from './features/auth/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './features/auth/reset-password/reset-password.component';
 
 export const routes: Routes = [
   {
@@ -19,6 +20,14 @@ export const routes: Routes = [
   {
     path: 'register',
     loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordComponent
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordComponent
   },
   {
     path: 'dashboard',

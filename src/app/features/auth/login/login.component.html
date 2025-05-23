@@ -29,6 +29,10 @@
           </mat-error>
         </mat-form-field>
 
+        <div class="forgot-password-link">
+          <a [routerLink]="['/forgot-password']" mat-button color="primary">Zapomniałeś hasła?</a>
+        </div>
+
         <div class="button-container">
           <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || isLoading">
             <mat-icon *ngIf="isLoading">hourglass_empty</mat-icon>
