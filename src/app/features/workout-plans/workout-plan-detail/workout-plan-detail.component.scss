@@ -1,4 +1,4 @@
-/* src/app/features/workout-plans/workout-plan-detail/workout-plan-detail.component.scss */
+/* Zoptymalizowany workout-plan-detail.component.scss */
 .workout-plan-detail-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -62,87 +62,13 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .progress-card {
+  .progress-card, .join-button {
     margin-top: 16px;
-
-    .progress-container {
-      background-color: #f5f5f5;
-      height: 12px;
-      border-radius: 6px;
-      overflow: hidden;
-      margin-bottom: 16px;
-      position: relative;
-
-      .progress-bar {
-        background-color: #4caf50;
-        height: 100%;
-        border-radius: 6px;
-        transition: width 0.3s ease;
-        min-width: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .progress-text {
-        position: absolute;
-        right: 8px;
-        font-size: 10px;
-        font-weight: 500;
-        color: #333;
-      }
-    }
-
-    .progress-info {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 16px;
-
-      .progress-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        .info-label {
-          font-size: 14px;
-          color: #666;
-        }
-
-        .info-value, .status-badge {
-          font-size: 14px;
-          font-weight: 500;
-          color: #333;
-        }
-
-        .status-badge {
-          padding: 2px 8px;
-          border-radius: 4px;
-          color: white;
-        }
-      }
-    }
-
-    .progress-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-
-      button {
-        mat-icon {
-          margin-right: 8px;
-        }
-      }
-    }
   }
 
   .join-button {
-    margin-top: 16px;
     height: 48px;
-
-    mat-icon {
-      margin-right: 8px;
-    }
+    mat-icon { margin-right: 8px; }
   }
 }
 
@@ -199,20 +125,14 @@ mat-divider {
   margin-top: 4px;
 }
 
-.tags-section {
-  h3 {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 12px;
-    color: #666;
-  }
+.tags-section h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: #666;
 }
 
 .workout-days-card {
-  .mat-card-subtitle {
-    margin-bottom: 0;
-  }
-
   .workout-day-content {
     padding: 16px 0;
 
@@ -230,16 +150,11 @@ mat-divider {
       white-space: pre-line;
     }
 
-    .exercises-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
     .exercise-item {
       background-color: #f9f9f9;
       border-radius: 8px;
       padding: 16px;
+      margin-bottom: 16px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
       .exercise-header {
@@ -248,21 +163,18 @@ mat-divider {
         align-items: center;
         margin-bottom: 12px;
 
-        .exercise-info {
-          .exercise-name {
-            font-size: 16px;
-            font-weight: 500;
-            margin: 0 0 4px 0;
-            color: #333;
-          }
+        .exercise-name {
+          font-size: 16px;
+          font-weight: 500;
+          color: #333;
+        }
 
-          .exercise-muscle-group {
-            font-size: 12px;
-            color: #666;
-            background-color: #e0e0e0;
-            padding: 2px 6px;
-            border-radius: 4px;
-          }
+        .exercise-muscle-group {
+          font-size: 12px;
+          color: #666;
+          background-color: #e0e0e0;
+          padding: 2px 6px;
+          border-radius: 4px;
         }
       }
 
@@ -282,14 +194,7 @@ mat-divider {
 
           mat-icon {
             font-size: 16px;
-            height: 16px;
-            width: 16px;
             color: #3f51b5;
-          }
-
-          span {
-            font-size: 14px;
-            color: #333;
           }
         }
       }
@@ -308,12 +213,6 @@ mat-divider {
         }
       }
     }
-  }
-}
-
-.ratings-card {
-  .mat-card-subtitle {
-    font-size: 14px;
   }
 }
 
@@ -343,10 +242,6 @@ mat-divider {
   }
 }
 
-.ratings-divider {
-  margin: 24px 0;
-}
-
 .ratings-list {
   h3 {
     font-size: 16px;
@@ -372,29 +267,18 @@ mat-divider {
       align-items: center;
       margin-bottom: 8px;
 
-      .user-info {
-        display: flex;
-        flex-direction: column;
-
-        strong {
-          font-size: 16px;
-          color: #333;
-        }
-
-        .rating-date {
-          font-size: 12px;
-          color: #999;
-        }
+      .user-info strong {
+        font-size: 16px;
+        color: #333;
       }
 
-      .stars {
-        display: flex;
+      .rating-date {
+        font-size: 12px;
+        color: #999;
+      }
 
-        mat-icon {
-          font-size: 18px;
-          height: 18px;
-          width: 18px;
-        }
+      .stars mat-icon {
+        font-size: 18px;
       }
     }
 
@@ -405,24 +289,7 @@ mat-divider {
       white-space: pre-line;
       margin-bottom: 16px;
     }
-
-    &:last-child {
-      mat-divider {
-        display: none;
-      }
-    }
   }
-}
-
-/* Dodatkowe style do zakładek */
-:host ::ng-deep .mat-mdc-tab-group {
-  .mat-mdc-tab-body-content {
-    padding: 16px 0;
-  }
-}
-
-.plan-info {
-  margin-bottom: 20px;
 }
 
 .plan-info-item {
@@ -431,17 +298,6 @@ mat-divider {
   margin-bottom: 12px;
   padding: 8px 0;
   border-bottom: 1px solid #eee;
-}
-
-.info-label {
-  font-size: 14px;
-  color: #666;
-  font-weight: 500;
-}
-
-.info-value {
-  font-size: 14px;
-  color: #333;
 }
 
 .status-badge {
@@ -454,28 +310,7 @@ mat-divider {
 
 .plan-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.completed-info {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  margin-bottom: 16px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  color: #666;
-
-  mat-icon {
-    margin-right: 8px;
-    color: #f44336; /* Red warning color */
-  }
-}
-
-.plan-actions {
-  display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 20px;
 }

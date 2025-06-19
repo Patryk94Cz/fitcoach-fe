@@ -1,24 +1,24 @@
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, finalize, map, of, tap } from 'rxjs';
-import { isPlatformBrowser } from '@angular/common';
-import { environment } from '../../../environments/environment';
-import { LoginRequest } from '../../models/auth/login-request.model';
-import { RegisterRequest } from '../../models/auth/register-request.model';
-import { JwtResponse } from '../../models/auth/jwt-response.model';
-import { User } from '../../models/user.model';
-import { Router } from '@angular/router';
+import {Injectable, PLATFORM_ID, inject} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {BehaviorSubject, Observable, catchError, finalize, map, of, tap} from 'rxjs';
+import {isPlatformBrowser} from '@angular/common';
+import {environment} from '../../../environments/environment';
+import {LoginRequest} from '../../models/auth/login-request.model';
+import {RegisterRequest} from '../../models/auth/register-request.model';
+import {JwtResponse} from '../../models/auth/jwt-response.model';
+import {User} from '../../models/user.model';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // BehaviorSubjects to expose observables for reactive state management
+
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   private isLoadingSubject = new BehaviorSubject<boolean>(false);
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
 
-  // Public observables that components can subscribe to
+
   public currentUser$ = this.currentUserSubject.asObservable();
   public isLoading$ = this.isLoadingSubject.asObservable();
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
@@ -30,21 +30,17 @@ export class AuthService {
     private http: HttpClient,
     private router: Router
   ) {
-    // Load user data during initialization, but with proper error handling
+
     this.loadStoredUser();
   }
 
-  /**
-   * Loads user data from localStorage token if available
-   * Handles platform-specific code for SSR compatibility
-   */
   private loadStoredUser(): void {
-    // Only run localStorage code in browser environments (not during SSR)
+
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem(this.tokenKey);
 
       if (token) {
-        // Check if token is expired before making an API call
+
         if (this.isTokenExpired(token)) {
           console.log('Token expired, removing from storage');
           localStorage.removeItem(this.tokenKey);
@@ -54,11 +50,11 @@ export class AuthService {
         this.isLoadingSubject.next(true);
         this.isAuthenticatedSubject.next(true);
 
-        // Add a special header to prevent the interceptor from being triggered
+
         const headers = new HttpHeaders().set('Skip-Token-Injection', 'true');
 
-        // Get user data with proper error handling - use the headers
-        this.http.get<User>(`${environment.apiUrl}/users/me`, { headers })
+
+        this.http.get<User>(`${environment.apiUrl}/users/me`, {headers})
           .pipe(
             catchError(error => {
               console.error('Error loading user profile:', error);
@@ -107,22 +103,22 @@ export class AuthService {
   register(registerRequest: RegisterRequest): Observable<any> {
     this.isLoadingSubject.next(true);
 
-    // Add special header to handle text responses as the backend might return plain text
+
     const headers = new HttpHeaders({
       'Accept': 'application/json, text/plain, */*'
     });
 
     return this.http.post(`${environment.apiUrl}/auth/register`, registerRequest, {
       headers,
-      responseType: 'text' // Handle response as text to avoid JSON parsing errors
+      responseType: 'text'
     }).pipe(
       map(response => {
-        // Try to parse as JSON if possible
+
         try {
           return JSON.parse(response);
         } catch (e) {
-          // If not valid JSON, just return the text response
-          return { message: response };
+
+          return {message: response};
         }
       }),
       catchError(error => {
@@ -140,16 +136,16 @@ export class AuthService {
    * @returns Observable with user data
    */
   getCurrentUser(): Observable<User> {
-    // Add the special header to skip the interceptor
+
     const headers = new HttpHeaders().set('Skip-Token-Injection', 'true');
 
-    return this.http.get<User>(`${environment.apiUrl}/users/me`, { headers })
+    return this.http.get<User>(`${environment.apiUrl}/users/me`, {headers})
       .pipe(
         tap(user => {
           this.currentUserSubject.next(user);
         }),
         catchError(error => {
-          // Clear user state on 401 Unauthorized
+
           if (error.status === 401) {
             this.logout();
           }
@@ -211,7 +207,7 @@ export class AuthService {
     const token = this.getToken();
     if (!token) return false;
 
-    // Verify the token isn't expired
+
     return !this.isTokenExpired(token);
   }
 
@@ -227,14 +223,14 @@ export class AuthService {
 
       const payload = JSON.parse(atob(tokenParts[1]));
 
-      // Check if exp claim exists
+
       if (!payload.exp) return false;
 
-      const expiryTimeMs = payload.exp * 1000; // Convert to milliseconds
+      const expiryTimeMs = payload.exp * 1000;
       return Date.now() >= expiryTimeMs;
     } catch (e) {
       console.error('Error parsing JWT token', e);
-      return true; // If we can't parse the token, consider it expired
+      return true;
     }
   }
 
@@ -243,10 +239,10 @@ export class AuthService {
    * @returns Observable<boolean> indicating if backend is reachable
    */
   checkBackendHealth(): Observable<boolean> {
-    // Use the special header here as well
+
     const headers = new HttpHeaders().set('Skip-Token-Injection', 'true');
 
-    return this.http.get<any>(`${environment.apiUrl}/public/health`, { headers })
+    return this.http.get<any>(`${environment.apiUrl}/public/health`, {headers})
       .pipe(
         map(() => true),
         catchError(() => of(false))
@@ -254,17 +250,68 @@ export class AuthService {
   }
 
   forgotPassword(email: string): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/forgot-password`, { email });
+    const headers = new HttpHeaders({
+      'Accept': 'application/json, text/plain, */*',
+      'Skip-Token-Injection': 'true'
+    });
+
+    return this.http.post(`${environment.apiUrl}/auth/forgot-password`, {email}, {
+      headers,
+      responseType: 'text'
+    }).pipe(
+      map(response => {
+        try {
+          return JSON.parse(response);
+        } catch (e) {
+          return {message: response};
+        }
+      }),
+      catchError(error => {
+        console.error('Forgot password error:', error);
+        throw error;
+      })
+    );
   }
 
-  validateResetToken(token: string): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/validate-reset-token?token=${token}`);
+  validateResetToken(token: string): Observable<boolean> {
+    const headers = new HttpHeaders({
+      'Skip-Token-Injection': 'true'
+    });
+
+    return this.http.get<boolean>(`${environment.apiUrl}/auth/validate-reset-token?token=${token}`, {headers})
+      .pipe(
+        map(() => true),
+        catchError(error => {
+          console.error('Token validation error:', error);
+          return of(false);
+        })
+      );
   }
 
   resetPassword(token: string, newPassword: string): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/reset-password`, {
+    const headers = new HttpHeaders({
+      'Accept': 'application/json, text/plain, */*',
+      'Skip-Token-Injection': 'true'
+    });
+
+    return this.http.post(`${environment.apiUrl}/auth/reset-password`, {
       token,
       newPassword
-    });
+    }, {
+      headers,
+      responseType: 'text'
+    }).pipe(
+      map(response => {
+        try {
+          return JSON.parse(response);
+        } catch (e) {
+          return { message: response };
+        }
+      }),
+      catchError(error => {
+        console.error('Reset password error:', error);
+        throw error;
+      })
+    );
   }
 }

@@ -1,4 +1,4 @@
-/* src/app/features/workout-plans/workout-plan-form/workout-plan-form.component.scss */
+/* Zoptymalizowany workout-plan-form.component.scss */
 .workout-plan-form-container {
   max-width: 900px;
   margin: 0 auto;
@@ -36,10 +36,6 @@
     margin-bottom: 24px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05) !important;
-
-    &:last-of-type {
-      margin-bottom: 0;
-    }
   }
 
   mat-card-content {
@@ -201,12 +197,6 @@
   justify-content: space-between;
   margin-top: 24px;
 
-  button {
-    mat-icon {
-      margin: 0 4px;
-    }
-  }
-
   @media (max-width: 600px) {
     flex-direction: column;
     gap: 8px;
@@ -271,29 +261,24 @@
       color: #333;
     }
 
-    .day-exercises {
+    .day-exercise {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background-color: white;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-bottom: 8px;
 
-      .day-exercise {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 12px;
-        background-color: white;
-        border-radius: 4px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      .exercise-summary-name {
+        font-weight: 500;
+        color: #333;
+      }
 
-        .exercise-summary-name {
-          font-weight: 500;
-          color: #333;
-        }
-
-        .exercise-summary-details {
-          font-size: 14px;
-          color: #666;
-        }
+      .exercise-summary-details {
+        font-size: 14px;
+        color: #666;
       }
     }
   }
@@ -329,64 +314,12 @@
   align-items: center;
   gap: 16px;
 
-  button {
-    &:last-child {
-      margin-left: auto;
-    }
-  }
-
   @media (max-width: 600px) {
     flex-direction: column;
     gap: 8px;
 
     button {
       width: 100%;
-
-      &:last-child {
-        margin-left: 0;
-      }
     }
   }
-}
-
-/* Style dla paneli mat-expansion-panel */
-:host ::ng-deep .mat-expansion-panel {
-  margin-bottom: 16px;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
-
-  .mat-expansion-panel-header {
-    height: 64px;
-  }
-
-  .mat-expansion-panel-header-title {
-    color: #3f51b5;
-    font-weight: 500;
-  }
-
-  .mat-expansion-panel-header-description {
-    color: #666;
-  }
-}
-
-/* Style dla steppera */
-:host ::ng-deep .mat-horizontal-stepper-header-container {
-  margin-bottom: 24px;
-}
-
-:host ::ng-deep .mat-horizontal-stepper-header {
-  pointer-events: none !important;
-}
-
-:host ::ng-deep .mat-stepper-horizontal-line {
-  margin: 0 -8px;
-}
-
-:host ::ng-deep .mat-step-label {
-  font-weight: 500;
-}
-
-:host ::ng-deep .mat-step-icon {
-  background-color: #3f51b5;
 }
