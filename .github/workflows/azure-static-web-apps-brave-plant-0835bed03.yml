@@ -30,24 +30,10 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          npm ci
-          npx ng version
+        run: npm ci
 
       - name: Build Angular app
-        run: |
-          echo "Building with production configuration..."
-          npx ng build --configuration=production --verbose
-          echo "Build completed. Checking output..."
-          ls -la dist/fitcoach-fe/
-          echo "Checking for index.html..."
-          if [ -f "dist/fitcoach-fe/index.html" ]; then
-            echo "✅ index.html found"
-          else
-            echo "❌ index.html not found"
-            echo "Files in dist/fitcoach-fe/:"
-            find dist/fitcoach-fe/ -name "*.html"
-          fi
+        run: ng build --configuration=production
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
