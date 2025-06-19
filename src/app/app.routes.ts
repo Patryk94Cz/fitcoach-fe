@@ -1,111 +1,137 @@
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { ForgotPasswordComponent } from './features/auth/forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from './features/auth/reset-password/reset-password.component';
 
 export const routes: Routes = [
+  // Public routes
   {
     path: '',
-    redirectTo: '/home',
-    pathMatch: 'full'
-  },
-  {
-    path: 'home',
-    loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
+    loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent),
+    data: { prerender: true }
   },
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
+    loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent),
+    data: { prerender: true }
   },
   {
     path: 'register',
-    loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)
+    loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent),
+    data: { prerender: true }
   },
   {
     path: 'forgot-password',
-    component: ForgotPasswordComponent
+    loadComponent: () => import('./features/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent),
+    data: { prerender: true }
   },
   {
     path: 'reset-password',
-    component: ResetPasswordComponent
+    loadComponent: () => import('./features/auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent),
+    data: { prerender: true }
   },
+
+  // Protected routes - Client-side only
   {
     path: 'dashboard',
     loadComponent: () => import('./features/dashboard/dashboard/dashboard.component').then(m => m.DashboardComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { prerender: false }
   },
-  // Ścieżki dla ćwiczeń
   {
     path: 'exercises',
     loadComponent: () => import('./features/exercises/exercise-list/exercise-list.component').then(m => m.ExerciseListComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { prerender: false }
   },
   {
     path: 'exercises/create',
     loadComponent: () => import('./features/exercises/exercise-form/exercise-form.component').then(m => m.ExerciseFormComponent),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'exercises/:id',
-    loadComponent: () => import('./features/exercises/exercise-detail/exercise-detail.component').then(m => m.ExerciseDetailComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { prerender: false }
   },
   {
     path: 'exercises/edit/:id',
     loadComponent: () => import('./features/exercises/exercise-form/exercise-form.component').then(m => m.ExerciseFormComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { prerender: false }
   },
-  // Ścieżki dla planów treningowych
+  {
+    path: 'exercises/:id',
+    loadComponent: () => import('./features/exercises/exercise-detail/exercise-detail.component').then(m => m.ExerciseDetailComponent),
+    canActivate: [authGuard],
+    data: { prerender: false }
+  },
   {
     path: 'workout-plans',
     loadComponent: () => import('./features/workout-plans/workout-plan-list/workout-plan-list.component').then(m => m.WorkoutPlanListComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { prerender: false }
   },
   {
     path: 'workout-plans/create',
     loadComponent: () => import('./features/workout-plans/workout-plan-form/workout-plan-form.component').then(m => m.WorkoutPlanFormComponent),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'workout-plans/:id',
-    loadComponent: () => import('./features/workout-plans/workout-plan-detail/workout-plan-detail.component').then(m => m.WorkoutPlanDetailComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { prerender: false }
   },
   {
     path: 'workout-plans/edit/:id',
     loadComponent: () => import('./features/workout-plans/workout-plan-form/workout-plan-form.component').then(m => m.WorkoutPlanFormComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { prerender: false }
   },
-  // Nowa ścieżka dla rejestracji treningu
+  {
+    path: 'workout-plans/:id',
+    loadComponent: () => import('./features/workout-plans/workout-plan-detail/workout-plan-detail.component').then(m => m.WorkoutPlanDetailComponent),
+    canActivate: [authGuard],
+    data: { prerender: false }
+  },
+  {
+    path: 'my-workout-plans',
+    loadComponent: () => import('./features/workout-plans/my-workout-plans/my-workout-plans.component').then(m => m.MyWorkoutPlansComponent),
+    canActivate: [authGuard],
+    data: { prerender: false }
+  },
   {
     path: 'new-workout',
     loadComponent: () => import('./features/workout-sessions/new-workout/new-workout.component').then(m => m.NewWorkoutComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { prerender: false }
   },
-  // Ścieżki dla historii treningów
   {
-    path: 'my-workouts',
-    loadComponent: () => import('./features/workout-sessions/workout-history/workout-history.component').then(m => m.WorkoutHistoryComponent),
-    canActivate: [authGuard]
+    path: 'workout-sessions/new',
+    loadComponent: () => import('./features/workout-sessions/session-form/session-form.component').then(m => m.SessionFormComponent),
+    canActivate: [authGuard],
+    data: { prerender: false }
   },
-  // Ścieżki dla sesji treningowych
   {
     path: 'workout-sessions/:id',
     loadComponent: () => import('./features/workout-sessions/session-detail/session-detail.component').then(m => m.SessionDetailComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { prerender: false }
+  },
+  {
+    path: 'my-workouts',
+    loadComponent: () => import('./features/workout-sessions/workout-history/workout-history.component').then(m => m.WorkoutHistoryComponent),
+    canActivate: [authGuard],
+    data: { prerender: false }
   },
   {
     path: 'exercise-history-table',
     loadComponent: () => import('./features/exercises/exercise-history-table/exercise-history-table.component').then(m => m.ExerciseHistoryTableComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { prerender: false }
   },
   {
     path: 'exercise-stats',
     loadComponent: () => import('./features/statistics/exercise-stats/exercise-stats.component').then(m => m.ExerciseStatsComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    data: { prerender: false }
   },
+
+  // Catch-all route
   {
     path: '**',
-    redirectTo: '/dashboard'
-  },
+    redirectTo: '',
+    data: { prerender: true }
+  }
 ];
