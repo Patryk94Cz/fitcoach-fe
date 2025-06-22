@@ -1,6 +1,7 @@
+// src/app/core/services/auth.service.ts
 import {Injectable, PLATFORM_ID, inject} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {BehaviorSubject, Observable, catchError, finalize, map, of, tap} from 'rxjs';
+import {BehaviorSubject, Observable, catchError, finalize, map, of, tap, timer, switchMap, share} from 'rxjs';
 import {isPlatformBrowser} from '@angular/common';
 import {environment} from '../../../environments/environment';
 import {LoginRequest} from '../../models/auth/login-request.model';
@@ -18,58 +19,59 @@ export class AuthService {
   private isLoadingSubject = new BehaviorSubject<boolean>(false);
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
 
-
   public currentUser$ = this.currentUserSubject.asObservable();
   public isLoading$ = this.isLoadingSubject.asObservable();
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  private tokenKey = 'fitcoach_auth_token';
+  private accessTokenKey = 'fitcoach_access_token';
+  private refreshTokenKey = 'fitcoach_refresh_token';
+  private tokenExpiryKey = 'fitcoach_token_expiry';
+  private userDataKey = 'fitcoach_user_data';
   private platformId = inject(PLATFORM_ID);
+
+  // Refresh token management
+  private refreshTokenInProgress = false;
+  private refreshTokenSubject = new BehaviorSubject<string | null>(null);
+  private tokenRefreshTimer: any = null;
 
   constructor(
     private http: HttpClient,
     private router: Router
   ) {
-
     this.loadStoredUser();
+    this.setupTokenRefreshTimer();
   }
 
   private loadStoredUser(): void {
-
     if (isPlatformBrowser(this.platformId)) {
-      const token = localStorage.getItem(this.tokenKey);
+      const accessToken = localStorage.getItem(this.accessTokenKey);
+      const refreshToken = localStorage.getItem(this.refreshTokenKey);
+      const userData = localStorage.getItem(this.userDataKey);
 
-      if (token) {
+      if (accessToken && refreshToken && userData) {
+        try {
+          const user = JSON.parse(userData);
 
-        if (this.isTokenExpired(token)) {
-          console.log('Token expired, removing from storage');
-          localStorage.removeItem(this.tokenKey);
-          return;
-        }
-
-        this.isLoadingSubject.next(true);
-        this.isAuthenticatedSubject.next(true);
-
-
-        const headers = new HttpHeaders().set('Skip-Token-Injection', 'true');
-
-
-        this.http.get<User>(`${environment.apiUrl}/users/me`, {headers})
-          .pipe(
-            catchError(error => {
-              console.error('Error loading user profile:', error);
-              localStorage.removeItem(this.tokenKey);
-              this.isAuthenticatedSubject.next(false);
-              return of(null);
-            }),
-            finalize(() => {
-              this.isLoadingSubject.next(false);
-            })
-          ).subscribe(user => {
-          if (user) {
+          if (this.isTokenExpired(accessToken)) {
+            console.log('Access token expired, attempting refresh...');
+            this.refreshAccessToken().subscribe({
+              next: () => {
+                this.currentUserSubject.next(user);
+                this.isAuthenticatedSubject.next(true);
+              },
+              error: () => {
+                this.clearTokens();
+              }
+            });
+          } else {
             this.currentUserSubject.next(user);
+            this.isAuthenticatedSubject.next(true);
+            this.setupTokenRefreshTimer();
           }
-        });
+        } catch (error) {
+          console.error('Error parsing stored user data:', error);
+          this.clearTokens();
+        }
       }
     }
   }
@@ -103,9 +105,9 @@ export class AuthService {
   register(registerRequest: RegisterRequest): Observable<any> {
     this.isLoadingSubject.next(true);
 
-
     const headers = new HttpHeaders({
-      'Accept': 'application/json, text/plain, */*'
+      'Accept': 'application/json, text/plain, */*',
+      'Skip-Token-Injection': 'true'
     });
 
     return this.http.post(`${environment.apiUrl}/auth/register`, registerRequest, {
@@ -113,11 +115,9 @@ export class AuthService {
       responseType: 'text'
     }).pipe(
       map(response => {
-
         try {
           return JSON.parse(response);
         } catch (e) {
-
           return {message: response};
         }
       }),
@@ -132,22 +132,89 @@ export class AuthService {
   }
 
   /**
+   * Refreshes the access token using refresh token
+   * @returns Observable with new access token
+   */
+  refreshAccessToken(): Observable<JwtResponse> {
+    if (this.refreshTokenInProgress) {
+      // If refresh is in progress, wait for it to complete
+      return this.refreshTokenSubject.pipe(
+        switchMap(token => {
+          if (token) {
+            // Return a mock response when refresh completes
+            return of({
+              accessToken: token,
+              refreshToken: this.getRefreshToken(),
+              type: 'Bearer',
+              id: this.currentUserSubject.value?.id || 0,
+              username: this.currentUserSubject.value?.username || '',
+              email: this.currentUserSubject.value?.email || '',
+              role: this.currentUserSubject.value?.role || '',
+              expiresIn: 900
+            } as JwtResponse);
+          }
+          throw new Error('Token refresh failed');
+        })
+      );
+    }
+
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      this.logout();
+      throw new Error('No refresh token available');
+    }
+
+    this.refreshTokenInProgress = true;
+    this.refreshTokenSubject.next(null);
+
+    const headers = new HttpHeaders({
+      'Skip-Token-Injection': 'true'
+    });
+
+    return this.http.post<JwtResponse>(`${environment.apiUrl}/auth/refresh-token`, {
+      refreshToken: refreshToken
+    }, { headers }).pipe(
+      tap(response => {
+        this.refreshTokenInProgress = false;
+        this.handleAuth(response);
+        this.refreshTokenSubject.next(response.accessToken);
+      }),
+      catchError(error => {
+        console.error('Token refresh error:', error);
+        this.refreshTokenInProgress = false;
+        this.refreshTokenSubject.next(null);
+        this.logout();
+        throw error;
+      }),
+      share()
+    );
+  }
+
+  /**
    * Gets current authenticated user profile
    * @returns Observable with user data
    */
   getCurrentUser(): Observable<User> {
-
-    const headers = new HttpHeaders().set('Skip-Token-Injection', 'true');
-
-    return this.http.get<User>(`${environment.apiUrl}/users/me`, {headers})
+    return this.http.get<User>(`${environment.apiUrl}/users/me`)
       .pipe(
         tap(user => {
           this.currentUserSubject.next(user);
+          this.storeUserData(user);
         }),
         catchError(error => {
-
           if (error.status === 401) {
-            this.logout();
+            // Try to refresh token
+            return this.refreshAccessToken().pipe(
+              switchMap(() => this.http.get<User>(`${environment.apiUrl}/users/me`)),
+              tap(user => {
+                this.currentUserSubject.next(user);
+                this.storeUserData(user);
+              }),
+              catchError(() => {
+                this.logout();
+                throw error;
+              })
+            );
           }
           throw error;
         })
@@ -156,15 +223,27 @@ export class AuthService {
 
   /**
    * Logs out the current user
-   * Clears token from storage and resets authentication state
+   * Clears tokens from storage and resets authentication state
    */
   logout(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem(this.tokenKey);
+    const refreshToken = this.getRefreshToken();
+
+    if (refreshToken) {
+      // Call logout endpoint to invalidate refresh token
+      const headers = new HttpHeaders({
+        'Skip-Token-Injection': 'true'
+      });
+
+      this.http.post(`${environment.apiUrl}/auth/logout`, {
+        refreshToken: refreshToken
+      }, { headers }).subscribe({
+        next: () => console.log('Logout successful on server'),
+        error: (error) => console.error('Logout error on server:', error)
+      });
     }
 
-    this.currentUserSubject.next(null);
-    this.isAuthenticatedSubject.next(false);
+    this.clearTokens();
+    this.clearRefreshTimer();
     this.router.navigate(['/login']);
   }
 
@@ -174,7 +253,13 @@ export class AuthService {
    */
   private handleAuth(authResponse: JwtResponse): void {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(this.tokenKey, authResponse.token);
+      // Store tokens
+      localStorage.setItem(this.accessTokenKey, authResponse.accessToken);
+      localStorage.setItem(this.refreshTokenKey, authResponse.refreshToken);
+
+      // Calculate and store expiry time
+      const expiryTime = new Date().getTime() + (authResponse.expiresIn * 1000);
+      localStorage.setItem(this.tokenExpiryKey, expiryTime.toString());
     }
 
     const user: User = {
@@ -184,17 +269,55 @@ export class AuthService {
       role: authResponse.role
     };
 
+    this.storeUserData(user);
     this.currentUserSubject.next(user);
     this.isAuthenticatedSubject.next(true);
+    this.setupTokenRefreshTimer();
   }
 
   /**
-   * Gets the stored JWT token
+   * Stores user data in localStorage
+   * @param user User data to store
+   */
+  private storeUserData(user: User): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(this.userDataKey, JSON.stringify(user));
+    }
+  }
+
+  /**
+   * Clears all stored tokens and user data
+   */
+  private clearTokens(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem(this.accessTokenKey);
+      localStorage.removeItem(this.refreshTokenKey);
+      localStorage.removeItem(this.tokenExpiryKey);
+      localStorage.removeItem(this.userDataKey);
+    }
+
+    this.currentUserSubject.next(null);
+    this.isAuthenticatedSubject.next(false);
+  }
+
+  /**
+   * Gets the stored access token
    * @returns String token or null if not found
    */
   getToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem(this.tokenKey);
+      return localStorage.getItem(this.accessTokenKey);
+    }
+    return null;
+  }
+
+  /**
+   * Gets the stored refresh token
+   * @returns String refresh token or null if not found
+   */
+  private getRefreshToken(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem(this.refreshTokenKey);
     }
     return null;
   }
@@ -205,25 +328,42 @@ export class AuthService {
    */
   isAuthenticated(): boolean {
     const token = this.getToken();
-    if (!token) return false;
+    const refreshToken = this.getRefreshToken();
 
+    if (!token || !refreshToken) return false;
 
-    return !this.isTokenExpired(token);
+    // If access token is expired but we have refresh token, we're still considered authenticated
+    // The interceptor will handle the refresh
+    return true;
   }
 
   /**
-   * Checks if the token is expired by decoding the JWT
-   * @param token JWT token string
+   * Checks if the access token is expired
+   * @param token JWT token string (optional, uses stored token if not provided)
    * @returns Boolean indicating if token is expired
    */
-  private isTokenExpired(token: string): boolean {
+  isTokenExpired(token?: string | null): boolean {
+    if (!token) {
+      token = this.getToken();
+    }
+
+    if (!token) return true;
+
+    // Check stored expiry time first (more reliable)
+    if (isPlatformBrowser(this.platformId)) {
+      const storedExpiry = localStorage.getItem(this.tokenExpiryKey);
+      if (storedExpiry) {
+        const expiryTime = parseInt(storedExpiry, 10);
+        return Date.now() >= expiryTime;
+      }
+    }
+
+    // Fallback to JWT parsing
     try {
       const tokenParts = token.split('.');
       if (tokenParts.length !== 3) return true;
 
       const payload = JSON.parse(atob(tokenParts[1]));
-
-
       if (!payload.exp) return false;
 
       const expiryTimeMs = payload.exp * 1000;
@@ -235,11 +375,67 @@ export class AuthService {
   }
 
   /**
+   * Sets up automatic token refresh timer
+   * Refreshes token 2 minutes before expiry
+   */
+  private setupTokenRefreshTimer(): void {
+    this.clearRefreshTimer();
+
+    const token = this.getToken();
+    if (!token || this.isTokenExpired(token)) return;
+
+    let timeUntilRefresh: number;
+
+    // Try to get expiry from stored value first
+    if (isPlatformBrowser(this.platformId)) {
+      const storedExpiry = localStorage.getItem(this.tokenExpiryKey);
+      if (storedExpiry) {
+        const expiryTime = parseInt(storedExpiry, 10);
+        timeUntilRefresh = expiryTime - Date.now() - (2 * 60 * 1000); // 2 minutes before expiry
+      } else {
+        // Fallback to JWT parsing
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          if (payload.exp) {
+            const expiryTime = payload.exp * 1000;
+            timeUntilRefresh = expiryTime - Date.now() - (2 * 60 * 1000);
+          } else {
+            return;
+          }
+        } catch (e) {
+          return;
+        }
+      }
+    } else {
+      return;
+    }
+
+    if (timeUntilRefresh > 0) {
+      this.tokenRefreshTimer = timer(timeUntilRefresh).subscribe(() => {
+        console.log('Auto-refreshing access token...');
+        this.refreshAccessToken().subscribe({
+          next: () => console.log('Token auto-refresh successful'),
+          error: (error) => console.error('Token auto-refresh failed:', error)
+        });
+      });
+    }
+  }
+
+  /**
+   * Clears the token refresh timer
+   */
+  private clearRefreshTimer(): void {
+    if (this.tokenRefreshTimer) {
+      this.tokenRefreshTimer.unsubscribe();
+      this.tokenRefreshTimer = null;
+    }
+  }
+
+  /**
    * Health check to verify connectivity with backend
    * @returns Observable<boolean> indicating if backend is reachable
    */
   checkBackendHealth(): Observable<boolean> {
-
     const headers = new HttpHeaders().set('Skip-Token-Injection', 'true');
 
     return this.http.get<any>(`${environment.apiUrl}/public/health`, {headers})
@@ -249,6 +445,11 @@ export class AuthService {
       );
   }
 
+  /**
+   * Forgot password functionality
+   * @param email User email
+   * @returns Observable with response
+   */
   forgotPassword(email: string): Observable<any> {
     const headers = new HttpHeaders({
       'Accept': 'application/json, text/plain, */*',
@@ -273,6 +474,11 @@ export class AuthService {
     );
   }
 
+  /**
+   * Validates reset token
+   * @param token Reset token
+   * @returns Observable<boolean>
+   */
   validateResetToken(token: string): Observable<boolean> {
     const headers = new HttpHeaders({
       'Skip-Token-Injection': 'true'
@@ -288,6 +494,12 @@ export class AuthService {
       );
   }
 
+  /**
+   * Resets password with token
+   * @param token Reset token
+   * @param newPassword New password
+   * @returns Observable with response
+   */
   resetPassword(token: string, newPassword: string): Observable<any> {
     const headers = new HttpHeaders({
       'Accept': 'application/json, text/plain, */*',
