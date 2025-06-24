@@ -1,4 +1,4 @@
-// src/app/features/workout-plans/my-workout-plans/my-workout-plans.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -46,11 +46,11 @@ export class MyWorkoutPlansComponent implements OnInit {
   currentPage = 0;
   pageSize = 10;
 
-  // Progres
+
   updating: { [key: number]: boolean } = {};
 
-  // Aktywne filtry
-  activeTab = 0; // 0 = wszystkie, 1 = w trakcie, 2 = ukończone
+
+  activeTab = 0;
 
   constructor(
     private workoutPlanService: WorkoutPlanService,
@@ -63,7 +63,7 @@ export class MyWorkoutPlansComponent implements OnInit {
     this.loadUserWorkoutPlans();
   }
 
-  // Pobieranie planów użytkownika
+
   loadUserWorkoutPlans(): void {
     this.loading = true;
 
@@ -81,29 +81,29 @@ export class MyWorkoutPlansComponent implements OnInit {
     });
   }
 
-  // Obsługa zmiany strony w paginacji
+
   onPageChange(event: PageEvent): void {
     this.currentPage = event.pageIndex;
     this.pageSize = event.pageSize;
     this.loadUserWorkoutPlans();
   }
 
-  // Obsługa filtrowania po statusie
+
   filterByStatus(status: WorkoutPlanStatus | null): void {
-    // TODO: Implementacja filtrowania po statusie
-    // Na razie filtrujemy lokalnie
+
+
     this.loadUserWorkoutPlans();
   }
 
-  // Obsługa zmiany zakładki
+
   onTabChange(index: number): void {
     this.activeTab = index;
-    // TODO: Implementacja filtrowania po zakładce
-    // Na razie filtrujemy lokalnie
+
+
     this.loadUserWorkoutPlans();
   }
 
-  // Przejście do następnego dnia treningu
+
   moveToNextDay(userPlan: UserWorkoutPlan): void {
     if (!userPlan || userPlan.status === WorkoutPlanStatus.COMPLETED) return;
 
@@ -124,7 +124,7 @@ export class MyWorkoutPlansComponent implements OnInit {
 
     this.workoutPlanService.updateWorkoutPlanProgress(userPlan.id, progress).subscribe({
       next: (updatedPlan) => {
-        // Aktualizuj plan w tablicy
+
         const index = this.userWorkoutPlans.findIndex(p => p.id === userPlan.id);
         if (index !== -1) {
           this.userWorkoutPlans[index] = updatedPlan;
@@ -140,7 +140,7 @@ export class MyWorkoutPlansComponent implements OnInit {
     });
   }
 
-  // Zakończenie planu treningowego
+
   completeWorkoutPlan(userPlan: UserWorkoutPlan): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -163,7 +163,7 @@ export class MyWorkoutPlansComponent implements OnInit {
 
         this.workoutPlanService.updateWorkoutPlanProgress(userPlan.id, progress).subscribe({
           next: (updatedPlan) => {
-            // Aktualizuj plan w tablicy
+
             const index = this.userWorkoutPlans.findIndex(p => p.id === userPlan.id);
             if (index !== -1) {
               this.userWorkoutPlans[index] = updatedPlan;
@@ -181,7 +181,7 @@ export class MyWorkoutPlansComponent implements OnInit {
     });
   }
 
-  // Porzucanie planu treningowego
+
   abandonWorkoutPlan(userPlan: UserWorkoutPlan): void {
     if (!userPlan) return;
 
@@ -200,7 +200,7 @@ export class MyWorkoutPlansComponent implements OnInit {
 
         this.workoutPlanService.abandonWorkoutPlan(userPlan.id).subscribe({
           next: () => {
-            // Usuń plan z tablicy
+
             this.userWorkoutPlans = this.userWorkoutPlans.filter(p => p.id !== userPlan.id);
             this.snackBar.open('Plan treningowy został porzucony', 'OK', { duration: 3000 });
             this.updating[userPlan.id] = false;
@@ -215,12 +215,12 @@ export class MyWorkoutPlansComponent implements OnInit {
     });
   }
 
-  // Przejście do szczegółów planu treningowego
+
   viewWorkoutPlanDetails(planId: number): void {
     this.router.navigate(['/workout-plans', planId]);
   }
 
-  // Sprawdza czy pokazać przycisk następnego dnia
+
   canMoveToNextDay(userPlan: UserWorkoutPlan): boolean {
     if (!userPlan) return false;
     return userPlan.status === WorkoutPlanStatus.IN_PROGRESS &&
@@ -233,7 +233,7 @@ export class MyWorkoutPlansComponent implements OnInit {
     return userPlan.status !== 'COMPLETED';
   }
 
-  // Pomocnicze metody
+
   getStatusName(status: string): string {
     const statusNames: Record<string, string> = {
       'NOT_STARTED': 'Nie rozpoczęty',

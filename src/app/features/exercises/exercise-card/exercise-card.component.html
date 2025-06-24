@@ -1,11 +1,10 @@
-<!-- src/app/features/exercises/exercise-card/exercise-card.component.html -->
 <mat-card class="exercise-card" [style.background-color]="getDifficultyColor(exercise.difficultyLevel)">
   <div class="exercise-image-container">
     <img [src]="getImageUrl()" [alt]="exercise.name" class="exercise-image">
     <div class="difficulty-tag" [style.color]="getDifficultyTextColor(exercise.difficultyLevel)">
       {{ getDifficultyName(exercise.difficultyLevel) }}
     </div>
-    <!-- New badge for recently added exercises -->
+
     <div class="new-badge" *ngIf="isNewExercise()">NOWOŚĆ</div>
   </div>
 

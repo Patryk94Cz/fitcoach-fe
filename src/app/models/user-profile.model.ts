@@ -1,4 +1,3 @@
-// src/app/models/user-profile.model.ts
 export interface UserProfile {
   id: number;
   height?: number;

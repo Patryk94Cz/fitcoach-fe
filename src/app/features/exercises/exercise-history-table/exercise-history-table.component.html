@@ -1,4 +1,3 @@
-<!-- src/app/features/exercises/exercise-history-table/exercise-history-table.component.html -->
 <div class="exercise-history-table-container">
   <div class="navigation-buttons">
     <button mat-button color="primary" routerLink="/my-workouts">
@@ -10,7 +9,7 @@
   <h1 class="page-title">Historia ćwiczeń</h1>
   <p class="subtitle">Szczegółowa historia wszystkich wykonanych ćwiczeń</p>
 
-  <!-- Search filter bar with only exercise name dropdown -->
+
   <div class="search-filter-bar">
     <mat-card>
       <mat-card-content>
@@ -31,7 +30,8 @@
               color="warn"
               (click)="clearFilter()"
               [disabled]="!hasActiveFilter()">
-              <mat-icon>clear</mat-icon> Wyczyść filtr
+              <mat-icon>clear</mat-icon>
+              Wyczyść filtr
             </button>
           </div>
         </div>
@@ -39,13 +39,13 @@
     </mat-card>
   </div>
 
-  <!-- Loading indicator -->
+
   <div class="loading-container" *ngIf="loading">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Ładowanie historii ćwiczeń...</p>
   </div>
 
-  <!-- No data message -->
+
   <div class="no-results" *ngIf="!loading && hasNoResults()">
     <mat-icon>fitness_center</mat-icon>
 
@@ -77,37 +77,37 @@
     </div>
   </div>
 
-  <!-- Table with results -->
+
   <div class="table-container" *ngIf="!loading && !hasNoResults()">
     <table mat-table [dataSource]="dataSource" matSort (matSortChange)="logSortingState($event)" class="history-table">
-      <!-- Date Column -->
+
       <ng-container matColumnDef="date">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Data </th>
-        <td mat-cell *matCellDef="let entry"> {{ formatDate(entry.date) }} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Data</th>
+        <td mat-cell *matCellDef="let entry"> {{ formatDate(entry.date) }}</td>
       </ng-container>
 
-      <!-- Exercise Name Column -->
+
       <ng-container matColumnDef="exerciseName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Ćwiczenie </th>
-        <td mat-cell *matCellDef="let entry"> {{ entry.exerciseName }} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Ćwiczenie</th>
+        <td mat-cell *matCellDef="let entry"> {{ entry.exerciseName }}</td>
       </ng-container>
 
-      <!-- Sets Column -->
+
       <ng-container matColumnDef="setsCompleted">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Serie </th>
-        <td mat-cell *matCellDef="let entry"> {{ entry.setsCompleted }} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Serie</th>
+        <td mat-cell *matCellDef="let entry"> {{ entry.setsCompleted }}</td>
       </ng-container>
 
-      <!-- Reps Column -->
+
       <ng-container matColumnDef="repsCompleted">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Powtórzenia </th>
-        <td mat-cell *matCellDef="let entry"> {{ entry.repsCompleted }} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Powtórzenia</th>
+        <td mat-cell *matCellDef="let entry"> {{ entry.repsCompleted }}</td>
       </ng-container>
 
-      <!-- Weight Column -->
+
       <ng-container matColumnDef="weightUsed">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Obciążenie </th>
-        <td mat-cell *matCellDef="let entry"> {{ entry.weightUsed }} </td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Obciążenie</th>
+        <td mat-cell *matCellDef="let entry"> {{ entry.weightUsed }}</td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

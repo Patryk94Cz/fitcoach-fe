@@ -11,6 +11,5 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // Poprawione przekierowanie do /login zamiast /auth/login
   return router.createUrlTree(['/login']);
 };

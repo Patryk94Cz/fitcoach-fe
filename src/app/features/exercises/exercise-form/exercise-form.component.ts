@@ -1,24 +1,23 @@
-// src/app/features/exercises/exercise-form/exercise-form.component.ts
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSliderModule } from '@angular/material/slider';
-import { MatDividerModule } from '@angular/material/divider';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators} from '@angular/forms';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatSliderModule} from '@angular/material/slider';
+import {MatDividerModule} from '@angular/material/divider';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {MatChipEditedEvent, MatChipInputEvent} from '@angular/material/chips';
 
-import { ExerciseService } from '../../../core/services/exercise.service';
+import {ExerciseService} from '../../../core/services/exercise.service';
 import {
   Exercise,
   MuscleGroup,
@@ -56,7 +55,7 @@ export class ExerciseFormComponent implements OnInit {
   loading = false;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
-  // Listy dostępnych opcji
+
   muscleGroups: MuscleGroup[] = [];
   difficultyLevels: DifficultyLevel[] = [];
   riskLevels = Object.values(RiskLevel);
@@ -72,11 +71,11 @@ export class ExerciseFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Pobierz dostępne opcje
+
     this.muscleGroups = this.exerciseService.getAllMuscleGroups();
     this.difficultyLevels = this.exerciseService.getAllDifficultyLevels();
 
-    // Sprawdź, czy to tryb edycji
+
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -87,7 +86,7 @@ export class ExerciseFormComponent implements OnInit {
     });
   }
 
-  // Tworzenie formularza
+
   createForm(): FormGroup {
     return this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
@@ -105,13 +104,13 @@ export class ExerciseFormComponent implements OnInit {
     });
   }
 
-  // Ładowanie ćwiczenia do edycji
+
   loadExercise(id: number): void {
     this.loading = true;
 
     this.exerciseService.getExerciseById(id).subscribe({
       next: (exercise) => {
-        // Wypełnij formularz danymi ćwiczenia
+
         this.exerciseForm.patchValue({
           name: exercise.name,
           description: exercise.description,
@@ -126,7 +125,7 @@ export class ExerciseFormComponent implements OnInit {
           isPublic: exercise.isPublic
         });
 
-        // Dodaj tagi
+
         if (exercise.tags && exercise.tags.length > 0) {
           const tagsArray = this.exerciseForm.get('tags') as FormArray;
           tagsArray.clear();
@@ -140,14 +139,14 @@ export class ExerciseFormComponent implements OnInit {
       },
       error: (error) => {
         console.error('Błąd podczas ładowania ćwiczenia:', error);
-        this.snackBar.open('Nie udało się załadować ćwiczenia', 'OK', { duration: 3000 });
+        this.snackBar.open('Nie udało się załadować ćwiczenia', 'OK', {duration: 3000});
         this.loading = false;
         this.router.navigate(['/exercises']);
       }
     });
   }
 
-  // Obsługa formularza
+
   onSubmit(): void {
     if (this.exerciseForm.invalid) {
       this.markFormGroupTouched(this.exerciseForm);
@@ -156,44 +155,44 @@ export class ExerciseFormComponent implements OnInit {
 
     this.loading = true;
 
-    // Przygotuj dane do wysłania
+
     const exerciseData: Exercise = {
       ...this.exerciseForm.value,
       tags: (this.tagsArray.value || []).map((tag: any) => tag)
     };
 
     if (this.isEditMode && this.exerciseId) {
-      // Aktualizacja ćwiczenia
+
       this.exerciseService.updateExercise(this.exerciseId, exerciseData).subscribe({
         next: (updatedExercise) => {
-          this.snackBar.open('Ćwiczenie zostało zaktualizowane', 'OK', { duration: 3000 });
+          this.snackBar.open('Ćwiczenie zostało zaktualizowane', 'OK', {duration: 3000});
           this.loading = false;
           this.router.navigate(['/exercises', this.exerciseId]);
         },
         error: (error) => {
           console.error('Błąd podczas aktualizacji ćwiczenia:', error);
-          this.snackBar.open('Nie udało się zaktualizować ćwiczenia', 'OK', { duration: 3000 });
+          this.snackBar.open('Nie udało się zaktualizować ćwiczenia', 'OK', {duration: 3000});
           this.loading = false;
         }
       });
     } else {
-      // Tworzenie nowego ćwiczenia
+
       this.exerciseService.createExercise(exerciseData).subscribe({
         next: (newExercise) => {
-          this.snackBar.open('Ćwiczenie zostało utworzone', 'OK', { duration: 3000 });
+          this.snackBar.open('Ćwiczenie zostało utworzone', 'OK', {duration: 3000});
           this.loading = false;
           this.router.navigate(['/exercises', newExercise.id]);
         },
         error: (error) => {
           console.error('Błąd podczas tworzenia ćwiczenia:', error);
-          this.snackBar.open('Nie udało się utworzyć ćwiczenia', 'OK', { duration: 3000 });
+          this.snackBar.open('Nie udało się utworzyć ćwiczenia', 'OK', {duration: 3000});
           this.loading = false;
         }
       });
     }
   }
 
-  // Pomocnicza metoda do oznaczania wszystkich kontrolek jako dotknięte
+
   markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
@@ -204,7 +203,7 @@ export class ExerciseFormComponent implements OnInit {
     });
   }
 
-  // Obsługa tagów
+
   get tagsArray(): FormArray {
     return this.exerciseForm.get('tags') as FormArray;
   }
@@ -223,7 +222,7 @@ export class ExerciseFormComponent implements OnInit {
     this.tagsArray.removeAt(index);
   }
 
-  // Pomocnicze metody do widoku
+
   getMuscleGroupName(muscleGroup: string): string {
     return this.exerciseService.getMuscleGroupName(muscleGroup as any);
   }

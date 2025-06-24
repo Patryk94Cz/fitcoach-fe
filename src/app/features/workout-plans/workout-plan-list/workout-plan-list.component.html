@@ -7,7 +7,7 @@
     </button>
   </div>
 
-  <!-- Search and filter bar -->
+
   <div class="search-filter-bar">
     <div class="search-box">
       <mat-form-field appearance="outline">
@@ -37,7 +37,7 @@
 
         <div class="filter-form">
           <div class="filter-row">
-            <!-- Goal filter -->
+
             <mat-form-field appearance="outline">
               <mat-label>Cel treningu</mat-label>
               <mat-select [(ngModel)]="filterOptions.goal">
@@ -48,7 +48,7 @@
               </mat-select>
             </mat-form-field>
 
-            <!-- Difficulty Level filter -->
+
             <mat-form-field appearance="outline">
               <mat-label>Poziom trudności</mat-label>
               <mat-select [(ngModel)]="filterOptions.difficultyLevel">
@@ -59,7 +59,7 @@
               </mat-select>
             </mat-form-field>
 
-            <!-- Author filter -->
+
             <mat-form-field appearance="outline">
               <mat-label>Autor</mat-label>
               <mat-select [(ngModel)]="filterOptions.author">
@@ -70,7 +70,7 @@
               </mat-select>
             </mat-form-field>
 
-            <!-- Sort option -->
+
             <mat-form-field appearance="outline">
               <mat-label>Sortowanie</mat-label>
               <mat-select [(ngModel)]="filterOptions.sortBy">
@@ -81,7 +81,7 @@
             </mat-form-field>
           </div>
 
-          <!-- Frequency filter -->
+
           <div class="filter-row">
             <mat-form-field appearance="outline">
               <mat-label>Maksymalna liczba treningów tygodniowo</mat-label>
@@ -105,10 +105,12 @@
               (click)="clearFilters()"
               [disabled]="!searchKeyword && !filterOptions.goal && !filterOptions.difficultyLevel &&
                         filterOptions.author === null && filterOptions.sortBy === 'newest' && !filterOptions.maxFrequency">
-              <mat-icon>clear</mat-icon> Wyczyść filtry
+              <mat-icon>clear</mat-icon>
+              Wyczyść filtry
             </button>
             <button mat-raised-button color="primary" (click)="applyFilters()">
-              <mat-icon>check</mat-icon> Zastosuj filtry
+              <mat-icon>check</mat-icon>
+              Zastosuj filtry
             </button>
           </div>
         </div>
@@ -116,17 +118,17 @@
     </div>
   </div>
 
-  <!-- Loading indicator -->
+
   <div class="loading-container" *ngIf="loading">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Ładowanie planów treningowych...</p>
   </div>
 
-  <!-- No results message -->
+
   <div class="no-results" *ngIf="!loading && workoutPlans.length === 0">
     <mat-icon>{{ hasActiveFilters() ? 'search_off' : 'fitness_center' }}</mat-icon>
 
-    <!-- Different message based on whether filters are active -->
+
     <p *ngIf="hasActiveFilters()">
       Nie znaleziono planów treningowych spełniających kryteria.
     </p>
@@ -134,7 +136,7 @@
       Nie znaleziono żadnych planów treningowych. Dodaj swój pierwszy plan!
     </p>
 
-    <!-- Action buttons -->
+
     <div class="no-results-actions">
       <button
         mat-button
@@ -156,7 +158,7 @@
     </div>
   </div>
 
-  <!-- Workout plans grid -->
+
   <div class="workout-plans-grid" *ngIf="!loading && workoutPlans.length > 0">
     <app-workout-plan-card
       *ngFor="let plan of workoutPlans"
@@ -165,7 +167,7 @@
     </app-workout-plan-card>
   </div>
 
-  <!-- Pagination -->
+
   <mat-paginator
     *ngIf="totalItems > 0"
     [length]="totalItems"

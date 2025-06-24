@@ -7,15 +7,12 @@ export class GlobalErrorHandler implements ErrorHandler {
   private http = inject(HttpClient);
 
   handleError(error: any): void {
-    // Zawsze loguj do console
     console.error('Global error caught:', error);
 
-    // W production wyślij do Azure Functions API
     if (environment.production) {
       this.logErrorToAPI(error);
     }
 
-    // Opcjonalnie: pokaż user-friendly message
     this.showUserFriendlyError(error);
   }
 
@@ -29,7 +26,6 @@ export class GlobalErrorHandler implements ErrorHandler {
       userId: this.getCurrentUserId() // Implementuj zgodnie z twoim systemem auth
     };
 
-    // Wyślij do Azure Functions
     this.http.post('/api/log-error', errorData).subscribe({
       next: () => console.log('Error logged to API'),
       error: (apiError) => console.error('Failed to log error to API:', apiError)
@@ -37,16 +33,12 @@ export class GlobalErrorHandler implements ErrorHandler {
   }
 
   private getCurrentUserId(): string | null {
-    // Implementuj zgodnie z twoim systemem auth
-    // Na przykład: pobierz z localStorage, JWT token itp.
     return localStorage.getItem('userId') || null;
   }
 
   private showUserFriendlyError(error: any): void {
-    // Możesz tutaj dodać logic do pokazywania toast/snackbar użytkownikowi
   }
 
-  // Metody pomocnicze do ręcznego trackowania
   trackEvent(name: string, properties?: any): void {
     if (environment.production) {
       this.http.post('/api/log-error', {

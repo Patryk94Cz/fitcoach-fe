@@ -1,23 +1,22 @@
-// src/app/features/workout-sessions/new-workout/new-workout.component.ts
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatStepperModule, MatStepper } from '@angular/material/stepper';
-import { MatDividerModule } from '@angular/material/divider';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormBuilder, FormGroup, FormArray, ReactiveFormsModule, Validators, AbstractControl} from '@angular/forms';
+import {Router, RouterLink} from '@angular/router';
+import {MatCardModule} from '@angular/material/card';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatStepperModule, MatStepper} from '@angular/material/stepper';
+import {MatDividerModule} from '@angular/material/divider';
 
-import { WorkoutSessionService } from '../../../core/services/workout-session.service';
-import { WorkoutPlanService } from '../../../core/services/workout-plan.service';
-import { UserWorkoutPlan, WorkoutDay, WorkoutExercise } from '../../../models/workout-plan.model';
-import { WorkoutSessionRequest } from '../../../models/workout-session.model';
+import {WorkoutSessionService} from '../../../core/services/workout-session.service';
+import {WorkoutPlanService} from '../../../core/services/workout-plan.service';
+import {UserWorkoutPlan, WorkoutDay, WorkoutExercise} from '../../../models/workout-plan.model';
+import {WorkoutSessionRequest} from '../../../models/workout-session.model';
 
 @Component({
   selector: 'app-new-workout',
@@ -98,7 +97,7 @@ export class NewWorkoutComponent implements OnInit {
       },
       error: (error) => {
         console.error('Błąd podczas ładowania planów treningowych:', error);
-        this.snackBar.open('Nie udało się załadować planów treningowych', 'OK', { duration: 3000 });
+        this.snackBar.open('Nie udało się załadować planów treningowych', 'OK', {duration: 3000});
         this.loading.plans = false;
       }
     });
@@ -140,7 +139,7 @@ export class NewWorkoutComponent implements OnInit {
       },
       error: (error) => {
         console.error('Błąd podczas ładowania szczegółów planu:', error);
-        this.snackBar.open('Nie udało się załadować szczegółów planu', 'OK', { duration: 3000 });
+        this.snackBar.open('Nie udało się załadować szczegółów planu', 'OK', {duration: 3000});
         this.loading.plan = false;
       }
     });
@@ -183,13 +182,13 @@ export class NewWorkoutComponent implements OnInit {
 
     this.workoutSessionService.createSession(sessionRequest).subscribe({
       next: (session) => {
-        this.snackBar.open('Sesja treningowa została zarejestrowana!', 'OK', { duration: 3000 });
+        this.snackBar.open('Sesja treningowa została zarejestrowana!', 'OK', {duration: 3000});
         this.router.navigate(['/my-workouts']);
         this.loading.submit = false;
       },
       error: (error) => {
         console.error('Błąd podczas rejestrowania sesji:', error);
-        this.snackBar.open('Nie udało się zarejestrować sesji treningowej', 'OK', { duration: 3000 });
+        this.snackBar.open('Nie udało się zarejestrować sesji treningowej', 'OK', {duration: 3000});
         this.loading.submit = false;
       }
     });
@@ -223,7 +222,7 @@ export class NewWorkoutComponent implements OnInit {
       return [];
     }
 
-    return Array.from({ length: this.selectedPlan.workoutPlan.totalDays }, (_, i) => i + 1);
+    return Array.from({length: this.selectedPlan.workoutPlan.totalDays}, (_, i) => i + 1);
   }
 
   hasCompletedPlans(): boolean {

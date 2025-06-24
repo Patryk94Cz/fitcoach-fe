@@ -58,7 +58,6 @@ export class ResetPasswordComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Pobierz token z parametrów URL
     this.route.queryParams.subscribe(params => {
       this.token = params['token'];
       if (this.token) {
@@ -123,7 +122,6 @@ export class ResetPasswordComponent implements OnInit {
           { duration: 5000 }
         );
 
-        // Przekieruj do logowania po 3 sekundach
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 3000);

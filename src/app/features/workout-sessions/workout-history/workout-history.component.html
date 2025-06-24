@@ -1,4 +1,3 @@
-<!-- src/app/features/workout-sessions/workout-history/workout-history.component.html -->
 <div class="workout-history-container">
   <div class="page-header">
     <div class="header-content">
@@ -7,13 +6,14 @@
     </div>
   </div>
 
-  <!-- Komunikat o braku aktywnych planów -->
+
   <div class="no-plans-message" *ngIf="!loading.plans && activeWorkoutPlans.length === 0">
     <mat-card>
       <mat-card-content>
         <div class="message-content">
           <mat-icon>info</mat-icon>
-          <p>Nie masz jeszcze aktywnych planów treningowych. Dołącz do istniejącego planu, aby zacząć rejestrować treningi.</p>
+          <p>Nie masz jeszcze aktywnych planów treningowych. Dołącz do istniejącego planu, aby zacząć rejestrować
+            treningi.</p>
           <button mat-raised-button color="primary" routerLink="/workout-plans">
             <mat-icon>fitness_center</mat-icon>
             Przeglądaj plany treningowe
@@ -24,13 +24,13 @@
   </div>
 
   <div class="history-content" *ngIf="activeWorkoutPlans.length > 0">
-    <!-- Zakładki -->
+
     <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="activeTab">
       <mat-tab label="Wszystkie sesje"></mat-tab>
       <mat-tab label="Według planu"></mat-tab>
     </mat-tab-group>
 
-    <!-- Selektor planu dla zakładki "Według planu" -->
+
     <div class="plan-selector" *ngIf="activeTab === 1">
       <mat-card>
         <mat-card-content>
@@ -65,7 +65,7 @@
       </mat-card>
     </div>
 
-    <!-- Lista sesji treningowych -->
+
     <div class="sessions-container">
       <div class="loading-container" *ngIf="loading.sessions">
         <mat-spinner diameter="50"></mat-spinner>
@@ -126,7 +126,7 @@
         </mat-card>
       </div>
 
-      <!-- Paginacja -->
+
       <mat-paginator
         *ngIf="totalItems > 0"
         [length]="totalItems"

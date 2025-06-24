@@ -1,5 +1,4 @@
-// src/app/models/workout-plan.model.ts
-import { MuscleGroup, DifficultyLevel, Exercise } from './exercise.model';
+import {MuscleGroup, DifficultyLevel, Exercise} from './exercise.model';
 
 export interface WorkoutPlan {
   id?: number;
@@ -40,7 +39,7 @@ export interface WorkoutDay {
 export interface WorkoutExercise {
   id?: number;
   exercise?: Exercise;
-  exerciseId?: number;  // Używane przy tworzeniu lub aktualizacji
+  exerciseId?: number;
   order: number;
   setsCount: number;
   repsCount: number;
@@ -90,8 +89,8 @@ export interface UserWorkoutPlan {
   status: WorkoutPlanStatus;
   completionDate?: string;
   progressPercentage: number;
-  lastWorkoutDate?: string;     // Data ostatniego treningu
-  totalWorkouts?: number;       // Liczba treningów
+  lastWorkoutDate?: string;
+  totalWorkouts?: number;
 }
 
 export enum WorkoutPlanStatus {

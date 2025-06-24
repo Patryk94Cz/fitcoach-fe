@@ -1,4 +1,4 @@
-<!-- src/app/features/exercises/exercise-list/exercise-list.component.html -->
+
 <div class="exercise-list-container">
   <div class="page-header">
     <h1 class="page-title">Ćwiczenia</h1>
@@ -9,7 +9,7 @@
   </div>
 
 
-  <!-- Search and filter bar -->
+
   <div class="search-filter-bar">
     <div class="search-box">
       <mat-form-field appearance="outline">
@@ -39,7 +39,7 @@
 
         <div class="filter-form">
           <div class="filter-row">
-            <!-- Muscle Group filter -->
+
             <mat-form-field appearance="outline">
               <mat-label>Grupa mięśniowa</mat-label>
               <mat-select [(ngModel)]="filterOptions.muscleGroup">
@@ -50,7 +50,7 @@
               </mat-select>
             </mat-form-field>
 
-            <!-- Difficulty Level filter -->
+
             <mat-form-field appearance="outline">
               <mat-label>Poziom trudności</mat-label>
               <mat-select [(ngModel)]="filterOptions.difficultyLevel">
@@ -61,7 +61,7 @@
               </mat-select>
             </mat-form-field>
 
-            <!-- Author filter -->
+
             <mat-form-field appearance="outline">
               <mat-label>Autor</mat-label>
               <mat-select [(ngModel)]="filterOptions.author">
@@ -72,7 +72,7 @@
               </mat-select>
             </mat-form-field>
 
-            <!-- Sort option -->
+
             <mat-form-field appearance="outline">
               <mat-label>Sortowanie</mat-label>
               <mat-select [(ngModel)]="filterOptions.sortBy">
@@ -98,17 +98,17 @@
     </div>
   </div>
 
-  <!-- Loading indicator -->
+
   <div class="loading-container" *ngIf="loading">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Ładowanie ćwiczeń...</p>
   </div>
 
-  <!-- No results message -->
+
   <div class="no-results" *ngIf="!loading && exercises.length === 0">
     <mat-icon>{{ searchKeyword || filterOptions.muscleGroup || filterOptions.difficultyLevel || filterOptions.author !== null ? 'search_off' : 'fitness_center' }}</mat-icon>
 
-    <!-- Different message based on whether filters are active -->
+
     <p *ngIf="searchKeyword || filterOptions.muscleGroup || filterOptions.difficultyLevel || filterOptions.author !== null">
       Nie znaleziono ćwiczeń spełniających kryteria.
     </p>
@@ -116,7 +116,7 @@
       Nie znaleziono żadnych ćwiczeń. Dodaj swoje pierwsze ćwiczenie!
     </p>
 
-    <!-- Action buttons -->
+
     <div class="no-results-actions">
       <button
         mat-button
@@ -138,12 +138,12 @@
     </div>
   </div>
 
-  <!-- Exercises grid -->
+
   <div class="exercises-grid" *ngIf="!loading && exercises.length > 0">
     <div *ngFor="let exercise of exercises" class="exercise-card-container"
          (click)="viewExerciseDetails(exercise.id!)">
 
-      <!-- Favorite star button -->
+
       <button
         mat-icon-button
         class="favorite-button"
@@ -153,12 +153,12 @@
         <mat-icon>{{ isFavorite(exercise.id) ? 'star' : 'star_border' }}</mat-icon>
       </button>
 
-      <!-- Exercise card -->
+
       <app-exercise-card [exercise]="exercise"></app-exercise-card>
     </div>
   </div>
 
-  <!-- Pagination -->
+
   <mat-paginator
     *ngIf="totalItems > 0"
     [length]="totalItems"

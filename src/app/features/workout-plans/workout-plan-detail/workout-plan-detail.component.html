@@ -1,6 +1,5 @@
-<!-- src/app/features/workout-plans/workout-plan-detail/workout-plan-detail.component.html -->
 <div class="workout-plan-detail-container">
-  <!-- Przyciski nawigacji -->
+
   <div class="navigation-buttons">
     <button mat-button color="primary" routerLink="/workout-plans">
       <mat-icon>arrow_back</mat-icon>
@@ -8,19 +7,19 @@
     </button>
   </div>
 
-  <!-- Ładowanie -->
+
   <div class="loading-container" *ngIf="loading.plan">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Ładowanie planu treningowego...</p>
   </div>
 
-  <!-- Główna zawartość -->
+
   <div class="workout-plan-content" *ngIf="!loading.plan && workoutPlan">
-    <!-- Nagłówek z nazwą i akcjami -->
+
     <div class="workout-plan-header">
       <h1>{{ workoutPlan.name }}</h1>
 
-      <!-- Przyciski edycji i usuwania (tylko dla autora) -->
+
       <div class="action-buttons" *ngIf="isAuthor">
         <button mat-raised-button color="primary" (click)="editWorkoutPlan()">
           <mat-icon>edit</mat-icon>
@@ -33,12 +32,13 @@
       </div>
     </div>
 
-    <!-- Sekcja z informacjami o planie treningowym -->
+
     <div class="workout-plan-info-section">
       <div class="workout-plan-media">
-        <img [src]="workoutPlan.imageUrl || 'assets/images/workout-placeholder.jpg'" [alt]="workoutPlan.name" class="workout-plan-image">
+        <img [src]="workoutPlan.imageUrl || 'assets/images/workout-placeholder.jpg'" [alt]="workoutPlan.name"
+             class="workout-plan-image">
 
-        <!-- Progress Card (tylko dla uczestników) -->
+
         <mat-card class="progress-card" *ngIf="isJoined && userPlan">
           <mat-card-header>
             <mat-card-title>Informacje o planie</mat-card-title>
@@ -64,23 +64,22 @@
                 <span class="info-value">{{ formatDate(userPlan.completionDate) }}</span>
               </div>
 
-              <!-- Dodajemy informację o ostatnim treningu -->
+
               <div class="plan-info-item" *ngIf="userPlan.lastWorkoutDate">
                 <span class="info-label">Ostatni trening:</span>
                 <span class="info-value">{{ formatDate(userPlan.lastWorkoutDate) }}</span>
               </div>
 
-              <!-- Liczba treningów -->
+
               <div class="plan-info-item" *ngIf="userPlan.totalWorkouts">
                 <span class="info-label">Liczba treningów:</span>
                 <span class="info-value">{{ userPlan.totalWorkouts }}</span>
               </div>
             </div>
 
-            <!-- Usuwamy pasek postępu -->
 
             <div class="plan-actions">
-              <!-- Przycisk do rejestracji treningu (dostępny tylko dla planów które nie są zakończone) -->
+
               <button
                 mat-raised-button
                 color="primary"
@@ -90,7 +89,7 @@
                 Zarejestruj trening
               </button>
 
-              <!-- Jeśli plan jest zakończony, dodajemy przycisk do jego reaktywacji -->
+
               <button
                 mat-raised-button
                 color="accent"
@@ -100,7 +99,7 @@
                 Reaktywuj plan
               </button>
 
-              <!-- Przyciski dla planów w trakcie -->
+
               <ng-container *ngIf="userPlan.status !== 'COMPLETED'">
                 <button
                   mat-raised-button
@@ -116,7 +115,7 @@
           </mat-card-content>
         </mat-card>
 
-        <!-- Przycisk dołączenia do planu (dla nie-uczestników) -->
+
         <button
           mat-raised-button
           color="primary"
@@ -131,7 +130,7 @@
       </div>
 
       <div class="workout-plan-details">
-        <!-- Podstawowe informacje -->
+
         <mat-card>
           <mat-card-header>
             <mat-card-title>Informacje o planie</mat-card-title>
@@ -202,7 +201,7 @@
           </mat-card-content>
         </mat-card>
 
-        <!-- Dni treningowe -->
+
         <mat-card class="workout-days-card">
           <mat-card-header>
             <mat-card-title>Plan treningowy</mat-card-title>
@@ -212,7 +211,7 @@
           </mat-card-header>
 
           <mat-card-content>
-            <!-- Zakładki z dniami treningowymi -->
+
             <mat-tab-group [selectedIndex]="activeDay" (selectedIndexChange)="onDayChange($event)">
               <mat-tab *ngFor="let day of workoutPlan.workoutDays" [label]="'Dzień ' + day.dayNumber">
                 <div class="workout-day-content">
@@ -263,7 +262,7 @@
           </mat-card-content>
         </mat-card>
 
-        <!-- Sekcja ocen -->
+
         <mat-card class="ratings-card">
           <mat-card-header>
             <mat-card-title>Oceny</mat-card-title>
@@ -277,7 +276,7 @@
           </mat-card-header>
 
           <mat-card-content>
-            <!-- Formularz oceny -->
+
             <div class="rating-form-container">
               <h3>{{ hasRated ? 'Twoja ocena:' : 'Oceń ten plan:' }}</h3>
 
@@ -326,7 +325,7 @@
 
             <mat-divider class="ratings-divider"></mat-divider>
 
-            <!-- Lista ocen innych użytkowników -->
+
             <div class="ratings-list">
               <h3>Oceny użytkowników</h3>
 

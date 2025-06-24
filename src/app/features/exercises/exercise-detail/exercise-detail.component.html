@@ -1,6 +1,5 @@
-<!-- src/app/features/exercises/exercise-detail/exercise-detail.component.html -->
 <div class="exercise-detail-container">
-  <!-- Przyciski nawigacji -->
+
   <div class="navigation-buttons">
     <button mat-button color="primary" routerLink="/exercises">
       <mat-icon>arrow_back</mat-icon>
@@ -8,20 +7,20 @@
     </button>
   </div>
 
-  <!-- Ładowanie -->
+
   <div class="loading-container" *ngIf="loading.exercise">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Ładowanie ćwiczenia...</p>
   </div>
 
-  <!-- Główna zawartość -->
+
   <div class="exercise-content" *ngIf="!loading.exercise && exercise">
-    <!-- Nagłówek z nazwą i akcjami -->
+
     <div class="exercise-header">
       <div class="title-section">
         <h1>{{ exercise.name }}</h1>
 
-        <!-- Przycisk ulubionych -->
+
         <button
           mat-icon-button
           color="accent"
@@ -32,7 +31,7 @@
         </button>
       </div>
 
-      <!-- Przyciski edycji i usuwania (tylko dla autora) -->
+
       <div class="action-buttons" *ngIf="isAuthor">
         <button mat-raised-button color="primary" (click)="editExercise()">
           <mat-icon>edit</mat-icon>
@@ -45,10 +44,11 @@
       </div>
     </div>
 
-    <!-- Sekcja z informacjami o ćwiczeniu -->
+
     <div class="exercise-info-section">
       <div class="exercise-media">
-        <img [src]="exercise.imageUrl || 'assets/images/exercise-placeholder.jpg'" [alt]="exercise.name" class="exercise-image">
+        <img [src]="exercise.imageUrl || 'assets/images/exercise-placeholder.jpg'" [alt]="exercise.name"
+             class="exercise-image">
 
         <div class="video-container" *ngIf="exercise.videoUrl">
           <a [href]="exercise.videoUrl" target="_blank" mat-raised-button color="primary">
@@ -59,7 +59,7 @@
       </div>
 
       <div class="exercise-details">
-        <!-- Podstawowe informacje -->
+
         <mat-card>
           <mat-card-header>
             <mat-card-title>Informacje o ćwiczeniu</mat-card-title>
@@ -76,7 +76,8 @@
                 <span class="info-value">{{ getMuscleGroupName(exercise.primaryMuscleGroup) }}</span>
               </div>
 
-              <div class="info-item" *ngIf="exercise.secondaryMuscleGroups && exercise.secondaryMuscleGroups.length > 0">
+              <div class="info-item"
+                   *ngIf="exercise.secondaryMuscleGroups && exercise.secondaryMuscleGroups.length > 0">
                 <span class="info-label">Dodatkowe grupy mięśniowe:</span>
                 <div class="chip-list">
                   <mat-chip *ngFor="let group of exercise.secondaryMuscleGroups">
@@ -129,7 +130,7 @@
           </mat-card-content>
         </mat-card>
 
-        <!-- Sekcja ocen -->
+
         <mat-card class="ratings-card">
           <mat-card-header>
             <mat-card-title>Oceny</mat-card-title>
@@ -143,7 +144,7 @@
           </mat-card-header>
 
           <mat-card-content>
-            <!-- Formularz oceny -->
+
             <div class="rating-form-container">
               <h3>{{ hasRated ? 'Twoja ocena:' : 'Oceń to ćwiczenie:' }}</h3>
 
@@ -192,7 +193,7 @@
 
             <mat-divider class="ratings-divider"></mat-divider>
 
-            <!-- Lista ocen innych użytkowników -->
+
             <div class="ratings-list">
               <h3>Oceny użytkowników</h3>
 

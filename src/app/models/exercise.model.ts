@@ -1,4 +1,4 @@
-// src/app/models/exercise.model.ts
+
 export interface Exercise {
   id?: number;
   name: string;
@@ -61,7 +61,7 @@ export enum RiskLevel {
   HIGH = 'HIGH'
 }
 
-// Interfejsy dla paginacji
+
 export interface PageRequest {
   page: number;
   size: number;
@@ -98,7 +98,7 @@ export interface PageResponse<T> {
   empty: boolean;
 }
 
-// src/app/models/exercise-rating.model.ts
+
 export interface ExerciseRating {
   id?: number;
   user?: {

@@ -1,4 +1,4 @@
-<!-- src/app/features/workout-sessions/exercise-history/exercise-history.component.html -->
+
 <div class="exercise-history-container">
   <div class="navigation-buttons">
     <button mat-button color="primary" routerLink="/my-workouts">
@@ -10,13 +10,13 @@
   <h1 class="page-title">Historia ćwiczeń</h1>
   <p class="subtitle">Śledź swoje postępy dla każdego ćwiczenia</p>
 
-  <!-- Loading spinner -->
+
   <div class="loading-container" *ngIf="loading">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Ładowanie historii ćwiczeń...</p>
   </div>
 
-  <!-- No history message -->
+
   <div class="no-history" *ngIf="!loading && exerciseHistory.length === 0">
     <mat-card>
       <mat-card-content>
@@ -33,7 +33,7 @@
     </mat-card>
   </div>
 
-  <!-- Exercise History Content -->
+
   <div class="history-content" *ngIf="!loading && exerciseHistory.length > 0">
     <mat-accordion>
       <mat-expansion-panel *ngFor="let exercise of exerciseHistory; let i = index">
@@ -46,35 +46,35 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
 
-        <!-- Table with history entries -->
+
         <div class="history-table-container">
-          <!-- No entries message -->
+
           <div class="no-entries" *ngIf="exercise.history.length === 0">
             <p>Brak historii dla tego ćwiczenia</p>
           </div>
 
-          <!-- History table -->
+
           <table mat-table [dataSource]="exercise.history" matSort (matSortChange)="sortData($event, i)"
                  class="history-table" *ngIf="exercise.history.length > 0">
-            <!-- Date Column -->
+
             <ng-container matColumnDef="date">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
               <td mat-cell *matCellDef="let entry">{{ formatDate(entry.date) }}</td>
             </ng-container>
 
-            <!-- Sets Column -->
+
             <ng-container matColumnDef="setsCompleted">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Serie</th>
               <td mat-cell *matCellDef="let entry">{{ entry.setsCompleted }}</td>
             </ng-container>
 
-            <!-- Reps Column -->
+
             <ng-container matColumnDef="repsCompleted">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Powtórzenia</th>
               <td mat-cell *matCellDef="let entry">{{ entry.repsCompleted }}</td>
             </ng-container>
 
-            <!-- Weight Column -->
+
             <ng-container matColumnDef="weightUsed">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Obciążenie</th>
               <td mat-cell *matCellDef="let entry">{{ entry.weightUsed }}</td>
@@ -85,7 +85,7 @@
           </table>
         </div>
 
-        <!-- Progress visualization -->
+
         <div class="progress-visualization" *ngIf="exercise.history.length > 1">
           <h3>Postępy obciążenia</h3>
           <p class="hint">Wizualizacja zmian obciążenia w czasie (interaktywny wykres będzie dostępny w przyszłej wersji)</p>

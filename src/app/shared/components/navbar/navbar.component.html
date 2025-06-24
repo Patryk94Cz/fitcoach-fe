@@ -1,4 +1,4 @@
-<!-- src/app/shared/components/navbar/navbar.component.html -->
+
 <mat-toolbar color="primary" class="navbar">
 
   <div class="navbar-brand" routerLink="/home">
@@ -8,13 +8,13 @@
 
   <span class="navbar-spacer"></span>
 
-  <!-- Linki dla niezalogowanych użytkowników -->
+
   <ng-container *ngIf="!authService.isAuthenticated()">
     <a mat-button routerLink="/login" routerLinkActive="active-link">Logowanie</a>
     <a mat-raised-button color="accent" routerLink="/register" routerLinkActive="active-link">Rejestracja</a>
   </ng-container>
 
-  <!-- Przycisk użytkownika (tylko dla zalogowanych) -->
+
   <ng-container *ngIf="authService.isAuthenticated()">
     <a mat-button [matMenuTriggerFor]="userMenu">
       <mat-icon>account_circle</mat-icon>

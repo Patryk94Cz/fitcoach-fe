@@ -1,21 +1,20 @@
-// src/app/features/workout-sessions/session-detail/session-detail.component.ts
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatExpansionModule } from '@angular/material/expansion';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Router, ActivatedRoute, RouterLink} from '@angular/router';
+import {MatCardModule} from '@angular/material/card';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatDialogModule, MatDialog} from '@angular/material/dialog';
+import {MatExpansionModule} from '@angular/material/expansion';
 
-import { WorkoutSessionService } from '../../../core/services/workout-session.service';
-import { ExerciseService } from '../../../core/services/exercise.service';
-import { WorkoutSession } from '../../../models/workout-session.model';
-import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import {WorkoutSessionService} from '../../../core/services/workout-session.service';
+import {ExerciseService} from '../../../core/services/exercise.service';
+import {WorkoutSession} from '../../../models/workout-session.model';
+import {ConfirmDialogComponent} from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-session-detail',
@@ -56,7 +55,7 @@ export class SessionDetailComponent implements OnInit {
     this.loadSessionDetails();
   }
 
-  // Load session details
+
   loadSessionDetails(): void {
     this.loading = true;
 
@@ -75,7 +74,7 @@ export class SessionDetailComponent implements OnInit {
       });
   }
 
-  // Delete session
+
   deleteSession(): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -102,7 +101,7 @@ export class SessionDetailComponent implements OnInit {
     });
   }
 
-  // Helper methods
+
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('pl-PL', {

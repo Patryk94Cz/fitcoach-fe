@@ -68,7 +68,6 @@ export class RegisterComponent {
     }, { validators: this.passwordMatchValidator });
   }
 
-  // Walidator sprawdzający zgodność haseł
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password')?.value;
     const confirmPassword = control.get('confirmPassword')?.value;
@@ -83,7 +82,6 @@ export class RegisterComponent {
 
   onSubmit(): void {
     if (this.registerForm.invalid) {
-      // Zaznacz wszystkie pola jako dotknięte, aby wyświetlić błędy
       Object.keys(this.registerForm.controls).forEach(key => {
         const control = this.registerForm.get(key);
         control?.markAsTouched();
@@ -104,13 +102,11 @@ export class RegisterComponent {
         this.isLoading = false;
         this.registrationSuccess = true;
 
-        // Wyświetl komunikat o pomyślnej rejestracji
         this.snackBar.open('Rejestracja zakończona pomyślnie! Możesz się teraz zalogować.', 'OK', {
           duration: 5000,
           panelClass: ['success-snackbar']
         });
 
-        // Przekieruj do ekranu logowania po krótkim opóźnieniu (dajemy czas na przeczytanie komunikatu)
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 2000);
@@ -119,10 +115,8 @@ export class RegisterComponent {
         this.isLoading = false;
         let errorMessage = 'Błąd rejestracji. Spróbuj ponownie.';
 
-        // Obsługa specyficznego błędu parsowania JSON
         if (error.status === 200 && error.error instanceof SyntaxError &&
           error.error.message.includes('not valid JSON')) {
-          // Sukces ale nieprawidłowa odpowiedź JSON - Backend zwrócił tekst zamiast JSON
           this.registrationSuccess = true;
           this.snackBar.open('Rejestracja zakończona pomyślnie! Możesz się teraz zalogować.', 'OK', {
             duration: 5000,
@@ -135,7 +129,6 @@ export class RegisterComponent {
           return;
         }
 
-        // Standardowa obsługa błędów
         if (error.error) {
           if (typeof error.error === 'string') {
             errorMessage = error.error;
@@ -155,7 +148,6 @@ export class RegisterComponent {
     });
   }
 
-  // Funkcje pomocnicze dla czytelnych komunikatów błędów
   getPasswordErrorMessage(): string {
     const passwordControl = this.registerForm.get('password');
 

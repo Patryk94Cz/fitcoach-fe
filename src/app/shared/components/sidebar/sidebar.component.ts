@@ -1,14 +1,13 @@
-// src/app/shared/components/sidebar/sidebar.component.ts (updated)
-import { Component, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { AuthService } from '../../../core/services/auth.service';
+import {Component, Output, EventEmitter} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Router, RouterLink, RouterLinkActive} from '@angular/router';
+import {MatListModule} from '@angular/material/list';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {AuthService} from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -32,7 +31,7 @@ export class SidebarComponent {
 
   @Output() toggleSidebar = new EventEmitter<boolean>();
 
-  // Navigation menu items
+
   navItems = [
     {
       name: 'Dashboard',
@@ -75,15 +74,16 @@ export class SidebarComponent {
   constructor(
     private router: Router,
     public authService: AuthService
-  ) { }
+  ) {
+  }
 
-  // Toggle sidebar expansion
+
   toggleMenu() {
     this.isExpanded = !this.isExpanded;
     this.toggleSidebar.emit(this.isExpanded);
   }
 
-  // Navigate to route
+
   navigateTo(route: string) {
     this.router.navigate([route]);
   }

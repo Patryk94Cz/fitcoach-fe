@@ -1,30 +1,29 @@
-// src/app/features/workout-plans/workout-plan-detail/workout-plan-detail.component.ts
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
 
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import {MatCardModule} from '@angular/material/card';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatDialogModule, MatDialog} from '@angular/material/dialog';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatStepperModule} from '@angular/material/stepper';
+import {MatBadgeModule} from '@angular/material/badge';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
-import { WorkoutPlanService } from '../../../core/services/workout-plan.service';
-import { ExerciseService } from '../../../core/services/exercise.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import {WorkoutPlanService} from '../../../core/services/workout-plan.service';
+import {ExerciseService} from '../../../core/services/exercise.service';
+import {AuthService} from '../../../core/services/auth.service';
+import {ConfirmDialogComponent} from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 import {
   WorkoutPlan,
@@ -34,7 +33,7 @@ import {
   WorkoutPlanStatus,
   UserWorkoutPlan
 } from '../../../models/workout-plan.model';
-import { User } from '../../../models/user.model';
+import {User} from '../../../models/user.model';
 
 @Component({
   selector: 'app-workout-plan-detail',
@@ -108,7 +107,7 @@ export class WorkoutPlanDetailComponent implements OnInit {
   ngOnInit(): void {
     this.workoutPlanId = +this.route.snapshot.paramMap.get('id')!;
 
-    // Pobierz aktualnego użytkownika
+
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
@@ -119,14 +118,14 @@ export class WorkoutPlanDetailComponent implements OnInit {
     this.checkUserPlan();
   }
 
-  // Ładowanie danych planu treningowego
+
   loadWorkoutPlan(): void {
     this.loading.plan = true;
 
     this.workoutPlanService.getWorkoutPlanById(this.workoutPlanId).subscribe({
       next: (data) => {
         this.workoutPlan = data;
-        // Sprawdź czy użytkownik jest autorem
+
         if (this.currentUser && this.workoutPlan.author) {
           this.isAuthor = this.currentUser.id === this.workoutPlan.author.id;
         }
@@ -134,9 +133,9 @@ export class WorkoutPlanDetailComponent implements OnInit {
       },
       error: (error) => {
         console.error('Błąd podczas ładowania planu treningowego:', error);
-        this.snackBar.open('Nie udało się załadować planu treningowego', 'OK', { duration: 3000 });
+        this.snackBar.open('Nie udało się załadować planu treningowego', 'OK', {duration: 3000});
         this.loading.plan = false;
-        // Przekieruj do listy planów
+
         this.router.navigate(['/workout-plans']);
       }
     });
@@ -154,16 +153,16 @@ export class WorkoutPlanDetailComponent implements OnInit {
     this.workoutPlanService.updateWorkoutPlanProgress(this.userPlan.id, progress).subscribe({
       next: (updatedPlan) => {
         this.userPlan = updatedPlan;
-        this.snackBar.open('Plan treningowy został reaktywowany!', 'OK', { duration: 3000 });
+        this.snackBar.open('Plan treningowy został reaktywowany!', 'OK', {duration: 3000});
       },
       error: (error) => {
         console.error('Błąd podczas reaktywacji planu:', error);
-        this.snackBar.open('Nie udało się reaktywować planu', 'OK', { duration: 3000 });
+        this.snackBar.open('Nie udało się reaktywować planu', 'OK', {duration: 3000});
       }
     });
   }
 
-  // Ładowanie ocen
+
   loadRatings(): void {
     this.loading.ratings = true;
 
@@ -179,7 +178,7 @@ export class WorkoutPlanDetailComponent implements OnInit {
     });
   }
 
-  // Sprawdzenie czy użytkownik ocenił plan i pobranie jego oceny
+
   checkUserRating(): void {
     this.loading.rating = true;
 
@@ -214,7 +213,7 @@ export class WorkoutPlanDetailComponent implements OnInit {
     });
   }
 
-  // Sprawdzenie czy użytkownik dołączył do planu
+
   checkUserPlan(): void {
     this.loading.userPlan = true;
 
@@ -224,7 +223,7 @@ export class WorkoutPlanDetailComponent implements OnInit {
         if (userPlan) {
           this.userPlan = userPlan;
           this.isJoined = true;
-          this.activeDay = userPlan.currentDay - 1; // Indeks dla mat-tab od 0
+          this.activeDay = userPlan.currentDay - 1;
           if (this.activeDay < 0) this.activeDay = 0;
         }
         this.loading.userPlan = false;
@@ -236,7 +235,7 @@ export class WorkoutPlanDetailComponent implements OnInit {
     });
   }
 
-  // Obsługa oceniania
+
   onRateWorkoutPlan(): void {
     if (this.ratingForm.invalid) {
       return;
@@ -248,42 +247,42 @@ export class WorkoutPlanDetailComponent implements OnInit {
     this.loading.rating = true;
 
     if (this.hasRated) {
-      // Aktualizacja oceny
+
       this.workoutPlanService.updateWorkoutPlanRating(this.workoutPlanId, rating, comment).subscribe({
         next: (updatedRating) => {
           this.userRating = updatedRating;
-          this.snackBar.open('Ocena została zaktualizowana', 'OK', { duration: 3000 });
+          this.snackBar.open('Ocena została zaktualizowana', 'OK', {duration: 3000});
           this.loadRatings();
-          this.loadWorkoutPlan(); // Odśwież dane planu, aby zaktualizować średnią ocenę
+          this.loadWorkoutPlan();
           this.loading.rating = false;
         },
         error: (error) => {
           console.error('Błąd podczas aktualizacji oceny:', error);
-          this.snackBar.open('Nie udało się zaktualizować oceny', 'OK', { duration: 3000 });
+          this.snackBar.open('Nie udało się zaktualizować oceny', 'OK', {duration: 3000});
           this.loading.rating = false;
         }
       });
     } else {
-      // Dodanie nowej oceny
+
       this.workoutPlanService.rateWorkoutPlan(this.workoutPlanId, rating, comment).subscribe({
         next: (newRating) => {
           this.userRating = newRating;
           this.hasRated = true;
-          this.snackBar.open('Ocena została dodana', 'OK', { duration: 3000 });
+          this.snackBar.open('Ocena została dodana', 'OK', {duration: 3000});
           this.loadRatings();
-          this.loadWorkoutPlan(); // Odśwież dane planu, aby zaktualizować średnią ocenę
+          this.loadWorkoutPlan();
           this.loading.rating = false;
         },
         error: (error) => {
           console.error('Błąd podczas dodawania oceny:', error);
-          this.snackBar.open('Nie udało się dodać oceny', 'OK', { duration: 3000 });
+          this.snackBar.open('Nie udało się dodać oceny', 'OK', {duration: 3000});
           this.loading.rating = false;
         }
       });
     }
   }
 
-  // Usuwanie oceny
+
   deleteRating(): void {
     this.workoutPlanService.deleteWorkoutPlanRating(this.workoutPlanId).subscribe({
       next: () => {
@@ -291,24 +290,24 @@ export class WorkoutPlanDetailComponent implements OnInit {
         this.userRating = null;
         this.ratingForm.reset();
         this.starRating = 0;
-        this.snackBar.open('Ocena została usunięta', 'OK', { duration: 3000 });
+        this.snackBar.open('Ocena została usunięta', 'OK', {duration: 3000});
         this.loadRatings();
-        this.loadWorkoutPlan(); // Odśwież dane planu, aby zaktualizować średnią ocenę
+        this.loadWorkoutPlan();
       },
       error: (error) => {
         console.error('Błąd podczas usuwania oceny:', error);
-        this.snackBar.open('Nie udało się usunąć oceny', 'OK', { duration: 3000 });
+        this.snackBar.open('Nie udało się usunąć oceny', 'OK', {duration: 3000});
       }
     });
   }
 
-  // Wybór oceny (gwiazdki)
+
   setRating(rating: number): void {
     this.starRating = rating;
-    this.ratingForm.patchValue({ rating });
+    this.ratingForm.patchValue({rating});
   }
 
-  // Dołączanie do planu treningowego
+
   joinWorkoutPlan(): void {
     this.loading.join = true;
 
@@ -316,19 +315,19 @@ export class WorkoutPlanDetailComponent implements OnInit {
       next: (userPlan) => {
         this.userPlan = userPlan;
         this.isJoined = true;
-        this.loadWorkoutPlan(); // Odśwież licznik uczestników
-        this.snackBar.open('Dołączono do planu treningowego!', 'OK', { duration: 3000 });
+        this.loadWorkoutPlan();
+        this.snackBar.open('Dołączono do planu treningowego!', 'OK', {duration: 3000});
         this.loading.join = false;
       },
       error: (error) => {
         console.error('Błąd podczas dołączania do planu:', error);
-        this.snackBar.open('Nie udało się dołączyć do planu', 'OK', { duration: 3000 });
+        this.snackBar.open('Nie udało się dołączyć do planu', 'OK', {duration: 3000});
         this.loading.join = false;
       }
     });
   }
 
-  // Porzucanie planu treningowego
+
   abandonWorkoutPlan(): void {
     if (!this.userPlan) return;
 
@@ -347,19 +346,19 @@ export class WorkoutPlanDetailComponent implements OnInit {
           next: () => {
             this.userPlan = null;
             this.isJoined = false;
-            this.loadWorkoutPlan(); // Odśwież licznik uczestników
-            this.snackBar.open('Plan treningowy został porzucony', 'OK', { duration: 3000 });
+            this.loadWorkoutPlan();
+            this.snackBar.open('Plan treningowy został porzucony', 'OK', {duration: 3000});
           },
           error: (error) => {
             console.error('Błąd podczas porzucania planu:', error);
-            this.snackBar.open('Nie udało się porzucić planu', 'OK', { duration: 3000 });
+            this.snackBar.open('Nie udało się porzucić planu', 'OK', {duration: 3000});
           }
         });
       }
     });
   }
 
-  // Zakończenie planu treningowego
+
   completeWorkoutPlan(): void {
     if (!this.userPlan) return;
 
@@ -375,7 +374,7 @@ export class WorkoutPlanDetailComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         const progress: WorkoutPlanProgress = {
-          currentDay: this.userPlan?.currentDay? this.userPlan.currentDay : 0,
+          currentDay: this.userPlan?.currentDay ? this.userPlan.currentDay : 0,
           status: WorkoutPlanStatus.COMPLETED,
           progressPercentage: 100
         };
@@ -385,12 +384,12 @@ export class WorkoutPlanDetailComponent implements OnInit {
         this.workoutPlanService.updateWorkoutPlanProgress(this.userPlan!.id, progress).subscribe({
           next: (updatedPlan) => {
             this.userPlan = updatedPlan;
-            this.snackBar.open('Plan treningowy został zakończony!', 'OK', { duration: 3000 });
+            this.snackBar.open('Plan treningowy został zakończony!', 'OK', {duration: 3000});
             this.loading.update = false;
           },
           error: (error) => {
             console.error('Błąd podczas aktualizacji statusu planu:', error);
-            this.snackBar.open('Nie udało się zakończyć planu treningowego', 'OK', { duration: 3000 });
+            this.snackBar.open('Nie udało się zakończyć planu treningowego', 'OK', {duration: 3000});
             this.loading.update = false;
           }
         });
@@ -398,7 +397,7 @@ export class WorkoutPlanDetailComponent implements OnInit {
     });
   }
 
-  // Przejście do następnego dnia treningu
+
   moveToNextDay(): void {
     if (!this.userPlan || !this.workoutPlan) return;
 
@@ -407,7 +406,7 @@ export class WorkoutPlanDetailComponent implements OnInit {
 
     if (nextDay > totalDays) return;
 
-    // Oblicz procent postępu ale NIGDY nie ustawiaj statusu na COMPLETED automatycznie
+
     const progressPercentage = Math.round((nextDay / totalDays) * 100);
 
     const progress: WorkoutPlanProgress = {
@@ -421,24 +420,24 @@ export class WorkoutPlanDetailComponent implements OnInit {
     this.workoutPlanService.updateWorkoutPlanProgress(this.userPlan.id, progress).subscribe({
       next: (updatedPlan) => {
         this.userPlan = updatedPlan;
-        this.activeDay = nextDay - 1; // Indeks dla mat-tab od 0
-        this.snackBar.open('Postęp zaktualizowany', 'OK', { duration: 3000 });
+        this.activeDay = nextDay - 1;
+        this.snackBar.open('Postęp zaktualizowany', 'OK', {duration: 3000});
         this.loading.update = false;
       },
       error: (error) => {
         console.error('Błąd podczas aktualizacji postępu:', error);
-        this.snackBar.open('Nie udało się zaktualizować postępu', 'OK', { duration: 3000 });
+        this.snackBar.open('Nie udało się zaktualizować postępu', 'OK', {duration: 3000});
         this.loading.update = false;
       }
     });
   }
 
-  // Edycja planu treningowego
+
   editWorkoutPlan(): void {
     this.router.navigate(['/workout-plans/edit', this.workoutPlanId]);
   }
 
-  // Usuwanie planu treningowego
+
   deleteWorkoutPlan(): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
@@ -453,24 +452,24 @@ export class WorkoutPlanDetailComponent implements OnInit {
       if (result) {
         this.workoutPlanService.deleteWorkoutPlan(this.workoutPlanId).subscribe({
           next: () => {
-            this.snackBar.open('Plan treningowy został usunięty', 'OK', { duration: 3000 });
+            this.snackBar.open('Plan treningowy został usunięty', 'OK', {duration: 3000});
             this.router.navigate(['/workout-plans']);
           },
           error: (error) => {
             console.error('Błąd podczas usuwania planu treningowego:', error);
-            this.snackBar.open('Nie udało się usunąć planu treningowego', 'OK', { duration: 3000 });
+            this.snackBar.open('Nie udało się usunąć planu treningowego', 'OK', {duration: 3000});
           }
         });
       }
     });
   }
 
-  // Obsługa zmiany dnia treningu
+
   onDayChange(index: number): void {
     this.activeDay = index;
   }
 
-  // Pomocnicze metody
+
   getGoalName(goal: string): string {
     return this.workoutPlanService.getGoalName(goal as any);
   }
@@ -518,7 +517,7 @@ export class WorkoutPlanDetailComponent implements OnInit {
   canCompleteWorkoutPlan(): boolean {
     if (!this.userPlan) return false;
 
-    // Plan można zakończyć w dowolnym momencie, o ile nie jest już zakończony
+
     const status = this.userPlan.status;
     return status !== 'COMPLETED';
   }

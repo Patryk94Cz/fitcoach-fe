@@ -1,9 +1,8 @@
-<!-- src/app/features/statistics/exercise-stats/exercise-stats.component.html -->
 <div class="exercise-stats-container">
   <h1 class="page-title">Śledź Postęp</h1>
   <p class="subtitle">Analizuj swoje postępy i monitoruj obciążenia w czasie</p>
 
-  <!-- Filters section -->
+
   <mat-card class="filters-card">
     <mat-card-content>
       <form [formGroup]="filterForm" class="filters-form">
@@ -29,13 +28,13 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- Loading indicator -->
+
   <div class="loading-container" *ngIf="loading">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Ładowanie danych...</p>
   </div>
 
-  <!-- No data message -->
+
   <div class="no-data-container" *ngIf="!loading && uniqueExercises.length === 0">
     <mat-card>
       <mat-card-content class="no-data-content">
@@ -49,7 +48,7 @@
     </mat-card>
   </div>
 
-  <!-- Chart container -->
+
   <div class="chart-section" *ngIf="!loading && uniqueExercises.length > 0">
     <mat-card>
       <mat-card-content>
@@ -81,7 +80,7 @@
     </mat-card>
   </div>
 
-  <!-- Stats summary -->
+
   <div class="stats-summary" *ngIf="!loading && chartData && chartData.length > 0">
     <mat-card>
       <mat-card-content>

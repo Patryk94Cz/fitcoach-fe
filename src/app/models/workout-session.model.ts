@@ -1,4 +1,3 @@
-// src/app/models/workout-session.model.ts
 import { UserWorkoutPlan } from './workout-plan.model';
 
 export interface WorkoutSession {

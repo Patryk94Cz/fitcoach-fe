@@ -1,1 +1,0 @@
-To jest readme dla mojego backendu. Zaimplementuj kolejne widoki i ficzery dla ćwiczeń we frontendzie, bazujac na istniejacym kodzie w repo frontu. Zastosuj Najlepsze praktyki, mając na uwadze, ze jestem poczatkujacym programista i kod ma byc dla mnie zrozumialy. Nie uzywaj komentarzy, uzywaj angular material dla ux/ui

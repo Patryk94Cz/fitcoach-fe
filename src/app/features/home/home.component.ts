@@ -1,11 +1,10 @@
-// features/home/home.component.ts
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
+import {Component} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Router} from '@angular/router';
+import {MatButtonModule} from '@angular/material/button';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatIconModule} from '@angular/material/icon';
+import {MatCardModule} from '@angular/material/card';
 
 @Component({
   selector: 'app-home',
@@ -21,11 +20,12 @@ import { MatCardModule } from '@angular/material/card';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+  }
 
   navigateTo(path: string): void {
     console.log(`Navigating to: /${path}`);
-    // Używamy bezpośredniej nawigacji do ścieżek zdefiniowanych w app.routes.ts
+
     this.router.navigateByUrl(`/${path}`);
   }
 }
