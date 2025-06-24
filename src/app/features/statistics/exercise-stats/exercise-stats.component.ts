@@ -1,4 +1,3 @@
-// src/app/features/statistics/exercise-stats/exercise-stats.component.ts
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
@@ -51,8 +50,8 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
   selectedExercise: string | null = null;
   selectedRange: 'week' | 'month' | 'year' = 'month';
   chartData: ChartData[] = [];
+  chartInitialized = false;
 
-  // For no data message
   noDataMessage = '';
 
   constructor(
@@ -69,22 +68,24 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.loadExerciseHistory();
 
-    // Subscribe to form value changes
     this.filterForm.valueChanges.subscribe(values => {
       this.selectedExercise = values.exerciseId;
       this.selectedRange = values.dateRange;
       this.prepareChartData();
-      if (this.chartContainer) {
+
+      if (this.chartContainer && this.chartInitialized) {
         this.renderChart();
       }
     });
   }
 
   ngAfterViewInit(): void {
-    // Initial chart render after view is initialized
-    setTimeout(() => {
+    this.chartInitialized = true;
+
+    if (this.selectedExercise) {
+      this.prepareChartData();
       this.renderChart();
-    }, 0);
+    }
   }
 
   getMinWeight(): number {
@@ -121,17 +122,24 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
       next: (history) => {
         this.exerciseHistory = history;
 
-        // Populate unique exercises for the dropdown
         this.uniqueExercises = history.map(item => ({
           name: item.exerciseName,
-          id: item.exerciseName // Using name as ID since we don't have specific IDs
+          id: item.exerciseName
         }));
 
-        // If there are exercises, set the first one as default
         if (this.uniqueExercises.length > 0) {
+          const firstExerciseId = this.uniqueExercises[0].id;
+
           this.filterForm.patchValue({
-            exerciseId: this.uniqueExercises[0].id
+            exerciseId: firstExerciseId
           });
+
+          this.selectedExercise = firstExerciseId;
+          this.prepareChartData();
+
+          if (this.chartInitialized) {
+            this.renderChart();
+          }
         } else {
           this.noDataMessage = 'Brak historii ćwiczeń. Zarejestruj swoje pierwsze treningi.';
         }
@@ -153,7 +161,6 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    // Find selected exercise history
     const exerciseData = this.exerciseHistory.find(
       ex => ex.exerciseName === this.selectedExercise
     );
@@ -163,7 +170,6 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    // Get date range boundary based on selection
     const now = new Date();
     let startDate: Date;
 
@@ -185,11 +191,9 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
         startDate.setMonth(now.getMonth() - 1);
     }
 
-    // Filter history entries by date range and extract weight values
     this.chartData = exerciseData.history
       .filter(entry => new Date(entry.date) >= startDate)
       .map(entry => {
-        // Try to extract numeric weight value
         let weightValue = 0;
         const weightMatch = entry.weightUsed.match(/(\d+)/);
         if (weightMatch) {
@@ -201,12 +205,14 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
           weight: weightValue
         };
       })
-      // Sort by date ascending
       .sort((a, b) => a.date.getTime() - b.date.getTime());
   }
 
   renderChart(): void {
-    // Clear previous chart
+    if (!this.chartContainer) {
+      return;
+    }
+
     const element = this.chartContainer.nativeElement;
     while (element.firstChild) {
       element.firstChild.remove();
@@ -217,12 +223,10 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    // Set up dimensions and margins
     const margin = { top: 20, right: 30, bottom: 40, left: 50 };
     const width = element.clientWidth - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
-    // Create SVG
     const svg = d3.select(element)
       .append('svg')
       .attr('width', width + margin.left + margin.right)
@@ -230,22 +234,19 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Set up scales
     const x = d3.scaleTime()
       .domain(d3.extent(this.chartData, d => d.date) as [Date, Date])
       .range([0, width]);
 
     const y = d3.scaleLinear()
-      .domain([0, d3.max(this.chartData, d => d.weight) as number * 1.1]) // Add 10% padding on top
+      .domain([0, d3.max(this.chartData, d => d.weight) as number * 1.1])
       .range([height, 0]);
 
-    // Create line generator
     const line = d3.line<ChartData>()
       .x(d => x(d.date))
       .y(d => y(d.weight))
-      .curve(d3.curveMonotoneX); // Smoother line
+      .curve(d3.curveMonotoneX);
 
-    // Add axes
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
       .call(d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat('%d %b') as any))
@@ -258,7 +259,6 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
     svg.append('g')
       .call(d3.axisLeft(y));
 
-    // Add line path
     svg.append('path')
       .datum(this.chartData)
       .attr('fill', 'none')
@@ -266,7 +266,6 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
       .attr('stroke-width', 3)
       .attr('d', line);
 
-    // Add dots for data points
     svg.selectAll('.dot')
       .data(this.chartData)
       .enter().append('circle')
@@ -278,7 +277,6 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
       .attr('stroke', '#fff')
       .attr('stroke-width', 2);
 
-    // Add tooltip for data points
     const tooltip = d3.select('body').append('div')
       .attr('class', 'chart-tooltip')
       .style('opacity', 0)
@@ -306,7 +304,6 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
           .style('opacity', 0);
       });
 
-    // Add chart title
     svg.append('text')
       .attr('x', width / 2)
       .attr('y', 0 - (margin.top / 2))
@@ -314,7 +311,6 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
       .style('font-size', '16px')
       .text(`Progres obciążenia: ${this.selectedExercise}`);
 
-    // Add y-axis label
     svg.append('text')
       .attr('transform', 'rotate(-90)')
       .attr('y', 0 - margin.left)
@@ -337,7 +333,6 @@ export class ExerciseStatsComponent implements OnInit, AfterViewInit {
     const container = svg.append('g')
       .attr('transform', `translate(${width/2}, ${height/2})`);
 
-    // Add empty state message
     container.append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', '-1em')

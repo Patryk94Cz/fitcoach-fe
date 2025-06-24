@@ -68,7 +68,6 @@ export class NewWorkoutComponent implements OnInit {
     this.loadUserWorkoutPlans();
   }
 
-  // Tworzenie formularza
   createForm(): FormGroup {
     return this.fb.group({
       userWorkoutPlanId: [null, Validators.required],
@@ -78,7 +77,6 @@ export class NewWorkoutComponent implements OnInit {
     });
   }
 
-  // Getter dla tablicy ćwiczeń
   get exercisePerformancesArray(): FormArray {
     return this.sessionForm.get('exercisePerformances') as FormArray;
   }
@@ -88,11 +86,9 @@ export class NewWorkoutComponent implements OnInit {
 
     this.workoutPlanService.getUserWorkoutPlans().subscribe({
       next: (response) => {
-        // Get all plans but visually distinguish completed plans in the template
         this.userWorkoutPlans = response.content;
         this.loading.plans = false;
 
-        // If no plans, show message and redirect
         if (this.userWorkoutPlans.length === 0) {
           this.snackBar.open('Nie masz żadnych planów treningowych. Dołącz do planu aby rejestrować treningi.', 'OK', {
             duration: 5000
@@ -108,24 +104,14 @@ export class NewWorkoutComponent implements OnInit {
     });
   }
 
-  hasCompletedPlans(): boolean {
-    return this.userWorkoutPlans?.some(plan => plan.status === 'COMPLETED') || false;
-  }
-
-  // Obsługa wyboru planu
   onPlanSelected(planId: number): void {
-    this.loading.plan = true;
     this.selectedPlan = this.userWorkoutPlans.find(p => p.id === planId) || null;
 
     if (this.selectedPlan) {
-      // Nie ustawiaj domyślnego dnia - pozwól użytkownikowi wybrać dowolny
       this.sessionForm.get('completedDayNumber')?.setValue(null);
-
-      // Reszta kodu pozostaje bez zmian...
     }
   }
 
-  // Obsługa zmiany dnia
   onDayChanged(dayNumber: number): void {
     if (!this.selectedPlan) return;
 
@@ -136,13 +122,9 @@ export class NewWorkoutComponent implements OnInit {
         const selectedDay = plan.workoutDays.find(day => day.dayNumber === dayNumber);
 
         if (selectedDay && selectedDay.exercises) {
-          // Wyczyść poprzednie ćwiczenia
           this.exercisePerformancesArray.clear();
-
-          // Zapisz ćwiczenia wybranego dnia
           this.currentDayExercises = selectedDay.exercises;
 
-          // Dodaj formularze dla każdego ćwiczenia
           selectedDay.exercises.forEach((exercise, index) => {
             this.addExercisePerformance(
               exercise.exercise?.id || 0,
@@ -164,7 +146,6 @@ export class NewWorkoutComponent implements OnInit {
     });
   }
 
-  // Dodanie formularza dla ćwiczenia
   addExercisePerformance(
     exerciseId: number,
     defaultSets: number = 0,
@@ -203,7 +184,8 @@ export class NewWorkoutComponent implements OnInit {
     this.workoutSessionService.createSession(sessionRequest).subscribe({
       next: (session) => {
         this.snackBar.open('Sesja treningowa została zarejestrowana!', 'OK', { duration: 3000 });
-        // this.router.navigate(['/my-workouts']);
+        this.router.navigate(['/my-workouts']);
+        this.loading.submit = false;
       },
       error: (error) => {
         console.error('Błąd podczas rejestrowania sesji:', error);
@@ -213,7 +195,6 @@ export class NewWorkoutComponent implements OnInit {
     });
   }
 
-  // Pomocnicza metoda do oznaczania wszystkich kontrolek jako dotknięte
   markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
@@ -232,18 +213,20 @@ export class NewWorkoutComponent implements OnInit {
     });
   }
 
-  // Pobranie nazwy ćwiczenia na podstawie ID
   getExerciseName(exerciseId: number): string {
     const exercise = this.currentDayExercises.find(e => e.exercise?.id === exerciseId);
     return exercise?.exercise?.name || 'Ćwiczenie';
   }
 
-  // Pobranie dostępnych dni treningowych
   get availableDays(): number[] {
     if (!this.selectedPlan || !this.selectedPlan.workoutPlan.totalDays) {
       return [];
     }
 
     return Array.from({ length: this.selectedPlan.workoutPlan.totalDays }, (_, i) => i + 1);
+  }
+
+  hasCompletedPlans(): boolean {
+    return this.userWorkoutPlans?.some(plan => plan.status === 'COMPLETED') || false;
   }
 }

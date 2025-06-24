@@ -77,6 +77,7 @@
                 <button
                   mat-raised-button
                   color="primary"
+                  type="button"
                   matStepperNext
                   [disabled]="!sessionForm.get('userWorkoutPlanId')?.valid ||
                              !sessionForm.get('completedDayNumber')?.valid ||
@@ -191,7 +192,7 @@
 
               <!-- Przyciski nawigacji -->
               <div class="step-actions">
-                <button mat-button matStepperPrevious>
+                <button mat-button type="button" matStepperPrevious>
                   <mat-icon>arrow_back</mat-icon>
                   Wróć do wyboru planu
                 </button>
